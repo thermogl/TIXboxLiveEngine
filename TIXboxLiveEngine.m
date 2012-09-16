@@ -156,10 +156,6 @@ NSString * const kTIXboxLiveEngineFriendRequestErrorMessage = @"Your friend requ
 	}
 }
 
-- (void)signInWithEmail:(NSString *)anEmail password:(NSString *)aPassword {
-	
-}
-
 - (void)signOut {
 	
 	[self resetCredentials];
