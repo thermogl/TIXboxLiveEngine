@@ -24,6 +24,7 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 @end
 
 @implementation TIXboxLiveEngineImageCache
+@synthesize cacheRootDirectory;
 
 #pragma mark - Instance Methods
 - (id)init {
@@ -129,11 +130,7 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 }
 
 - (NSString *)filePathForKey:(NSString *)key {
-#if TARGET_OS_IPHONE
-	return [NSHomeDirectory() stringByAppendingFormat:@"/Library/Caches/%@.xboximage", key];
-#else
-	return [NSHomeDirectory() stringByAppendingFormat:@"/Library/Application Support/Friendz/Images/%@.xboximage", key];
-#endif
+	return [cacheRootDirectory stringByAppendingFormat:@"%@.xboximage", key];
 }
 
 - (void)storeImageInMemoryCache:(id)image key:(NSString *)key {
@@ -239,6 +236,7 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 	[memoryCache release];
 	dispatch_release(processingQueue);
 	dispatch_release(ioQueue);
+	[cacheRootDirectory release];
 	[super dealloc];
 }
 

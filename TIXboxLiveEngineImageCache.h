@@ -20,7 +20,11 @@ typedef void (^TIXboxLiveEngineImageCacheCompletionBlock)(NSImage * image, NSURL
 	dispatch_queue_t processingQueue;
 	dispatch_queue_t ioQueue;
 	BOOL emptyingDiskCache;
+	
+	NSString * cacheRootDirectory;
 }
+
+@property (nonatomic, copy) NSString * cacheRootDirectory;
 
 + (TIXboxLiveEngineImageCache *)sharedCache;
 
