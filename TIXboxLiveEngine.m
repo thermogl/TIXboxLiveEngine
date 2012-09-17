@@ -35,6 +35,7 @@ NSString * const kTIXboxLiveEngineWrongEmailOrPassword = @"The email address or 
 NSString * const kTIXboxLiveEngineSiteCannotBeContacted = @"The Xbox LIVE site is all full of errors. Try again later.";
 NSString * const kTIXboxLiveEngineTermsOfUseChanged = @"The Xbox LIVE terms of use have changed. Please visit Xbox.com to accept them.";
 NSString * const kTIXboxLiveEngineFriendRequestErrorMessage = @"Your friend request could not be sent at this time.";
+NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could not be sent at this time";
 
 @interface TIXboxLiveEngine ()
 @property (nonatomic, copy) NSString * email;
@@ -161,7 +162,7 @@ NSString * const kTIXboxLiveEngineFriendRequestErrorMessage = @"Your friend requ
 	[self resetCredentials];
 	[self clearConnectionQueue];
 	
-	[returnDataDict.allKeys enumerateObjectsUsingBlock:^(NSValue * key, NSUInteger idx, BOOL *stop){
+	[returnDataDict enumerateKeysAndObjectsUsingBlock:^(NSValue * key, id obj, BOOL *stop) {
 		[(TIXboxLiveEngineConnection *)key.pointerValue cancel];
 		[self setNetworkSpinnerVisible:NO];
 	}];
@@ -834,7 +835,11 @@ NSString * const kTIXboxLiveEngineFriendRequestErrorMessage = @"Your friend requ
 		NSError * error = nil;
 		
 		if (![[responseDict objectForKey:@"Success"] boolValue]){
-			NSDictionary * userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:[responseDict objectForKey:@"Status"], NSLocalizedDescriptionKey, nil];
+			
+			NSString * status = [responseDict objectForKey:@"Status"];
+			if (!status) status = kTIXboxLiveEngineMessageSendErrorMessage;
+			
+			NSDictionary * userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:status, NSLocalizedDescriptionKey, nil];
 			error = [NSError errorWithDomain:kTIXboxLiveEngineErrorDomain code:TIXboxLiveEngineErrorCodeMessageSendingError userInfo:userInfo];
 			[userInfo release];
 		}
