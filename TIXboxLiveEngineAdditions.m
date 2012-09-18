@@ -535,6 +535,7 @@ static int activityCounter = 0;
 	if (visible) activityCounter++;
 	else activityCounter--;
 	
+	if (activityCounter < 0) activityCounter = 0;
 	[self setNetworkActivityIndicatorVisible:(activityCounter > 0)];
 }
 
