@@ -333,6 +333,13 @@ static char EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvw
 	return [NSDate dateWithTimeIntervalSince1970:([[self stringBetween:@"Date(" and:@")"] doubleValue] / 1000)];
 }
 
+- (NSString *)fileSafeHash {
+	
+	NSString * tempHash = [self stringSignedWithSecret:@"hash"];
+	NSCharacterSet * illegalFileNameCharacters = [NSCharacterSet characterSetWithCharactersInString:@"/\\?%*|\"<>"];
+	return [[tempHash componentsSeparatedByCharactersInSet:illegalFileNameCharacters] componentsJoinedByString:@""];
+}
+
 @end
 
 @implementation NSArray (TIXboxLiveEngineAdditions)

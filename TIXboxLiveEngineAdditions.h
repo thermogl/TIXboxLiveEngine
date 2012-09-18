@@ -33,6 +33,7 @@ NSString * TIXboxLiveEngineFileSavePath(NSString * name);
 @property (nonatomic, readonly) NSString * stringByTrimmingWhitespaceAndNewLines;
 @property (nonatomic, readonly) NSString * stringByCorrectingDateRelativeToLocale;
 @property (nonatomic, readonly) NSDate * dateFromJSONDate;
+@property (nonatomic, readonly) NSString * fileSafeHash;
 
 - (NSString *)stringBetween:(NSString *)start and:(NSString *)end;
 

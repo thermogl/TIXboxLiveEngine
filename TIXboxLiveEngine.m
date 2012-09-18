@@ -136,10 +136,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		
 		[self setEmail:anEmail];
 		[self setPassword:aPassword];
-		
-		NSString * tempHash = [email stringSignedWithSecret:password];
-		NSCharacterSet * illegalFileNameCharacters = [NSCharacterSet characterSetWithCharactersInString:@"/\\?%*|\"<>"];
-		[self setCookieHash:[[tempHash componentsSeparatedByCharactersInSet:illegalFileNameCharacters] componentsJoinedByString:@""]];
+		[self setCookieHash:email.fileSafeHash];
 		[self removeAuthCookies];
 		
 		NSString * loginAddress = @"https://login.live.com/login.srf?wa=wsignin1.0&rpsnv=11&ct=1318941594&rver=6.0.5286.0&wp=MBI&"

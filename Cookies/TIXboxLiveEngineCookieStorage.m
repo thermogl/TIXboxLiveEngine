@@ -110,7 +110,7 @@
 }
 
 - (NSString *)filePathForHash:(NSString *)hash {
-	return [cookieRootDirectory stringByAppendingFormat:@"%@.plist", hash];
+	return [cookieRootDirectory stringByAppendingFormat:@"%@.cookies", hash];
 }
 
 - (void)dealloc {
