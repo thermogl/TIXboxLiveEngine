@@ -9,15 +9,12 @@
 #import "TIXboxLiveEngineCookieStorage.h"
 #import "TIXboxLiveEngineAdditions.h"
 
-NSString * TIXboxLiveEngineCookieStorageLocation(NSString * name) {
-#if TARGET_OS_IPHONE
-	return [NSHomeDirectory() stringByAppendingFormat:@"/Library/Caches/%@.plist", name];
-#else
-	return [NSHomeDirectory() stringByAppendingFormat:@"/Library/Application Support/Friendz/%@.plist", name];
-#endif
-}
+@interface TIXboxLiveEngineCookieStorage (Private)
+- (NSString *)filePathForHash:(NSString *)hash;
+@end
 
 @implementation TIXboxLiveEngineCookieStorage
+@synthesize cookieRootDirectory;
 
 - (void)addCookiesFromResponse:(NSURLResponse *)response hash:(NSString *)cookieHash {
 	
@@ -32,7 +29,7 @@ NSString * TIXboxLiveEngineCookieStorageLocation(NSString * name) {
 	
 	if (newCookies && cookieHash){
 		
-		NSMutableArray * allCookies = [[NSMutableArray alloc] initWithContentsOfFile:TIXboxLiveEngineCookieStorageLocation(cookieHash)];
+		NSMutableArray * allCookies = [[NSMutableArray alloc] initWithContentsOfFile:[self filePathForHash:cookieHash]];
 		if (!allCookies) allCookies = [[NSMutableArray alloc] init];
 		
 		[newCookies enumerateObjectsUsingBlock:^(NSHTTPCookie * newCookie, NSUInteger idx, BOOL *stop){
@@ -57,13 +54,13 @@ NSString * TIXboxLiveEngineCookieStorageLocation(NSString * name) {
 			}
 		}];
 		
-		[allCookies writeToFile:TIXboxLiveEngineCookieStorageLocation(cookieHash) atomically:YES];
+		[allCookies writeToFile:[self filePathForHash:cookieHash] atomically:YES];
 		[allCookies release];
 	}
 }
 
 - (void)removeAllCookiesForHash:(NSString *)cookieHash {
-	if (cookieHash) [[NSFileManager defaultManager] removeItemAtPath:TIXboxLiveEngineCookieStorageLocation(cookieHash) error:NULL];
+	if (cookieHash) [[NSFileManager defaultManager] removeItemAtPath:[self filePathForHash:cookieHash] error:NULL];
 }
 
 - (NSArray *)cookiesForURL:(NSURL *)URL hash:(NSString *)cookieHash {
@@ -77,7 +74,7 @@ NSString * TIXboxLiveEngineCookieStorageLocation(NSString * name) {
 	
 	if (URL.host && cookieHash && block){
 		
-		NSMutableArray * allCookies = [[NSMutableArray alloc] initWithContentsOfFile:TIXboxLiveEngineCookieStorageLocation(cookieHash)];
+		NSMutableArray * allCookies = [[NSMutableArray alloc] initWithContentsOfFile:[self filePathForHash:cookieHash]];
 		NSMutableArray * expiredCookies = [[NSMutableArray alloc] init];
 		
 		[allCookies enumerateObjectsUsingBlock:^(NSDictionary * cookieProperties, NSUInteger idx, BOOL *stop){
@@ -104,12 +101,21 @@ NSString * TIXboxLiveEngineCookieStorageLocation(NSString * name) {
 		
 		if (expiredCookies.count){
 			[allCookies removeObjectsInArray:expiredCookies];
-			[allCookies writeToFile:TIXboxLiveEngineCookieStorageLocation(cookieHash) atomically:YES];
+			[allCookies writeToFile:[self filePathForHash:cookieHash] atomically:YES];
 		}
 		
 		[expiredCookies release];
 		[allCookies release];
 	}
+}
+
+- (NSString *)filePathForHash:(NSString *)hash {
+	return [cookieRootDirectory stringByAppendingFormat:@"%@.plist", hash];
+}
+
+- (void)dealloc {
+	[cookieRootDirectory release];
+	[super dealloc];
 }
 
 #pragma mark - Singleton stuff
