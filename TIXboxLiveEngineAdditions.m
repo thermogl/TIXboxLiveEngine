@@ -177,7 +177,7 @@ NSString * TIXboxLiveEngineFileSavePath(NSString * name) {
 				if (searchRange.location != NSNotFound){
 					
 					NSString * finalString = [self substringWithRange:NSMakeRange(offset, searchRange.location - offset)];
-					if (finalString) return [[finalString stringByReplacingWeirdEncoding] stringByUnescapingXML];
+					if (finalString) return finalString.stringByReplacingWeirdEncoding.stringByUnescapingXML;
 				}
 			}
 		}
@@ -226,7 +226,7 @@ NSString * TIXboxLiveEngineFileSavePath(NSString * name) {
 			
 			if ([replacedString contains:formatString]){
 				NSString * replacementString = [[NSString alloc] initWithFormat:@"%C", (unsigned short)anInt];
-				[replacedString replaceOccurrencesOfString:formatString withString:replacementString options:NSAnchoredSearch range:NSMakeRange(0, replacedString.length)];
+				[replacedString replaceOccurrencesOfString:formatString withString:replacementString options:0 range:NSMakeRange(0, replacedString.length)];
 				[replacementString release];
 			}
 			
