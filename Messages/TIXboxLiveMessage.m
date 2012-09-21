@@ -267,6 +267,7 @@
 		if (bodyBlock) bodyBlock(body);
 	}
 	
+	/*
 	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetMessageImage){
 #if TARGET_OS_IPHONE
 		UIImage * image = [[UIImage alloc] initWithData:returnData];
@@ -275,8 +276,9 @@
 #endif
 		[image release];
 		
-		//TIXboxLiveMessageImageBlock imageBlock = xboxConnection.callback;
+		TIXboxLiveMessageImageBlock imageBlock = xboxConnection.callback;
 	}
+	 */
 	
 	[returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
 }
