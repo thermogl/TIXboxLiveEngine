@@ -260,19 +260,14 @@ void dispatch_async_main_queue(dispatch_block_t block) {
 	
 	[NSDateFormatter setDefaultFormatterBehavior:NSDateFormatterBehavior10_4];
 	
-	BOOL shouldReleaseInputFormatter = NO;
-	BOOL shouldReleaseOutputFormatter = NO;
-	
 	if (!inputFormatter){
-		inputFormatter = [[NSDateFormatter alloc] init];
+		inputFormatter = [[[NSDateFormatter alloc] init] autorelease];
 		[inputFormatter setDateFormat:@"dd/MM/yyyy"];
-		shouldReleaseInputFormatter = YES;
 	}
 	
 	if (!outputFormatter){
-		outputFormatter = [[NSDateFormatter alloc] init];
+		outputFormatter = [[[NSDateFormatter alloc] init] autorelease];
 		[outputFormatter setDateStyle:NSDateFormatterShortStyle];
-		shouldReleaseOutputFormatter = YES;
 	}
 	
 	NSString * info = [NSString stringWithString:self];
@@ -282,9 +277,6 @@ void dispatch_async_main_queue(dispatch_block_t block) {
 		NSString * newDateString = [outputFormatter stringFromDate:[inputFormatter dateFromString:dateString]];
 		if (newDateString) info = [info stringByReplacingOccurrencesOfString:dateString withString:newDateString];
 	}
-	
-	if (shouldReleaseInputFormatter) [inputFormatter release];
-	if (shouldReleaseOutputFormatter) [outputFormatter release];
 	
 	return info;
 }
@@ -439,11 +431,7 @@ static char EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvw
 
 - (NSString *)relativeDateStringWithDateFormatter:(NSDateFormatter *)dateFormatter {
 	
-	BOOL shouldReleaseFormatter = NO;
-	if (!dateFormatter){
-		dateFormatter = [[NSDateFormatter alloc] init];
-		shouldReleaseFormatter = YES;
-	}
+	if (!dateFormatter) dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
 	
 	NSDate * now = [NSDate date];
 	
@@ -489,8 +477,6 @@ static char EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvw
 	}
 	
 	if (!displayString) displayString = [dateFormatter stringFromDate:self];
-	if (shouldReleaseFormatter)[dateFormatter release];
-	
 	return displayString;
 }
 
@@ -500,20 +486,10 @@ static char EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvw
 
 - (NSString *)fullDateStringWithDateFormatter:(NSDateFormatter *)dateFormatter {
 	
-	BOOL shouldReleaseFormatter = NO;
-	
-	if (!dateFormatter){
-		dateFormatter = [[NSDateFormatter alloc] init];
-		shouldReleaseFormatter = YES;
-	}
-	
+	if (!dateFormatter) dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
 	[dateFormatter setDateStyle:NSDateFormatterLongStyle];
 	[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
-	
-	NSString * fullDate = [dateFormatter stringFromDate:self];
-	if (shouldReleaseFormatter) [dateFormatter release];
-	
-	return [fullDate stringByReplacingOccurrencesOfString:@"," withString:@""];
+	return [[dateFormatter stringFromDate:self] stringByReplacingOccurrencesOfString:@"," withString:@""];
 }
 
 @end
