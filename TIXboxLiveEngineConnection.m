@@ -15,7 +15,7 @@
 @synthesize backgroundTaskIdentifier;
 
 - (void)start {
-	[self scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+	[self scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
 	[super start];
 }
 

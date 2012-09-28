@@ -151,7 +151,7 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 - (void)downloadImageAtURL:(NSURL *)URL key:(NSString *)key completionBlock:(TIXboxLiveEngineImageCacheCompletionBlock)block {
 	
 	NSURLRequest * request = [[NSURLRequest alloc] initWithURL:URL];
-	TIXboxLiveEngineConnection * connection = [[TIXboxLiveEngineConnection alloc] initWithRequest:request delegate:self];
+	TIXboxLiveEngineConnection * connection = [[TIXboxLiveEngineConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
 	[request release];
 	
 	[connection setType:TIXboxLiveEngineConnectionTypeGetTileImage];
@@ -168,6 +168,7 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 		[data release];
 	}
 	
+	[connection start];
 	[connection release];
 }
 
