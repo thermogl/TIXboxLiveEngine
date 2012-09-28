@@ -255,7 +255,7 @@
 		
 		NSString * tempBody = [contentDict objectForKey:@"Text"];
 		
-		if (![tempBody isNotEmpty] && TIXboxLiveMessageAttachmentIsVoice(attachmentType)) 
+		if (!tempBody.isNotEmpty && TIXboxLiveMessageAttachmentIsVoice(attachmentType))
 			tempBody = @"Voice attachments can only be viewed on your console.";
 		
 		if (!tempBody) tempBody = @"An error occured when downloading the message";

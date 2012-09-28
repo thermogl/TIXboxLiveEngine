@@ -11,8 +11,6 @@
 void dispatch_async_serial(const char * label, dispatch_block_t block);
 void dispatch_async_main_queue(dispatch_block_t block);
 
-NSString * TIXboxLiveEngineFileSavePath(NSString * name);
-
 @interface NSURL (TIXboxLiveEngineAdditions)
 - (NSString *)safeBaseURL;
 @end
@@ -24,6 +22,7 @@ NSString * TIXboxLiveEngineFileSavePath(NSString * name);
 @end
 
 @interface NSString (TIXboxLiveEngineAdditions)
+@property (nonatomic, readonly) BOOL isNotEmpty;
 @property (nonatomic, readonly) NSString * encodedURLString;
 @property (nonatomic, readonly) NSString * encodedURLParameterString;
 @property (nonatomic, readonly) NSString * decodedURLString;
@@ -36,13 +35,9 @@ NSString * TIXboxLiveEngineFileSavePath(NSString * name);
 @property (nonatomic, readonly) NSString * fileSafeHash;
 
 - (NSString *)stringBetween:(NSString *)start and:(NSString *)end;
-
 - (BOOL)contains:(NSString *)string;
-- (BOOL)isNotEmpty;
-
 - (NSString *)stringByCorrectingDateRelativeToLocaleWithInputFormatter:(NSDateFormatter *)inputFormatter 
 													   outputFormatter:(NSDateFormatter *)outputFormatter;
-
 - (NSString *)stringSignedWithSecret:(NSString *)secret;
 
 @end

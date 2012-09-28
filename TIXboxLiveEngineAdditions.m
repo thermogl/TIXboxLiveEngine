@@ -24,14 +24,6 @@ void dispatch_async_main_queue(dispatch_block_t block) {
 	dispatch_async(dispatch_get_main_queue(), block);
 }
 
-NSString * TIXboxLiveEngineFileSavePath(NSString * name) {
-#if TARGET_OS_IPHONE
-	return [NSHomeDirectory() stringByAppendingFormat:@"/Library/Caches/%@", name];
-#else
-	return [NSHomeDirectory() stringByAppendingFormat:@"/Library/Application Support/Friendz/Images/%@", name];
-#endif
-}
-
 @implementation NSURL (TIXboxLiveEngineAdditions)
 - (NSString *)safeBaseURL {
     return [[self.absoluteString componentsSeparatedByString:@"?"] objectAtIndex:0];
@@ -151,7 +143,7 @@ NSString * TIXboxLiveEngineFileSavePath(NSString * name) {
 		[cookieString appendFormat:@"%@=%@; ", cookie.name, cookie.value];
 	 }];
 	
-	if ([cookieString isNotEmpty]) [self setValue:cookieString forHTTPHeaderField:@"Cookie"];
+	if (cookieString.isNotEmpty) [self setValue:cookieString forHTTPHeaderField:@"Cookie"];
 	[cookieString release];
 }
 

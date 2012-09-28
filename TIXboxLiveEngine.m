@@ -332,7 +332,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 
 - (void)getFriendsOfFriend:(NSString *)gamertag callback:(TIXboxLiveEngineFriendsOfFriendBlock)callback {
 	
-	if ([gamertag isNotEmpty]){
+	if (gamertag.isNotEmpty){
 		
 		NSURL * friendsURL = [[NSURL alloc] initWithString:@"http://live.xbox.com/en-GB/Friends/List"];
 		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:friendsURL];
@@ -366,7 +366,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 
 - (void)getGamesComparedWithGamer:(NSString *)gamertag callback:(TIXboxLiveEngineGamesBlock)callback {
 	
-	if ([gamertag isNotEmpty]){
+	if (gamertag.isNotEmpty){
 		
 		NSString * gamesAddress = [[NSString alloc] initWithFormat:@"http://live.xbox.com/en-GB/Activity/Summary?CompareTo=%@", 
 								   [[gamertag stringByTrimmingWhitespaceAndNewLines]			 stringByReplacingOccurrencesOfString:@" " withString:@"+"]];
@@ -423,7 +423,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 
 - (void)sendFriendRequestToGamer:(NSString *)gamertag callback:(TIXboxLiveEngineFriendRequestBlock)callback {
 	
-	if ([gamertag isNotEmpty]){
+	if (gamertag.isNotEmpty){
 		
 		NSURL * friendRequestURL = [[NSURL alloc] initWithString:@"http://live.xbox.com/en-GB/Friends/Add"];
 		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:friendRequestURL];
@@ -456,7 +456,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 
 - (void)sendMessage:(NSString *)message toRecipients:(NSArray *)recipients callback:(TIXboxLiveEngineMessageSentBlock)callback {
 	
-	if ([message isNotEmpty] && recipients){
+	if (message.isNotEmpty && recipients){
 		
 		NSURL * messageURL = [[NSURL alloc] initWithString:@"http://live.xbox.com/en-GB/Messages/SendMessage"];
 		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:messageURL];
@@ -599,7 +599,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		if ([response contains:kTIXboxLiveEngineJavascriptCheck]){
 			[self constructAndPostAuthValuesFromResponse:response connectionType:TIXboxLiveEngineConnectionTypePostAuth callback:xboxConnection.callback];
 		}
-		else if (![response isNotEmpty] || [response contains:@"srf_uPost"]){
+		else if (!response.isNotEmpty || [response contains:@"srf_uPost"]){
 			[self doCallbackForSignOut:NO];
 		}
 		else if ([response contains:@"Error - Xbox.com"]){
@@ -644,7 +644,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		if ([response contains:@"grid-18 NotFound"] || [response isEqualToString:@"{\"Success\":false}"]){
 			[self attemptVerificationTokenRecoveryForConnection:xboxConnection];
 		}
-		else if ([response isNotEmpty] && ![response contains:kTIXboxLiveEngineJavascriptCheck]){
+		else if (response.isNotEmpty && ![response contains:kTIXboxLiveEngineJavascriptCheck]){
 			
 			__block TIXboxLiveEngine * weakSelf = self;
 			TIXboxLiveFriendsParser * friendsParser = [[TIXboxLiveFriendsParser alloc] init];
@@ -893,7 +893,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 			NSString * name = [rawParam stringBetween:@"name=\"" and:@"\""];
 			NSString * value = [rawParam stringBetween:@"value=\"" and:@"\""];
 			
-			if ([name isNotEmpty] && [value isNotEmpty]){
+			if (name.isNotEmpty && value.isNotEmpty){
 				TIURLRequestParameter * parameter = [[TIURLRequestParameter alloc] initWithName:name value:value];
 				[parameters addObject:parameter];
 				[parameter release];
@@ -950,7 +950,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	signingIn = NO;
 	
 	NSString * gamertag = [gamerInfo objectForKey:@"gamertag"];
-	if ([gamertag isNotEmpty]){
+	if (gamertag.isNotEmpty){
 		
 		signedIn = YES;
 		[self startQueuedConnections];

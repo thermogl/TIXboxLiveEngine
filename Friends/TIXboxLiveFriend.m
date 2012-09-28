@@ -295,8 +295,7 @@
 	if (status == TIXboxLiveFriendStatusOnline){
 		
 		game = [info stringBetween:@"playing " and:@" -"];
-		
-		if (![game isNotEmpty]){
+		if (!game.isNotEmpty){
 			
 			NSRange gameRange = [info rangeOfString:@"playing "];
 			game = [[info substringFromIndex:(gameRange.location + gameRange.length)] stringByReplacingWeirdEncoding];
