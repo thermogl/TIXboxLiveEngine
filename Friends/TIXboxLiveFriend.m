@@ -75,6 +75,7 @@
 	[aCoder encodeObject:gamertag forKey:@"Gamertag"];
 	[aCoder encodeBool:isOnFriendsList forKey:@"IsOnFriendsList"];
 	[aCoder encodeObject:tileURL forKey:@"TileURL"];
+	[aCoder encodeObject:avatarURL forKey:@"AvatarURL"];
 }
 
 - (id)copyWithZone:(NSZone *)zone {
@@ -228,6 +229,8 @@
 	
 	NSString * gamerscore = [gamerPage stringBetween:@"<div class=\"gamerscore\">" and:@"</div>"];
 	NSString * newInfo = [[gamerPage stringBetween:@"<div class=\"presence\">" and:@"</div>"] stringByCorrectingDateRelativeToLocale];
+	
+	if (!tileURL) tileURL = [[NSURL alloc] initWithString:[gamerPage stringBetween:@"<img class=\"gamerpic\" src=\"" and:@"\""]];
 	
 	TIXboxLiveFriendGamerInfoBlock infoBlock = connection.callback;
 	if (infoBlock) dispatch_async_main_queue(^{infoBlock(nil, realName, motto, location, bio, gamerscore, newInfo);});
