@@ -44,6 +44,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 @end
 
 @interface TIXboxLiveEngine (Private)
+- (void)cancelRunningConnections;
 - (void)clearConnectionQueue;
 - (void)removeAuthCookies;
 - (void)resetCredentials;
@@ -118,6 +119,17 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 }
 
 #pragma mark - Connection Methods
+- (void)cancelRunningConnections {
+	
+	[returnDataDict enumerateKeysAndObjectsUsingBlock:^(NSValue * key, id obj, BOOL *stop) {
+		[(TIXboxLiveEngineConnection *)key.pointerValue cancel];
+		[self setNetworkSpinnerVisible:NO];
+	}];
+	
+	[returnDataDict removeAllObjects];
+	[parsers removeAllObjects];
+}
+
 - (void)clearConnectionQueue {
 	[connectionQueue removeAllObjects];
 }
@@ -158,15 +170,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	
 	[self resetCredentials];
 	[self clearConnectionQueue];
-	
-	[returnDataDict enumerateKeysAndObjectsUsingBlock:^(NSValue * key, id obj, BOOL *stop) {
-		[(TIXboxLiveEngineConnection *)key.pointerValue cancel];
-		[self setNetworkSpinnerVisible:NO];
-	}];
-	
-	[returnDataDict removeAllObjects];
-	[parsers removeAllObjects];
-	
+	[self cancelRunningConnections];
 	[self doCallbackForSignOut:YES];
 }
 
@@ -1115,6 +1119,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 
 #pragma mark - Memory Management
 - (void)dealloc {
+	[self cancelRunningConnections];
 	[self resetCredentials];
 	[user release];
 	[returnDataDict release];

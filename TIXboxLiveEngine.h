@@ -27,7 +27,7 @@ typedef enum {
 	TIXboxLiveEngineErrorCodeSiteDown = -2,
 	TIXboxLiveEngineErrorCodeMessageSendingError = -3,
 	TIXboxLiveEngineErrorCodeTermsOfUse = -4,
-	TIXboxLiveEngineErrorCodeTimeout = -5,
+	TIXboxLiveEngineErrorCodeTimeout = NSURLErrorTimedOut,
 	TIXboxLiveEngineErrorCodeUnknownError = -6,
 	TIXboxLiveEngineErrorCodeParseError = -7,
 } TIXboxLiveEngineErrorCode;
