@@ -48,7 +48,7 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 	id image = nil;
 	BOOL needsDownload = YES;
 	
-	if (URL){
+	if (URL && !emptyingDiskCache){
 		
 		needsDownload = NO;
 		NSString * cacheKey = [self cacheKeyForURL:URL];
