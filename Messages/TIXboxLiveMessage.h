@@ -23,7 +23,11 @@ typedef enum {
 } TIXboxLiveMessageAttachmentType;
 
 typedef void (^TIXboxLiveMessageBodyBlock)(NSString * body);
-typedef void (^TIXboxLiveMessageImageBlock)(NSString * imagePath);
+#if TARGET_OS_IPHONE
+typedef void (^TIXboxLiveMessageImageBlock)(UIImage * image);
+#else
+typedef void (^TIXboxLiveMessageImageBlock)(NSImage * image);
+#endif
 
 @interface TIXboxLiveMessage : TIXboxLiveEngineCookieBase <NSCoding> {
 
