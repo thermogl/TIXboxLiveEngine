@@ -82,7 +82,7 @@
 - (NSString *)relativeDateStamp {
 	
 	if (!relativeDateStamp)
-		relativeDateStamp = [[date relativeDateString] copy];
+		relativeDateStamp = [date.relativeDateString copy];
 	
 	return relativeDateStamp;
 }
@@ -90,7 +90,7 @@
 - (NSString *)fullDateStamp {
 	
 	if (!fullDateStamp)
-		fullDateStamp = [[date fullDateString] copy];
+		fullDateStamp = [date.fullDateString copy];
 	
 	return fullDateStamp;
 }
@@ -112,7 +112,7 @@
 }
 
 - (BOOL)isFriendRequest {
-	return ([summary contains:@"Wants to be your friend"]);
+	return ([summary.lowercaseString contains:@"wants to be your friend"]);
 }
 
 - (TIXboxLiveEngineConnection *)connectionWithRequest:(NSMutableURLRequest *)request type:(TIXboxLiveEngineConnectionType)type {
@@ -150,7 +150,7 @@
 
 - (BOOL)deleteMessage {
 	
-	if ([self isFriendRequest]) return [self handleFriendRequest:NO];
+	if (self.isFriendRequest) return [self handleFriendRequest:NO];
 	
 	NSURL * deleteURL = [[NSURL alloc] initWithString:@"http://live.xbox.com/en-GB/Messages/Delete"];
 	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:deleteURL];
@@ -225,7 +225,7 @@
 	
 	TIXboxLiveEngineConnection * xboxConnection = (TIXboxLiveEngineConnection *)connection;
 	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetMessageBody){
-		[self setBody:[error localizedDescription]];
+		[self setBody:error.localizedDescription];
 		
 		TIXboxLiveMessageBodyBlock bodyBlock = xboxConnection.callback;
 		if (bodyBlock) bodyBlock(body);
@@ -260,7 +260,7 @@
 		
 		if (!tempBody) tempBody = @"An error occured when downloading the message";
 		
-		[self setBody:[(NSString *)tempBody stringByReplacingWeirdEncoding]];
+		[self setBody:tempBody.stringByReplacingWeirdEncoding];
 		[self setReadStatus:TIXboxLiveMessageReadStatusRead];
 		
 		TIXboxLiveMessageBodyBlock bodyBlock = xboxConnection.callback;
