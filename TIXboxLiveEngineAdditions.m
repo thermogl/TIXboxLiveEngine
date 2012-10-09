@@ -345,19 +345,6 @@ static char EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvw
 	return [self indexOfFriendWithGamertag:aFriend.gamertag];
 }
 
-- (NSUInteger)indexOfGameEqualToGame:(TIXboxLiveGame *)aGame {
-	
-	__block NSUInteger index = NSNotFound;
-	[self enumerateObjectsUsingBlock:^(TIXboxLiveGame * game, NSUInteger idx, BOOL *stop){
-		if ([game isEqualToGame:aGame]){
-			index = idx;
-			*stop = YES;
-		}
-	}];
-	
-	return index;
-}
-
 - (NSUInteger)indexOfMessageWithID:(NSString *)anID {
 	
 	__block NSUInteger index = NSNotFound;

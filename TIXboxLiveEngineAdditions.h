@@ -49,7 +49,6 @@ void dispatch_async_main_queue(dispatch_block_t block);
 - (NSUInteger)indexOfMessageWithID:(NSString *)address;
 
 - (NSUInteger)indexOfFriendEqualToFriend:(TIXboxLiveFriend *)aFriend;
-- (NSUInteger)indexOfGameEqualToGame:(TIXboxLiveGame *)aGame;
 - (NSUInteger)indexOfMessageEqualToMessage:(TIXboxLiveMessage *)aMessage;
 
 - (BOOL)containsFriendWithGamertag:(NSString *)gamertag;
