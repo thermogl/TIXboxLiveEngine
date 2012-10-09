@@ -112,6 +112,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	return self;
 }
 
+#pragma mark - Property Overrides
 - (void)setVerificationTokenFromResponse:(NSString *)response {
 	
 	[verificationToken release];
