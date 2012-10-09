@@ -77,7 +77,7 @@ void dispatch_async_main_queue(dispatch_block_t block) {
 	NSMutableArray * pairs = [[NSMutableArray alloc] init];
 	
 	[parameters enumerateObjectsUsingBlock:^(TIURLRequestParameter * requestParameter, NSUInteger idx, BOOL *stop){
-		[pairs addObject:[requestParameter safeURLRepresentation]];
+		[pairs addObject:requestParameter.safeURLRepresentation];
 	}];
 	
 	NSString * encodedParameterPairs = [pairs componentsJoinedByString:@"&"];

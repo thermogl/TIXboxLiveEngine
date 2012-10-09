@@ -14,8 +14,8 @@
 
 @property (nonatomic, copy) NSString * name;
 @property (nonatomic, copy) NSString * value;
+@property (nonatomic, readonly) NSString * safeURLRepresentation;
 
 - (id)initWithName:(NSString *)aName value:(NSString *)aValue;
-- (NSString *)safeURLRepresentation;
 
 @end
