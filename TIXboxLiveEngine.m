@@ -118,7 +118,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	verificationToken = [[response stringBetween:@"<input name=\"__RequestVerificationToken\" type=\"hidden\" value=\"" and:@"\" />"] retain];
 }
 
-#pragma mark - Connection Methods
+#pragma mark - Connection / Queue stuff Methods
 - (void)cancelRunningConnections {
 	
 	[returnDataDict enumerateKeysAndObjectsUsingBlock:^(NSValue * key, id obj, BOOL *stop) {
@@ -138,6 +138,14 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	[[TIXboxLiveEngineCookieStorage sharedCookieStorage] removeAllCookiesForHash:cookieHash];
 }
 
+- (void)resetCredentials {
+	[self removeAuthCookies];
+	[self setEmail:nil];
+	[self setPassword:nil];
+	[self setCookieHash:nil];
+}
+
+#pragma mark - Sign in / out
 - (void)signInWithEmail:(NSString *)anEmail password:(NSString *)aPassword callback:(TIXboxLiveEngineConnectionBlock)callback {
 	
 	if (!signingIn){
@@ -174,13 +182,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	[self doCallbackForSignOut:YES];
 }
 
-- (void)resetCredentials {
-	[self removeAuthCookies];
-	[self setEmail:nil];
-	[self setPassword:nil];
-	[self setCookieHash:nil];
-}
-
+#pragma mark - Friends
 - (void)getFriendsWithCallback:(TIXboxLiveEngineFriendsBlock)callback {
 	
 	if (!loadingFriends){
@@ -218,81 +220,6 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	[request release];
 	
 	return connection;
-}
-
-- (void)getGamesWithCallback:(TIXboxLiveEngineGamesBlock)callback {
-	
-	if (!loadingGames){
-		loadingGames = signedIn ? YES : NO;
-		[[self getGamesWithToken:(verificationToken != nil)] setCallback:callback];
-	}
-}
-
-- (TIXboxLiveEngineConnection *)getGamesWithToken:(BOOL)withToken {
-	
-	NSString * gamesAddress = @"http://live.xbox.com/en-GB/Activity/Summary";
-	if (!withToken) gamesAddress = @"http://live.xbox.com/en-GB/Activity";
-	
-	NSURL * gamesURL = [[NSURL alloc] initWithString:gamesAddress];
-	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:gamesURL];
-	[gamesURL release];
-	
-	if (withToken){
-		
-		[request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
-		[request setValue:@"http://live.xbox.com/en-GB/Activity" forHTTPHeaderField:@"Referer"];
-		
-		TIURLRequestParameter * requestParam = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:verificationToken];
-		NSArray * params = [[NSArray alloc] initWithObjects:requestParam, nil];
-		[requestParam release];
-		
-		[request setParameters:params];
-		[params release];
-	}
-	
-	TIXboxLiveEngineConnectionType type = TIXboxLiveEngineConnectionTypeGetGames;
-	if (!withToken) type = TIXboxLiveEngineConnectionTypeGetGamesVerification;
-	
-	TIXboxLiveEngineConnection * connection = [self connectionWithRequest:request type:type];
-	[request release];
-	
-	return connection;
-}
-
-- (void)getMessagesWithCallback:(TIXboxLiveEngineMessagesBlock)callback {
-	
-	if (!loadingMessages){
-		loadingMessages = signedIn ? YES : NO;
-		
-		NSURL * messagesURL = [[NSURL alloc] initWithString:@"http://live.xbox.com/en-GB/Messages"];
-		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:messagesURL];
-		[messagesURL release];
-		
-		[[self connectionWithRequest:request type:TIXboxLiveEngineConnectionTypeGetMessages] setCallback:callback];
-		[request release];
-	}
-}
-
-- (void)getAchievementsForGame:(TIXboxLiveGame *)game callback:(TIXboxLiveEngineAchievementsBlock)callback {
-	
-	if (game){
-		
-		NSString * achievementsAddress = [[NSString alloc] initWithFormat:@"http://live.xbox.com/en-GB/Activity/Details?titleId=%@", game.titleID];
-		NSURL * achievementsURL = [[NSURL alloc] initWithString:achievementsAddress];
-		[achievementsAddress release];
-		
-		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:achievementsURL];
-		[achievementsURL release];
-		
-		TIXboxLiveEngineConnection * connection = [self connectionWithRequest:request type:TIXboxLiveEngineConnectionTypeGetAchievements];
-		[request release];
-		
-		NSDictionary * userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:game, TIXboxLiveEngineConnectionGameKey, nil];
-		[connection setUserInfo:userInfo];
-		[userInfo release];
-		
-		[connection setCallback:callback];
-	}
 }
 
 - (void)getRecentPlayersWithCallback:(TIXboxLiveEngineRecentPlayersBlock)callback {
@@ -343,8 +270,8 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		[friendsURL release];
 		
 		[request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
-		[request setValue:[@"http://live.xbox.com/en-GB/Friends?gamertag=" 
-						   stringByAppendingString:[[gamertag stringByTrimmingWhitespaceAndNewLines] 
+		[request setValue:[@"http://live.xbox.com/en-GB/Friends?gamertag="
+						   stringByAppendingString:[[gamertag stringByTrimmingWhitespaceAndNewLines]
 													stringByReplacingOccurrencesOfString:@" " withString:@"+"]]
 	   forHTTPHeaderField:@"Referer"];
 		
@@ -368,11 +295,106 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	}
 }
 
+- (void)sendFriendRequestToGamer:(NSString *)gamertag callback:(TIXboxLiveEngineFriendRequestBlock)callback {
+	
+	if (gamertag.isNotEmpty){
+		
+		NSURL * friendRequestURL = [[NSURL alloc] initWithString:@"http://live.xbox.com/en-GB/Friends/Add"];
+		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:friendRequestURL];
+		[friendRequestURL release];
+		
+		[request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
+		
+		TIURLRequestParameter * parameter = [[TIURLRequestParameter alloc] initWithName:@"gamertag"
+																				  value:[gamertag stringByTrimmingWhitespaceAndNewLines]];
+		
+		TIURLRequestParameter * parameter2 = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:verificationToken];
+		
+		NSArray * parameters = [[NSArray alloc] initWithObjects:parameter, parameter2, nil];
+		[parameter release];
+		[parameter2 release];
+		
+		[request setParameters:parameters];
+		[parameters release];
+		
+		TIXboxLiveEngineConnection * connection = [self connectionWithRequest:request type:TIXboxLiveEngineConnectionTypeSendFriendRequest];
+		[request release];
+		
+		NSDictionary * userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:gamertag, TIXboxLiveEngineConnectionGamertagKey, nil];
+		[connection setUserInfo:userInfo];
+		[userInfo release];
+		
+		[connection setCallback:callback];
+	}
+}
+
+#pragma mark - Games
+- (void)getGamesWithCallback:(TIXboxLiveEngineGamesBlock)callback {
+	
+	if (!loadingGames){
+		loadingGames = signedIn ? YES : NO;
+		[[self getGamesWithToken:(verificationToken != nil)] setCallback:callback];
+	}
+}
+
+- (TIXboxLiveEngineConnection *)getGamesWithToken:(BOOL)withToken {
+	
+	NSString * gamesAddress = @"http://live.xbox.com/en-GB/Activity/Summary";
+	if (!withToken) gamesAddress = @"http://live.xbox.com/en-GB/Activity";
+	
+	NSURL * gamesURL = [[NSURL alloc] initWithString:gamesAddress];
+	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:gamesURL];
+	[gamesURL release];
+	
+	if (withToken){
+		
+		[request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
+		[request setValue:@"http://live.xbox.com/en-GB/Activity" forHTTPHeaderField:@"Referer"];
+		
+		TIURLRequestParameter * requestParam = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:verificationToken];
+		NSArray * params = [[NSArray alloc] initWithObjects:requestParam, nil];
+		[requestParam release];
+		
+		[request setParameters:params];
+		[params release];
+	}
+	
+	TIXboxLiveEngineConnectionType type = TIXboxLiveEngineConnectionTypeGetGames;
+	if (!withToken) type = TIXboxLiveEngineConnectionTypeGetGamesVerification;
+	
+	TIXboxLiveEngineConnection * connection = [self connectionWithRequest:request type:type];
+	[request release];
+	
+	return connection;
+}
+
+- (void)getAchievementsForGame:(TIXboxLiveGame *)game callback:(TIXboxLiveEngineAchievementsBlock)callback {
+	
+	if (game){
+		
+		NSString * achievementsAddress = [[NSString alloc] initWithFormat:@"http://live.xbox.com/en-GB/Activity/Details?titleId=%@", game.titleID];
+		NSURL * achievementsURL = [[NSURL alloc] initWithString:achievementsAddress];
+		[achievementsAddress release];
+		
+		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:achievementsURL];
+		[achievementsURL release];
+		
+		TIXboxLiveEngineConnection * connection = [self connectionWithRequest:request type:TIXboxLiveEngineConnectionTypeGetAchievements];
+		[request release];
+		
+		NSDictionary * userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:game, TIXboxLiveEngineConnectionGameKey, nil];
+		[connection setUserInfo:userInfo];
+		[userInfo release];
+		
+		[connection setCallback:callback];
+	}
+}
+
 - (void)getGamesComparedWithGamer:(NSString *)gamertag callback:(TIXboxLiveEngineGamesBlock)callback {
 	
 	if (gamertag.isNotEmpty){
 		
-		NSString * gamesAddress = [[NSString alloc] initWithFormat:@"http://live.xbox.com/en-GB/Activity/Summary?CompareTo=%@", 
+		NSString * gamesAddress = [[NSString alloc] initWithFormat:@"http://live.xbox.com/en-GB/Activity/Summary?CompareTo=%@",
 								   [[gamertag stringByTrimmingWhitespaceAndNewLines]			 stringByReplacingOccurrencesOfString:@" " withString:@"+"]];
 		
 		NSURL * gamesURL = [[NSURL alloc] initWithString:gamesAddress];
@@ -405,7 +427,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 - (void)getAchievementsComparisonsForGame:(TIXboxLiveGame *)game callback:(TIXboxLiveEngineAchievementsBlock)callback {
 	
 	if (game){
-		NSString * achievementsAddress = [[NSString alloc] initWithFormat:@"http://live.xbox.com/en-GB/Activity/Details?titleId=%@&compareTo=%@", 
+		NSString * achievementsAddress = [[NSString alloc] initWithFormat:@"http://live.xbox.com/en-GB/Activity/Details?titleId=%@&compareTo=%@",
 										  game.titleID, game.gamertagComparedWith.encodedURLString];
 		
 		NSURL * achievementsURL = [[NSURL alloc] initWithString:achievementsAddress];
@@ -425,36 +447,18 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	}
 }
 
-- (void)sendFriendRequestToGamer:(NSString *)gamertag callback:(TIXboxLiveEngineFriendRequestBlock)callback {
+#pragma mark - Messages
+- (void)getMessagesWithCallback:(TIXboxLiveEngineMessagesBlock)callback {
 	
-	if (gamertag.isNotEmpty){
+	if (!loadingMessages){
+		loadingMessages = signedIn ? YES : NO;
 		
-		NSURL * friendRequestURL = [[NSURL alloc] initWithString:@"http://live.xbox.com/en-GB/Friends/Add"];
-		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:friendRequestURL];
-		[friendRequestURL release];
+		NSURL * messagesURL = [[NSURL alloc] initWithString:@"http://live.xbox.com/en-GB/Messages"];
+		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:messagesURL];
+		[messagesURL release];
 		
-		[request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
-		
-		TIURLRequestParameter * parameter = [[TIURLRequestParameter alloc] initWithName:@"gamertag" 
-																				  value:[gamertag stringByTrimmingWhitespaceAndNewLines]];
-		
-		TIURLRequestParameter * parameter2 = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:verificationToken];
-		
-		NSArray * parameters = [[NSArray alloc] initWithObjects:parameter, parameter2, nil];
-		[parameter release];
-		[parameter2 release];
-		
-		[request setParameters:parameters];
-		[parameters release];
-		
-		TIXboxLiveEngineConnection * connection = [self connectionWithRequest:request type:TIXboxLiveEngineConnectionTypeSendFriendRequest];
+		[[self connectionWithRequest:request type:TIXboxLiveEngineConnectionTypeGetMessages] setCallback:callback];
 		[request release];
-		
-		NSDictionary * userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:gamertag, TIXboxLiveEngineConnectionGamertagKey, nil];
-		[connection setUserInfo:userInfo];
-		[userInfo release];
-		
-		[connection setCallback:callback];
 	}
 }
 

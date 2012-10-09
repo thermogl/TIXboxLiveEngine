@@ -79,17 +79,16 @@ typedef void (^TIXboxLiveEngineLogBlock)(TIXboxLiveEngineConnection * connection
 - (void)signOut;
 
 - (void)getFriendsWithCallback:(TIXboxLiveEngineFriendsBlock)callback;
-- (void)getGamesWithCallback:(TIXboxLiveEngineGamesBlock)callback;
-- (void)getMessagesWithCallback:(TIXboxLiveEngineMessagesBlock)callback;
 - (void)getRecentPlayersWithCallback:(TIXboxLiveEngineRecentPlayersBlock)callback;
-
 - (void)getFriendsOfFriend:(NSString *)gamertag callback:(TIXboxLiveEngineFriendsOfFriendBlock)callback;
-- (void)getAchievementsForGame:(TIXboxLiveGame *)game callback:(TIXboxLiveEngineAchievementsBlock)callback;
+- (void)sendFriendRequestToGamer:(NSString *)gamertag callback:(TIXboxLiveEngineFriendRequestBlock)callback;
 
+- (void)getGamesWithCallback:(TIXboxLiveEngineGamesBlock)callback;
+- (void)getAchievementsForGame:(TIXboxLiveGame *)game callback:(TIXboxLiveEngineAchievementsBlock)callback;
 - (void)getGamesComparedWithGamer:(NSString *)gamertag callback:(TIXboxLiveEngineGamesBlock)callback;
 - (void)getAchievementsComparisonsForGame:(TIXboxLiveGame *)game callback:(TIXboxLiveEngineAchievementsBlock)callback;
 
-- (void)sendFriendRequestToGamer:(NSString *)gamertag callback:(TIXboxLiveEngineFriendRequestBlock)callback;
+- (void)getMessagesWithCallback:(TIXboxLiveEngineMessagesBlock)callback;
 - (void)sendMessage:(NSString *)message toRecipients:(NSArray *)recipients callback:(TIXboxLiveEngineMessageSentBlock)callback;
 
 @end
