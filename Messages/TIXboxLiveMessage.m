@@ -152,7 +152,7 @@
 	
 	if (self.isFriendRequest) return [self handleFriendRequest:NO];
 	
-	NSURL * deleteURL = [[NSURL alloc] initWithString:@"http://live.xbox.com/en-GB/Messages/Delete"];
+	NSURL * deleteURL = [[NSURL alloc] initWithString:@"https://live.xbox.com/en-GB/Messages/Delete"];
 	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:deleteURL];
 	[deleteURL release];
 	
@@ -169,8 +169,8 @@
 
 - (BOOL)handleFriendRequest:(BOOL)shouldAccept {
 	
-	NSString * requestAddress = @"http://live.xbox.com/en-GB/Friends/Accept";
-	if (!shouldAccept) requestAddress = @"http://live.xbox.com/en-GB/Friends/Decline";
+	NSString * requestAddress = @"https://live.xbox.com/en-GB/Friends/Accept";
+	if (!shouldAccept) requestAddress = @"https://live.xbox.com/en-GB/Friends/Decline";
 	
 	NSURL * requestURL = [[NSURL alloc] initWithString:requestAddress];
 	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:requestURL];
@@ -199,7 +199,7 @@
 
 - (void)downloadMessageWithBodyCallback:(TIXboxLiveMessageBodyBlock)bodyCallback imageCallback:(TIXboxLiveMessageImageBlock)imageCallback {
 	
-	NSURL * URL = [[NSURL alloc] initWithString:@"http://live.xbox.com/en-GB/Messages/Message"];
+	NSURL * URL = [[NSURL alloc] initWithString:@"https://live.xbox.com/en-GB/Messages/Message"];
 	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:URL];
 	[URL release];
 	
@@ -211,7 +211,7 @@
 	
 	if (attachmentType == TIXboxLiveMessageAttachmentTypeImage){
 		
-		NSURL * imageURL = [[NSURL alloc] initWithString:[@"http://live.xbox.com/en-GB/Messages/Image?msgId=" stringByAppendingString:messageID]];
+		NSURL * imageURL = [[NSURL alloc] initWithString:[@"https://live.xbox.com/en-GB/Messages/Image?msgId=" stringByAppendingString:messageID]];
 		NSMutableURLRequest * imageRequest = [[NSMutableURLRequest alloc] initWithURL:imageURL];
 		[imageURL release];
 		

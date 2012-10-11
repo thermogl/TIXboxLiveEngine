@@ -104,7 +104,7 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 
 - (void)getGamerProfileWithCallback:(TIXboxLiveUserProfileBlock)callback {
 	
-	NSURL * profileURL = [[NSURL alloc] initWithString:@"http://live.xbox.com/en-GB/MyXbox/GamerProfile"];
+	NSURL * profileURL = [[NSURL alloc] initWithString:@"https://live.xbox.com/en-GB/MyXbox/GamerProfile"];
 	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:profileURL];
 	[profileURL release];
 	
@@ -114,7 +114,7 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 
 - (void)changeGamerProfileName:(NSString *)name motto:(NSString *)newMotto location:(NSString *)newLocation bio:(NSString *)newBio callback:(TIXboxLiveUserProfileBlock)callback {
 	
-	NSURL * profileURL = [[NSURL alloc] initWithString:@"http://live.xbox.com/en-GB/MyXbox/GamerProfile"];
+	NSURL * profileURL = [[NSURL alloc] initWithString:@"https://live.xbox.com/en-GB/MyXbox/GamerProfile"];
 	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:profileURL];
 	[profileURL release];
 	

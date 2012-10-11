@@ -169,7 +169,7 @@
 
 - (void)getGamerInfoWithCallback:(TIXboxLiveFriendGamerInfoBlock)callback {
 	
-	NSString * gamerAddress = [@"http://live.xbox.com/en-GB/MyXbox/Profile?gamertag=" stringByAppendingString:[gamertag encodedURLParameterString]];
+	NSString * gamerAddress = [@"https://live.xbox.com/en-GB/MyXbox/Profile?gamertag=" stringByAppendingString:[gamertag encodedURLParameterString]];
 	
 	NSURL * URL = [[NSURL alloc] initWithString:gamerAddress];
 	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:URL];
@@ -270,14 +270,14 @@
 
 - (BOOL)removeFriend {
 	
-	NSString * removeAddress = @"http://live.xbox.com/en-GB/Friends/Remove";
+	NSString * removeAddress = @"https://live.xbox.com/en-GB/Friends/Remove";
 	
 	if (friendRequestType == TIXboxLiveFriendRequestTypeOutgoing){
-		removeAddress = @"http://live.xbox.com/en-GB/Friends/Cancel";
+		removeAddress = @"https://live.xbox.com/en-GB/Friends/Cancel";
 	}
 	
 	if (friendRequestType == TIXboxLiveFriendRequestTypeIncoming){
-		removeAddress = @"http://live.xbox.com/en-GB/Friends/Decline";
+		removeAddress = @"https://live.xbox.com/en-GB/Friends/Decline";
 	}
 	
 	return ([self postConnectionWithAddress:removeAddress] != nil);
@@ -285,8 +285,8 @@
 
 - (BOOL)handleFriendRequest:(BOOL)shouldAccept {
 	
-	NSString * requestAddress = @"http://live.xbox.com/en-GB/Friends/Accept";
-	if (!shouldAccept) requestAddress = @"http://live.xbox.com/en-GB/Friends/Decline";
+	NSString * requestAddress = @"https://live.xbox.com/en-GB/Friends/Accept";
+	if (!shouldAccept) requestAddress = @"https://live.xbox.com/en-GB/Friends/Decline";
 	
 	return ([self postConnectionWithAddress:requestAddress] != nil);
 }

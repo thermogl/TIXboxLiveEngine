@@ -114,9 +114,8 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 
 #pragma mark - Property Overrides
 - (void)setVerificationTokenFromResponse:(NSString *)response {
-	
 	[verificationToken release];
-	verificationToken = [[response stringBetween:@"<input name=\"__RequestVerificationToken\" type=\"hidden\" value=\"" and:@"\" />"] retain];
+	verificationToken = [[response stringBetween:@"<input name=\"__RequestVerificationToken\" type=\"hidden\" value=\"" and:@"\""] retain];
 }
 
 #pragma mark - Connection / Queue stuff Methods
@@ -194,8 +193,8 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 
 - (TIXboxLiveEngineConnection *)getFriendsWithToken:(BOOL)withToken {
 	
-	NSString * friendsAddress = @"http://live.xbox.com/en-GB/Friends/List";
-	if (!withToken) friendsAddress = @"http://live.xbox.com/en-GB/Friends";
+	NSString * friendsAddress = @"https://live.xbox.com/en-GB/Friends/List";
+	if (!withToken) friendsAddress = @"https://live.xbox.com/en-GB/Friends";
 	
 	NSURL * friendsURL = [[NSURL alloc] initWithString:friendsAddress];
 	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:friendsURL];
@@ -204,7 +203,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	if (withToken){
 		
 		[request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
-		[request setValue:@"http://live.xbox.com/en-GB/Friends" forHTTPHeaderField:@"Referer"];
+		[request setValue:@"https://live.xbox.com/en-GB/Friends" forHTTPHeaderField:@"Referer"];
 		
 		TIURLRequestParameter * requestParam = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:verificationToken];
 		NSArray * params = [[NSArray alloc] initWithObjects:requestParam, nil];
@@ -233,8 +232,8 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 
 - (TIXboxLiveEngineConnection *)getRecentPlayersWithToken:(BOOL)withToken {
 	
-	NSString * playersAddress = @"http://live.xbox.com/en-GB/Friends/Recent";
-	if (!withToken) playersAddress = @"http://live.xbox.com/en-GB/Friends";
+	NSString * playersAddress = @"https://live.xbox.com/en-GB/Friends/Recent";
+	if (!withToken) playersAddress = @"https://live.xbox.com/en-GB/Friends";
 	
 	NSURL * playersURL = [[NSURL alloc] initWithString:playersAddress];
 	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:playersURL];
@@ -243,7 +242,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	if (withToken){
 		
 		[request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
-		[request setValue:@"http://live.xbox.com/en-GB/Friends" forHTTPHeaderField:@"Referer"];
+		[request setValue:@"https://live.xbox.com/en-GB/Friends" forHTTPHeaderField:@"Referer"];
 		
 		TIURLRequestParameter * requestParam = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:verificationToken];
 		NSArray * params = [[NSArray alloc] initWithObjects:requestParam, nil];
@@ -266,12 +265,12 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	
 	if (gamertag.isNotEmpty){
 		
-		NSURL * friendsURL = [[NSURL alloc] initWithString:@"http://live.xbox.com/en-GB/Friends/List"];
+		NSURL * friendsURL = [[NSURL alloc] initWithString:@"https://live.xbox.com/en-GB/Friends/List"];
 		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:friendsURL];
 		[friendsURL release];
 		
 		[request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
-		[request setValue:[@"http://live.xbox.com/en-GB/Friends?gamertag="
+		[request setValue:[@"https://live.xbox.com/en-GB/Friends?gamertag="
 						   stringByAppendingString:[[gamertag stringByTrimmingWhitespaceAndNewLines]
 													stringByReplacingOccurrencesOfString:@" " withString:@"+"]]
 	   forHTTPHeaderField:@"Referer"];
@@ -300,7 +299,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	
 	if (gamertag.isNotEmpty){
 		
-		NSURL * friendRequestURL = [[NSURL alloc] initWithString:@"http://live.xbox.com/en-GB/Friends/Add"];
+		NSURL * friendRequestURL = [[NSURL alloc] initWithString:@"https://live.xbox.com/en-GB/Friends/Add"];
 		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:friendRequestURL];
 		[friendRequestURL release];
 		
@@ -340,8 +339,8 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 
 - (TIXboxLiveEngineConnection *)getGamesWithToken:(BOOL)withToken {
 	
-	NSString * gamesAddress = @"http://live.xbox.com/en-GB/Activity/Summary";
-	if (!withToken) gamesAddress = @"http://live.xbox.com/en-GB/Activity";
+	NSString * gamesAddress = @"https://live.xbox.com/en-GB/Activity/Summary";
+	if (!withToken) gamesAddress = @"https://live.xbox.com/en-GB/Activity";
 	
 	NSURL * gamesURL = [[NSURL alloc] initWithString:gamesAddress];
 	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:gamesURL];
@@ -350,7 +349,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	if (withToken){
 		
 		[request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
-		[request setValue:@"http://live.xbox.com/en-GB/Activity" forHTTPHeaderField:@"Referer"];
+		[request setValue:@"https://live.xbox.com/en-GB/Activity" forHTTPHeaderField:@"Referer"];
 		
 		TIURLRequestParameter * requestParam = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:verificationToken];
 		NSArray * params = [[NSArray alloc] initWithObjects:requestParam, nil];
@@ -373,7 +372,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	
 	if (game){
 		
-		NSString * achievementsAddress = [[NSString alloc] initWithFormat:@"http://live.xbox.com/en-GB/Activity/Details?titleId=%@", game.titleID];
+		NSString * achievementsAddress = [[NSString alloc] initWithFormat:@"https://live.xbox.com/en-GB/Activity/Details?titleId=%@", game.titleID];
 		NSURL * achievementsURL = [[NSURL alloc] initWithString:achievementsAddress];
 		[achievementsAddress release];
 		
@@ -395,7 +394,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	
 	if (gamertag.isNotEmpty){
 		
-		NSString * gamesAddress = [[NSString alloc] initWithFormat:@"http://live.xbox.com/en-GB/Activity/Summary?CompareTo=%@",
+		NSString * gamesAddress = [[NSString alloc] initWithFormat:@"https://live.xbox.com/en-GB/Activity/Summary?CompareTo=%@",
 								   [[gamertag stringByTrimmingWhitespaceAndNewLines]			 stringByReplacingOccurrencesOfString:@" " withString:@"+"]];
 		
 		NSURL * gamesURL = [[NSURL alloc] initWithString:gamesAddress];
@@ -405,7 +404,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		[gamesURL release];
 		
 		[request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
-		[request setValue:@"http://live.xbox.com/en-GB/Activity" forHTTPHeaderField:@"Referer"];
+		[request setValue:@"https://live.xbox.com/en-GB/Activity" forHTTPHeaderField:@"Referer"];
 		
 		TIURLRequestParameter * requestParam = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:verificationToken];
 		NSArray * params = [[NSArray alloc] initWithObjects:requestParam, nil];
@@ -428,7 +427,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 - (void)getAchievementsComparisonsForGame:(TIXboxLiveGame *)game callback:(TIXboxLiveEngineAchievementsBlock)callback {
 	
 	if (game){
-		NSString * achievementsAddress = [[NSString alloc] initWithFormat:@"http://live.xbox.com/en-GB/Activity/Details?titleId=%@&compareTo=%@",
+		NSString * achievementsAddress = [[NSString alloc] initWithFormat:@"https://live.xbox.com/en-GB/Activity/Details?titleId=%@&compareTo=%@",
 										  game.titleID, game.gamertagComparedWith.encodedURLString];
 		
 		NSURL * achievementsURL = [[NSURL alloc] initWithString:achievementsAddress];
@@ -454,7 +453,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	if (!loadingMessages){
 		loadingMessages = signedIn ? YES : NO;
 		
-		NSURL * messagesURL = [[NSURL alloc] initWithString:@"http://live.xbox.com/en-GB/Messages"];
+		NSURL * messagesURL = [[NSURL alloc] initWithString:@"https://live.xbox.com/en-GB/Messages"];
 		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:messagesURL];
 		[messagesURL release];
 		
@@ -467,7 +466,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	
 	if (message.isNotEmpty && recipients){
 		
-		NSURL * messageURL = [[NSURL alloc] initWithString:@"http://live.xbox.com/en-GB/Messages/SendMessage"];
+		NSURL * messageURL = [[NSURL alloc] initWithString:@"https://live.xbox.com/en-GB/Messages/SendMessage"];
 		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:messageURL];
 		[messageURL release];
 		
