@@ -208,10 +208,10 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 			dispatch_async(processingQueue, ^{
 				CGFloat xValue = tileImage.size.height / 8;
 #if TARGET_OS_IPHONE
-				UIImage * croppedImage = [tileImage imageCroppedToRect:(CGRect){{0, xValue}, tileImage.size}];
+				UIImage * croppedImage = [tileImage imageCroppedToRect:(CGRect){{0, xValue}, {tileImage.size.width, tileImage.size.width}}];
 				NSData * croppedData = UIImageJPEGRepresentation(croppedImage, 0.0);
 #else
-				NSImage * croppedImage = [tileImage imageCroppedToRect:(NSRect){{0, xValue}, tileImage.size}];
+				NSImage * croppedImage = [tileImage imageCroppedToRect:(NSRect){{0, xValue}, {tileImage.size.width, tileImage.size.width}}];
 				NSData * croppedData = NSImageJPEGRepresentation(croppedImage, 0.0);
 #endif
 				[self writeImageData:croppedData image:croppedImage toPathWithKey:cacheKey completion:^{
