@@ -9,7 +9,6 @@
 #import "TIXboxLiveMessagesParser.h"
 #import "TIXboxLiveEngineAdditions.h"
 #import "TIXboxLiveMessage.h"
-#import "JSONKit.h"
 
 @implementation TIXboxLiveMessagesParser
 

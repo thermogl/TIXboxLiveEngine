@@ -10,7 +10,6 @@
 #import "TIXboxLiveEngineAdditions.h"
 #import "TIURLRequestParameter.h"
 #import "TIXboxLiveEngineConnection.h"
-#import "JSONKit.h"
 
 @interface TIXboxLiveMessage (Private)
 - (TIXboxLiveEngineConnection *)connectionWithRequest:(NSMutableURLRequest *)request type:(TIXboxLiveEngineConnectionType)type;

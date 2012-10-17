@@ -10,8 +10,6 @@
 #import "TIXboxLiveFriend.h"
 #import "TIXboxLiveEngineAdditions.h"
 #import "TIXboxLiveEngineConnection.h"
-#import "JSONKit.h"
-
 
 @interface TIXboxLiveFriendsParser (Private)
 - (void)notifyDelegateOfFriends:(NSArray *)friends onlineCount:(NSInteger)onlineCount;
@@ -38,17 +36,17 @@
 	
 	dispatch_async_serial("com.TIXboxLiveEngine.FriendsParseQueue", ^{
 		
+		__block NSInteger onlineCount = 0;
+		NSMutableArray * friends = [[NSMutableArray alloc] init];
+		
 		NSDateFormatter * inputFormatter = [[NSDateFormatter alloc] init];
 		[inputFormatter setDateFormat:@"dd/MM/yyyy"];
 		NSDateFormatter * outputFormatter = [[NSDateFormatter alloc] init];
 		[outputFormatter setDateStyle:NSDateFormatterShortStyle];
 		
 		NSDictionary * friendsData = [(NSDictionary *)[aPage objectFromJSONString] safeObjectForKey:@"Data"];
+		
 		NSArray * rawFriends = [friendsData	safeObjectForKey:@"Friends"];
-		
-		__block NSInteger onlineCount = 0;
-		NSMutableArray * friends = [[NSMutableArray alloc] init];
-		
 		[rawFriends enumerateObjectsUsingBlock:^(NSDictionary * friendDict, NSUInteger idx, BOOL *stop){
 			
 			BOOL isOnline = [[friendDict safeObjectForKey:@"IsOnline"] boolValue];
@@ -72,7 +70,6 @@
 		}];
 		
 		rawFriends = [friendsData safeObjectForKey:@"Outgoing"];
-		
 		[rawFriends enumerateObjectsUsingBlock:^(NSDictionary * friendDict, NSUInteger idx, BOOL *stop){
 			
 			NSString * gamertag = [friendDict safeObjectForKey:@"GamerTag"];
@@ -90,7 +87,6 @@
 		}];
 		
 		rawFriends = [friendsData safeObjectForKey:@"Incoming"];
-		
 		[rawFriends enumerateObjectsUsingBlock:^(NSDictionary * friendDict, NSUInteger idx, BOOL *stop){
 			
 			NSString * gamertag = [friendDict safeObjectForKey:@"GamerTag"];

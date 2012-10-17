@@ -31,6 +31,7 @@ void dispatch_async_main_queue(dispatch_block_t block);
 @property (nonatomic, readonly) NSString * stringByUnescapingXML;
 @property (nonatomic, readonly) NSString * stringByTrimmingWhitespaceAndNewLines;
 @property (nonatomic, readonly) NSString * stringByCorrectingDateRelativeToLocale;
+@property (nonatomic, readonly) id objectFromJSONString;
 @property (nonatomic, readonly) NSDate * dateFromJSONDate;
 @property (nonatomic, readonly) NSString * fileSafeHash;
 

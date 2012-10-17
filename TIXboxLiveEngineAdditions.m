@@ -313,6 +313,10 @@ static char EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvw
     return [[[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding] autorelease];
 }
 
+- (id)objectFromJSONString {
+	return [NSJSONSerialization JSONObjectWithData:[self dataUsingEncoding:NSUTF8StringEncoding] options:0 error:NULL];
+}
+
 - (NSDate *)dateFromJSONDate {
 	return [NSDate dateWithTimeIntervalSince1970:([[self stringBetween:@"Date(" and:@")"] doubleValue] / 1000)];
 }

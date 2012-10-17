@@ -15,7 +15,6 @@
 #import "TIURLRequestParameter.h"
 #import "TIXboxLiveGame.h"
 #import "TIXboxLiveEngineCookieStorage.h"
-#import "JSONKit.h"
 
 NSString * const kTIXboxLiveEngineErrorDomain = @"TIXboxLiveEngineErrorDomain";
 NSString * const kTIXboxLiveEngineUnknownErrorMessage = @"An unknown error occurred.";
