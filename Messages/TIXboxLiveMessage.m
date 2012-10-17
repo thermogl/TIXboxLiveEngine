@@ -81,7 +81,7 @@
 - (NSString *)relativeDateStamp {
 	
 	if (!relativeDateStamp)
-		relativeDateStamp = [date.relativeDateString copy];
+		relativeDateStamp = [date.relativeDateString retain];
 	
 	return relativeDateStamp;
 }
@@ -89,7 +89,7 @@
 - (NSString *)fullDateStamp {
 	
 	if (!fullDateStamp)
-		fullDateStamp = [date.fullDateString copy];
+		fullDateStamp = [date.fullDateString retain];
 	
 	return fullDateStamp;
 }
