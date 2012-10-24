@@ -102,9 +102,7 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 			NSString * file = nil;
 			
 			while ((file = [enumerator nextObject])){
-				if ([file contains:@".xboximage"]){
-					[[NSFileManager defaultManager] removeItemAtPath:[directoryPath stringByAppendingFormat:@"/%@", file] error:NULL];
-				}
+				if ([file contains:@".xboximage"]) [[NSFileManager defaultManager] removeItemAtPath:[directoryPath stringByAppendingFormat:@"/%@", file] error:NULL];
 			}
 			
 			emptyingDiskCache = NO;
