@@ -63,12 +63,11 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 				needsDownload = (modificationDate.timeIntervalSinceNow > kTIXboxLiveEngineImageCacheTime);
 				
 #if TARGET_OS_IPHONE
-				image = [[UIImage alloc] initWithContentsOfFile:filePath];
+				image = [[[UIImage alloc] initWithContentsOfFile:filePath] autorelease];
 #else
-				image = [[NSImage alloc] initWithContentsOfFile:filePath];
+				image = [[[NSImage alloc] initWithContentsOfFile:filePath] autorelease];
 #endif
 				[self storeImageInMemoryCache:image key:cacheKey];
-				[image autorelease];
 			}
 			
 			if (needsDownload) [self downloadImageAtURL:URL key:cacheKey completionBlock:block];
