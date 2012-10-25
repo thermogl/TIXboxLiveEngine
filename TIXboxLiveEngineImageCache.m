@@ -61,7 +61,6 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 			if (attributes){
 				NSDate * modificationDate = [attributes objectForKey:NSFileModificationDate];
 				needsDownload = (modificationDate.timeIntervalSinceNow > kTIXboxLiveEngineImageCacheTime);
-				
 #if TARGET_OS_IPHONE
 				image = [[[UIImage alloc] initWithContentsOfFile:filePath] autorelease];
 #else
