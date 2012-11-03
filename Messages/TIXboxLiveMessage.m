@@ -252,7 +252,7 @@
 		NSDictionary * contentDict = [[response objectFromJSONString] objectForKey:@"Data"];
 		[response release];
 		
-		NSString * tempBody = [contentDict objectForKey:@"Text"];
+		NSString * tempBody = [contentDict safeObjectForKey:@"Text"];
 		
 		if (!tempBody.isNotEmpty && TIXboxLiveMessageAttachmentIsVoice(attachmentType))
 			tempBody = @"Voice attachments can only be viewed on your console.";
