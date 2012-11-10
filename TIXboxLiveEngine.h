@@ -32,7 +32,7 @@ typedef enum {
 	TIXboxLiveEngineErrorCodeParseError = -7,
 } TIXboxLiveEngineErrorCode;
 
-typedef void (^TIXboxLiveEngineSignOutBlock)(BOOL wasExpected);
+typedef void (^TIXboxLiveEngineSignOutBlock)(BOOL userInstigated);
 typedef void (^TIXboxLiveEngineLogBlock)(TIXboxLiveEngineConnection * connection, NSString * response);
 
 @class TIXboxLiveGame;
@@ -89,6 +89,6 @@ typedef void (^TIXboxLiveEngineLogBlock)(TIXboxLiveEngineConnection * connection
 - (void)getAchievementsComparisonsForGame:(TIXboxLiveGame *)game callback:(TIXboxLiveEngineAchievementsBlock)callback;
 
 - (void)getMessagesWithCallback:(TIXboxLiveEngineMessagesBlock)callback;
-- (void)sendMessage:(NSString *)message toRecipients:(NSArray *)recipients callback:(TIXboxLiveEngineMessageSentBlock)callback;
+- (void)sendMessage:(NSString *)message recipients:(NSArray *)recipients callback:(TIXboxLiveEngineMessageSentBlock)callback;
 
 @end

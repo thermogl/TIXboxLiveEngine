@@ -54,7 +54,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 - (void)setVerificationTokenFromResponse:(NSString *)response;
 - (void)attemptVerificationTokenRecoveryForConnection:(TIXboxLiveEngineConnection *)connection;
 - (void)constructAndPostAuthValuesFromResponse:(NSString *)response connectionType:(TIXboxLiveEngineConnectionType)type callback:(id)callback;
-- (void)doCallbackForSignOut:(BOOL)wasExpected;
+- (void)doCallbackForSignOut:(BOOL)userInstigated;
 - (void)doCallbackForBasicGamerInfo:(NSDictionary *)gamerInfo connection:(TIXboxLiveEngineConnection *)connection;
 - (void)doCallbackForError:(NSError *)error connection:(TIXboxLiveEngineConnection *)connection;
 - (void)doCallbackForErrorWithMessage:(NSString *)message code:(NSInteger)code connection:(TIXboxLiveEngineConnection *)connection;
@@ -461,7 +461,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	}
 }
 
-- (void)sendMessage:(NSString *)message toRecipients:(NSArray *)recipients callback:(TIXboxLiveEngineMessageSentBlock)callback {
+- (void)sendMessage:(NSString *)message recipients:(NSArray *)recipients callback:(TIXboxLiveEngineMessageSentBlock)callback {
 	
 	if (message.isNotEmpty && recipients){
 		
@@ -942,12 +942,12 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	}
 }
 
-- (void)doCallbackForSignOut:(BOOL)wasExpected {
+- (void)doCallbackForSignOut:(BOOL)userInstigated {
 	
 	signedIn = NO;
 	signingIn = NO;
 	
-	if (signOutBlock) signOutBlock(wasExpected);
+	if (signOutBlock) signOutBlock(userInstigated);
 	
 	[[NSNotificationCenter defaultCenter] postNotificationName:TIXboxLiveEngineDidSignOutNotificationName object:nil];
 }
