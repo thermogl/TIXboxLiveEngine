@@ -270,8 +270,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		
 		[request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
 		[request setValue:[@"https://live.xbox.com/en-GB/Friends?gamertag="
-						   stringByAppendingString:[[gamertag stringByTrimmingWhitespaceAndNewLines]
-													stringByReplacingOccurrencesOfString:@" " withString:@"+"]]
+						   stringByAppendingString:[gamertag.stringByTrimmingWhitespaceAndNewLines stringByReplacingOccurrencesOfString:@" " withString:@"+"]]
 	   forHTTPHeaderField:@"Referer"];
 		
 		TIURLRequestParameter * gamertagParam = [[TIURLRequestParameter alloc] initWithName:@"gamertag" value:gamertag];
@@ -304,9 +303,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		
 		[request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
 		
-		TIURLRequestParameter * parameter = [[TIURLRequestParameter alloc] initWithName:@"gamertag"
-																				  value:[gamertag stringByTrimmingWhitespaceAndNewLines]];
-		
+		TIURLRequestParameter * parameter = [[TIURLRequestParameter alloc] initWithName:@"gamertag" value:gamertag.stringByTrimmingWhitespaceAndNewLines];
 		TIURLRequestParameter * parameter2 = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:verificationToken];
 		
 		NSArray * parameters = [[NSArray alloc] initWithObjects:parameter, parameter2, nil];
@@ -932,8 +929,8 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		verificationTokenAttemptCount++;
 		
 		if (connection.type == TIXboxLiveEngineConnectionTypeGetGames) [[self getGamesWithToken:NO] setCallback:connection.callback];
-		if (connection.type == TIXboxLiveEngineConnectionTypeGetRecentPlayers) [[self getRecentPlayersWithToken:NO] setCallback:connection.callback];
-		if (connection.type == TIXboxLiveEngineConnectionTypeGetFriends) [[self getFriendsWithToken:NO] setCallback:connection.callback];
+		else if (connection.type == TIXboxLiveEngineConnectionTypeGetRecentPlayers) [[self getRecentPlayersWithToken:NO] setCallback:connection.callback];
+		else if (connection.type == TIXboxLiveEngineConnectionTypeGetFriends) [[self getFriendsWithToken:NO] setCallback:connection.callback];
 	}
 	else
 	{
