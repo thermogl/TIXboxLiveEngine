@@ -6,12 +6,7 @@
 //  Copyright 2011 Tom Irving. All rights reserved.
 //
 
-@interface TIXboxLiveEngineCookieBase : NSObject {
-	NSString * cookieHash;
-	NSString * verificationToken;
-}
-
+@interface TIXboxLiveEngineCookieBase : NSObject
 @property (nonatomic, copy) NSString * cookieHash;
 @property (nonatomic, copy) NSString * verificationToken;
-
 @end
