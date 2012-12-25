@@ -22,31 +22,30 @@
 - (NSString *)typeDescription {
 	
 	if (type == TIXboxLiveEngineConnectionTypeGetLogin) return @"GetLogin";
-	if (type == TIXboxLiveEngineConnectionTypePostLogin) return @"PostLogin";
-	if (type == TIXboxLiveEngineConnectionTypePostAuth) return @"PostAuth";
-	if (type == TIXboxLiveEngineConnectionTypeGetBasicGamerInfo) return @"GetBasicGamerInfo";
-	if (type == TIXboxLiveEngineConnectionTypeGetGamerProfile) return @"GetGamerProfile";
-	if (type == TIXboxLiveEngineConnectionTypeChangeGamerProfile) return @"ChangeGamerProfile";
-	if (type == TIXboxLiveEngineConnectionTypeGetFriendGamerTile) return @"GetFriendGamerTile";
-	if (type == TIXboxLiveEngineConnectionTypeGetFriendGamerInfo) return @"GetFriendGamerInfo";
-	if (type == TIXboxLiveEngineConnectionTypeGetFriendsVerification) return @"GetFriendsVerification";
-	if (type == TIXboxLiveEngineConnectionTypeGetFriends) return @"GetFriends";
-	if (type == TIXboxLiveEngineConnectionTypeGetMessages) return @"GetMessages";
-	if (type == TIXboxLiveEngineConnectionTypeGetGames) return @"GetGames";
-	if (type == TIXboxLiveEngineConnectionTypeGetGamesVerification) return @"GetGamesVerification";
-	if (type == TIXboxLiveEngineConnectionTypeGetAchievements) return @"GetAchievements";
-	if (type == TIXboxLiveEngineConnectionTypeGetRecentPlayers) return @"GetRecentPlayers";
-	if (type == TIXboxLiveEngineConnectionTypeGetRecentPlayersVerification) return @"GetRecentPlayersVerification";
-	if (type == TIXboxLiveEngineConnectionTypeGetFriendsOfFriend) return @"GetFriendsOfFriend";
-	if (type == TIXboxLiveEngineConnectionTypeGetGameComparisons) return @"GetGameComparisons";
-	if (type == TIXboxLiveEngineConnectionTypeGetAchievementComparisons) return @"GetAchievementComparisons";
-	if (type == TIXboxLiveEngineConnectionTypeSendMessage) return @"SendMessage";
-	if (type == TIXboxLiveEngineConnectionTypeSendFriendRequest) return @"SendFriendRequest";
-	if (type == TIXboxLiveEngineConnectionTypeGetMessageBody) return @"GetMessageBody";
-	if (type == TIXboxLiveEngineConnectionTypeGetMessageImage) return @"GetMessageImage";
-	if (type == TIXboxLiveEngineConnectionTypeGetTileImage) return @"GetTileImage";
-	
-	return @"";
+	else if (type == TIXboxLiveEngineConnectionTypePostLogin) return @"PostLogin";
+	else if (type == TIXboxLiveEngineConnectionTypePostAuth) return @"PostAuth";
+	else if (type == TIXboxLiveEngineConnectionTypeGetBasicGamerInfo) return @"GetBasicGamerInfo";
+	else if (type == TIXboxLiveEngineConnectionTypeGetGamerProfile) return @"GetGamerProfile";
+	else if (type == TIXboxLiveEngineConnectionTypeChangeGamerProfile) return @"ChangeGamerProfile";
+	else if (type == TIXboxLiveEngineConnectionTypeGetFriendGamerTile) return @"GetFriendGamerTile";
+	else if (type == TIXboxLiveEngineConnectionTypeGetFriendGamerInfo) return @"GetFriendGamerInfo";
+	else if (type == TIXboxLiveEngineConnectionTypeGetFriendsVerification) return @"GetFriendsVerification";
+	else if (type == TIXboxLiveEngineConnectionTypeGetFriends) return @"GetFriends";
+	else if (type == TIXboxLiveEngineConnectionTypeGetMessages) return @"GetMessages";
+	else if (type == TIXboxLiveEngineConnectionTypeGetGames) return @"GetGames";
+	else if (type == TIXboxLiveEngineConnectionTypeGetGamesVerification) return @"GetGamesVerification";
+	else if (type == TIXboxLiveEngineConnectionTypeGetAchievements) return @"GetAchievements";
+	else if (type == TIXboxLiveEngineConnectionTypeGetRecentPlayers) return @"GetRecentPlayers";
+	else if (type == TIXboxLiveEngineConnectionTypeGetRecentPlayersVerification) return @"GetRecentPlayersVerification";
+	else if (type == TIXboxLiveEngineConnectionTypeGetFriendsOfFriend) return @"GetFriendsOfFriend";
+	else if (type == TIXboxLiveEngineConnectionTypeGetGameComparisons) return @"GetGameComparisons";
+	else if (type == TIXboxLiveEngineConnectionTypeGetAchievementComparisons) return @"GetAchievementComparisons";
+	else if (type == TIXboxLiveEngineConnectionTypeSendMessage) return @"SendMessage";
+	else if (type == TIXboxLiveEngineConnectionTypeSendFriendRequest) return @"SendFriendRequest";
+	else if (type == TIXboxLiveEngineConnectionTypeGetMessageBody) return @"GetMessageBody";
+	else if (type == TIXboxLiveEngineConnectionTypeGetMessageImage) return @"GetMessageImage";
+	else if (type == TIXboxLiveEngineConnectionTypeGetTileImage) return @"GetTileImage";
+	else return @"";
 }
 
 - (NSString *)description {
