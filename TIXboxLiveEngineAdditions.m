@@ -149,7 +149,7 @@ void dispatch_async_main_queue(dispatch_block_t block) {
 }
 
 - (BOOL)isNotEmpty {
-	return (self.length > 0 && [[self stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0);
+	return (self.length > 0 && self.stringByTrimmingWhitespaceAndNewLines.length > 0);
 }
 
 - (NSString *)encodedURLString {
