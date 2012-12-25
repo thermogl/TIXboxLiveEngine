@@ -43,7 +43,7 @@ void dispatch_async_main_queue(dispatch_block_t block) {
 - (NSArray *)parameters {
 	
     NSString * encodedParams = self.URL.query;
-	if (![self isMultipart] && ![self isMethodGetOrDelete]){
+	if (!self.isMultipart && !self.isMethodGetOrDelete){
 		encodedParams = [[[NSString alloc] initWithData:self.HTTPBody encoding:NSASCIIStringEncoding] autorelease];
 	}
 	
@@ -53,7 +53,6 @@ void dispatch_async_main_queue(dispatch_block_t block) {
 		NSMutableArray * requestParameters = [[NSMutableArray alloc] init];
 		
 		[encodedParameterPairs enumerateObjectsUsingBlock:^(NSString * encodedPair, NSUInteger idx, BOOL *stop){
-			
 			NSArray * encodedPairElements = [encodedPair componentsSeparatedByString:@"="];
 			
 			if (encodedPairElements.count > 1){
