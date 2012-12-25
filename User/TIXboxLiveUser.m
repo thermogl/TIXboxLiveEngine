@@ -69,7 +69,7 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 		motto = [[aDecoder decodeObjectForKey:@"Motto"] copy];
 		location = [[aDecoder decodeObjectForKey:@"Location"] copy];
 		bio = [[aDecoder decodeObjectForKey:@"Bio"] copy];
-		tileURL = [[aDecoder decodeObjectForKey:@"TileURL"] retain];
+		tileURL = [[aDecoder decodeObjectForKey:@"TileURL"] copy];
 	}
 	
 	return self;

@@ -40,8 +40,8 @@ typedef void (^TIXboxLiveFriendGamerInfoBlock)(NSError * error, NSString * name,
 @property (nonatomic, copy) NSString * gamertag;
 @property (nonatomic, copy) NSString * info;
 @property (nonatomic, assign) TIXboxLiveFriendStatus status;
-@property (nonatomic, retain) NSURL * tileURL;
-@property (nonatomic, retain) NSURL * avatarURL;
+@property (nonatomic, copy) NSURL * tileURL;
+@property (nonatomic, copy) NSURL * avatarURL;
 @property (nonatomic, assign) TIXboxLiveFriendRequestType friendRequestType;
 @property (nonatomic, assign) BOOL isOnFriendsList;
 @property (nonatomic, readonly) NSString * game;

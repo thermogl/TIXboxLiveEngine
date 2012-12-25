@@ -32,7 +32,7 @@
 		title = [aTitle copy];
 		titleID = [anID copy];
 		lastPlayedDate = [aDate copy];
-		tileURL = [aURL retain];
+		tileURL = [aURL copy];
 	}
 	
 	return self;
@@ -42,14 +42,14 @@
 	
 	if ((self = [self init])){
 		
-		title = [[aDecoder decodeObjectForKey:@"Title"] retain];
-		titleID = [[aDecoder decodeObjectForKey:@"TitleID"] retain];
+		title = [[aDecoder decodeObjectForKey:@"Title"] copy];
+		titleID = [[aDecoder decodeObjectForKey:@"TitleID"] copy];
 		unlockedScore = [[aDecoder decodeObjectForKey:@"UnlockedScore"] integerValue];
 		totalScore = [[aDecoder decodeObjectForKey:@"TotalScore"] integerValue];
 		unlockedAchievements = [[aDecoder decodeObjectForKey:@"UnlockedAchievements"] integerValue];
 		totalAchievements = [[aDecoder decodeObjectForKey:@"TotalAchievements"] integerValue];
-		lastPlayedDate = [[aDecoder decodeObjectForKey:@"LastPlayedDate"] retain];
-		tileURL = [[aDecoder decodeObjectForKey:@"TileURL"] retain];
+		lastPlayedDate = [[aDecoder decodeObjectForKey:@"LastPlayedDate"] copy];
+		tileURL = [[aDecoder decodeObjectForKey:@"TileURL"] copy];
 	}
 	
 	return self;

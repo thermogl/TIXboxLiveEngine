@@ -34,7 +34,7 @@
 		info = [someInfo copy];
 		score = someScore;
 		unlockedStatus = aStatus;
-		tileURL = [aURL retain];
+		tileURL = [aURL copy];
 	}
 	
 	return self;
@@ -48,7 +48,7 @@
 		info = [[aDecoder decodeObjectForKey:@"Info"] copy];
 		score = [aDecoder decodeIntegerForKey:@"Score"];
 		unlockedStatus = [aDecoder decodeIntegerForKey:@"UnlockedStatus"];
-		tileURL = [[aDecoder decodeObjectForKey:@"TileURL"] retain];
+		tileURL = [[aDecoder decodeObjectForKey:@"TileURL"] copy];
 	}
 	
 	return self;

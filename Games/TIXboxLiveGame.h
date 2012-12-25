@@ -27,7 +27,7 @@
 @property (nonatomic, assign) NSInteger unlockedAchievements;
 @property (nonatomic, assign) NSInteger totalAchievements;
 @property (nonatomic, copy) NSDate * lastPlayedDate;
-@property (nonatomic, retain) NSURL * tileURL;
+@property (nonatomic, copy) NSURL * tileURL;
 @property (nonatomic, copy) NSString * gamertagComparedWith;
 @property (nonatomic, copy) NSString * relativeDateStamp;
 

@@ -46,7 +46,7 @@
 		gamertag = [aGamertag copy];
 		info = [someInfo copy];
 		status = someStatus;
-		tileURL = [aURL retain];
+		tileURL = [aURL copy];
 		avatarURL = [[NSURL alloc] initWithString:[NSString stringWithFormat:@"http://avatar.xboxlive.com/avatar/%@/avatar-body.png", gamertag.encodedURLString]];
 		isOnFriendsList = YES;
 		friendRequestType = TIXboxLiveFriendRequestTypeNone;
@@ -62,10 +62,10 @@
 		gamertag = [[aDecoder decodeObjectForKey:@"Gamertag"] copy];
 		info = @"Waiting for refresh";
 		status = TIXboxLiveFriendStatusUnknown;
-		avatarURL = [[aDecoder decodeObjectForKey:@"AvatarURL"] retain];
+		avatarURL = [[aDecoder decodeObjectForKey:@"AvatarURL"] copy];
 		isOnFriendsList = [aDecoder decodeBoolForKey:@"IsOnFriendsList"];
 		friendRequestType = TIXboxLiveFriendRequestTypeNone;
-		tileURL = [[aDecoder decodeObjectForKey:@"TileURL"] retain];
+		tileURL = [[aDecoder decodeObjectForKey:@"TileURL"] copy];
 	}
 	
 	return self;

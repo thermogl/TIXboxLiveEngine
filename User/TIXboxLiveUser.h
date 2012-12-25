@@ -39,7 +39,7 @@ typedef void (^TIXboxLiveUserProfileBlock)(NSError * error);
 @property (nonatomic, copy) NSString * motto;
 @property (nonatomic, copy) NSString * location;
 @property (nonatomic, copy) NSString * bio;
-@property (nonatomic, retain) NSURL * tileURL;
+@property (nonatomic, copy) NSURL * tileURL;
 
 - (id)initWithGamertag:(NSString *)aTag gamerscore:(NSString *)aScore tileURL:(NSURL *)aURL;
 
