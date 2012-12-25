@@ -94,42 +94,6 @@ void dispatch_async_main_queue(dispatch_block_t block) {
 	[self setHTTPMethod:@"POST"];
 }
 
-- (void)attachFile:(NSData *)fileData fileName:(NSString *)filename parameterName:(NSString *)parameterName contentType:(NSString *)contentType {
-	
-	NSString * boundary = @"0xKhTmLbOuNdArY";
-	[self setValue:[@"multipart/form-data; boundary=" stringByAppendingString:boundary] forHTTPHeaderField:@"Content-type"];
-	
-	NSMutableData * bodyData = [[NSMutableData alloc] init];
-	NSArray * parameters = [self parameters];
-	
-	[parameters enumerateObjectsUsingBlock:^(TIURLRequestParameter * requestParameter, NSUInteger idx, BOOL *stop){
-		
-		NSString * parameterString = [[NSString alloc] initWithFormat:@"--%@\r\nContent-Disposition: form-data; name=\"%@\"\r\n\r\n%@\r\n", boundary, 
-									  requestParameter.name, requestParameter.value];
-		[bodyData appendData:[parameterString dataUsingEncoding:NSUTF8StringEncoding]];
-		[parameterString release];
-	}];
-	
-	NSString * fileInfo = [[NSString alloc] initWithFormat:@"--%@\r\nContent-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\nContent-Type: %@\r\n\r\n",
-						   boundary, parameterName, filename, contentType];
-	[bodyData appendData:[fileInfo dataUsingEncoding:NSUTF8StringEncoding]];
-	[fileInfo release];
-	
-	[bodyData appendData:fileData];
-	
-	NSString * endSeparator = [[NSString alloc] initWithFormat:@"--%@--", boundary];
-	[bodyData appendData:[endSeparator dataUsingEncoding:NSUTF8StringEncoding]];
-	[endSeparator release];
-	
-	NSString * length = [[NSString alloc] initWithFormat:@"%d", (int)bodyData.length];
-	[self setValue:length forHTTPHeaderField:@"Content-Length"];
-	[length release];
-	
-	[self setHTTPBody:bodyData];
-	[self setHTTPMethod:@"POST"];
-	[bodyData release];
-}
-
 - (void)setDefaultsForHash:(NSString *)cookieHash {
 	
 	[self setHTTPShouldHandleCookies:NO];

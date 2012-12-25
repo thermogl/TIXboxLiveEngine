@@ -12,7 +12,7 @@
 
 @implementation TIXboxLiveMessagesParser
 
-- (void)parseMessagesPage:(NSString *)aPage  callback:(TIXboxLiveMessagesParserMessagesBlock)callback {
+- (void)parseMessagesPage:(NSString *)aPage callback:(TIXboxLiveMessagesParserMessagesBlock)callback {
 	
 	dispatch_async_serial("com.TIXboxLiveEngine.MessagesParseQueue", ^{
 		
@@ -58,8 +58,8 @@
 			
 			if (![[rawMessage safeObjectForKey:@"HasText"] boolValue]){
 				if (type == TIXboxLiveMessageAttachmentTypeBoth) summary = @"Image and Voice attachments";
-				if (type == TIXboxLiveMessageAttachmentTypeImage) summary = @"Image attachment";
-				if (type == TIXboxLiveMessageAttachmentTypeVoice) summary = @"Voice attachment";
+				else if (type == TIXboxLiveMessageAttachmentTypeImage) summary = @"Image attachment";
+				else if (type == TIXboxLiveMessageAttachmentTypeVoice) summary = @"Voice attachment";
 			}
 			
 			NSDate * date = [[rawMessage safeObjectForKey:@"SentTime"] dateFromJSONDate];

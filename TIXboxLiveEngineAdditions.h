@@ -17,7 +17,6 @@ void dispatch_async_main_queue(dispatch_block_t block);
 
 @interface NSMutableURLRequest (TIXboxLiveEngineAdditions)
 @property (nonatomic, retain) NSArray * parameters;
-- (void)attachFile:(NSData *)fileData fileName:(NSString *)filename parameterName:(NSString *)parameterName contentType:(NSString *)contentType;
 - (void)setDefaultsForHash:(NSString *)cookieHash;
 @end
 
