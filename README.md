@@ -1,6 +1,6 @@
 ## TIXboxLiveEngine
 
-Mac / iOS classes for communication with Xbox LIVE.
+#### Mac / iOS classes for communication with Xbox LIVE.
 
 ## Usage
 
@@ -106,6 +106,10 @@ The following code is taken from the FriendsCell.m used in Friendz on iOS:
 	if (!local) [self setGamertile:[[UIImage imageNamed:@"avatar-tile"] roundCornerImageWithCornerRadius:5]];
 	
 The return value of -getImageForURL:completion: indicates if the image is on disk, or needs to be downloaded. I use this in Friendz to decide if a placeholder is needed whilst the download completes.
+
+### Cross Platform Compatibility
+
+The TIXboxLiveEngine is built to run on both Mac and iOS. Anywhere you see UIImage in the above code samples, NSImage can be used in it's place on Mac.
 
 ## ARC?
 
