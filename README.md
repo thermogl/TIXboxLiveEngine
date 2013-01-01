@@ -113,7 +113,7 @@ The return value of -getImageForURL:completion: indicates if the image is on dis
 
 ### Cross Platform Compatibility
 
-**The TIXboxLiveEngine is built to run on both Mac and iOS. Anywhere you see UIImage in the above code samples, NSImage can be used in it's place on Mac.**
+**The TIXboxLiveEngine is built to run on both Mac and iOS. Anywhere you see UIImage in the above code samples, NSImage can be used in its place on Mac.**
 
 ## ARC?
 
