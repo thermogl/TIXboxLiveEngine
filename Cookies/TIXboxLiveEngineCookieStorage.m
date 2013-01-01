@@ -18,8 +18,7 @@
 
 - (void)addCookiesFromResponse:(NSURLResponse *)response hash:(NSString *)cookieHash {
 	
-	if ([response respondsToSelector:@selector(allHeaderFields)]){
-		
+	if ([response isKindOfClass:[NSHTTPURLResponse class]]){
 		NSDictionary * headers = [(NSHTTPURLResponse *)response allHeaderFields];
 		[self addCookies:[NSHTTPCookie cookiesWithResponseHeaderFields:headers forURL:response.URL] hash:cookieHash];
 	}
