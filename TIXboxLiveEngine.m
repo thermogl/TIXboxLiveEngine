@@ -587,7 +587,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		[request release];
 	}
 	
-	if (xboxConnection.type == TIXboxLiveEngineConnectionTypePostLogin){
+	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypePostLogin){
 		
 		if ([response contains:kTIXboxLiveEngineJavascriptCheck]){
 			[self constructAndPostAuthValuesFromResponse:response connectionType:TIXboxLiveEngineConnectionTypePostAuth callback:xboxConnection.callback];
@@ -598,7 +598,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		}
 	}
 	
-	if (xboxConnection.type == TIXboxLiveEngineConnectionTypePostAuth){
+	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypePostAuth){
 		
 		if ([response contains:kTIXboxLiveEngineJavascriptCheck]){
 			[self constructAndPostAuthValuesFromResponse:response connectionType:TIXboxLiveEngineConnectionTypePostAuth callback:xboxConnection.callback];
@@ -629,7 +629,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		}
 	}
 	
-	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetFriendsVerification){
+	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetFriendsVerification){
 		
 		if ([response contains:kTIXboxLiveEngineJavascriptCheck]){
 			[self doCallbackForSignOut:NO];
@@ -641,7 +641,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		}
 	}
 	
-	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetFriends){
+	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetFriends){
 		
 		loadingFriends = NO;
 		
@@ -669,7 +669,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		}
 	}
 	
-	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetRecentPlayersVerification){
+	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetRecentPlayersVerification){
 		
 		if ([response contains:kTIXboxLiveEngineJavascriptCheck]){
 			[self doCallbackForSignOut:NO];
@@ -681,7 +681,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		}
 	}
 	
-	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetRecentPlayers){
+	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetRecentPlayers){
 		
 		loadingRecentPlayers = NO;
 		
@@ -705,7 +705,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		}
 	}
 	
-	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetFriendsOfFriend){
+	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetFriendsOfFriend){
 		
 		__block TIXboxLiveEngine * weakSelf = self;
 		TIXboxLiveFriendsParser * friendsParser = [[TIXboxLiveFriendsParser alloc] init];
@@ -721,7 +721,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		[friendsParser release];
 	}
 	
-	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetGamesVerification){
+	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetGamesVerification){
 		
 		if ([response contains:kTIXboxLiveEngineJavascriptCheck]){
 			[self doCallbackForSignOut:NO];
@@ -733,7 +733,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		}
 	}
 	
-	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetGames){
+	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetGames){
 		loadingGames = NO;
 		
 		if ([response contains:@"grid-18 NotFound"]){
@@ -754,7 +754,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		}
 	}
 	
-	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetGameComparisons){
+	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetGameComparisons){
 		
 		__block TIXboxLiveEngine * weakSelf = self;
 		TIXboxLiveGamesParser * gamesParser = [[TIXboxLiveGamesParser alloc] init];
@@ -768,7 +768,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		[gamesParser release];
 	}
 	
-	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetAchievements){
+	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetAchievements){
 		
 		__block TIXboxLiveEngine * weakSelf = self;
 		TIXboxLiveAchievementsParser * achievementsParser = [[TIXboxLiveAchievementsParser alloc] init];
@@ -782,7 +782,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		[achievementsParser release];
 	}
 	
-	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetAchievementComparisons){
+	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetAchievementComparisons){
 		
 		__block TIXboxLiveEngine * weakSelf = self;
 		TIXboxLiveAchievementsParser * achievementsParser = [[TIXboxLiveAchievementsParser alloc] init];
@@ -796,7 +796,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		[achievementsParser release];
 	}
 	
-	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetMessages){
+	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetMessages){
 		
 		loadingMessages = NO;
 		
@@ -815,7 +815,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		
 	}
 	
-	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeSendFriendRequest){
+	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeSendFriendRequest){
 		
 		NSDictionary * responseDict = [response objectFromJSONString];
 		NSError * error = nil;
@@ -830,7 +830,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		if (friendRequestBlock) friendRequestBlock(error, [xboxConnection.userInfo objectForKey:TIXboxLiveEngineConnectionGamertagKey]);
 	}
 	
-	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeSendMessage){
+	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeSendMessage){
 		
 		NSDictionary * responseDict = [response objectFromJSONString];
 		NSError * error = nil;
