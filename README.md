@@ -8,46 +8,46 @@ The TIXboxLiveEngine class is your entry to the wonderful world of Xbox LIVE. It
 
 ### First things first
 
-Before you start trying to sign in, you need to tell the TIXboxLiveEngineCookieStorage where you want to save the cookie information:
+Before you start trying to sign in, you need to tell the TIXboxLiveEngineCookieStorage where you want to save the cookie information (the official API is awful, so we scrape the site).
 
-    NSString * cacheDirectory = [NSHomeDirectory() stringByAppendingString:@"/Library/Caches/"];
+	NSString * cacheDirectory = [NSHomeDirectory() stringByAppendingString:@"/Library/Caches/"];
 	[[TIXboxLiveEngineCookieStorage sharedCookieStorage] setCookieRootDirectory:cacheDirectory];
 	
 Also, if you're going to be using the TIXboxLiveEngineImageCache, you'll need to tell that where to save images:
 
-    [[TIXboxLiveEngineImageCache sharedCache] setCacheRootDirectory:cacheDirectory];
+	[[TIXboxLiveEngineImageCache sharedCache] setCacheRootDirectory:cacheDirectory];
     
 ### Engine setup
 
 Creating an instance is as you'd expect:
 
-    TIXboxLiveEngine * engine = [[TIXboxLiveEngine alloc] init];
+	TIXboxLiveEngine * engine = [[TIXboxLiveEngine alloc] init];
     
 You can create as many engines as you need (effectively, one engine represents one account).
     
 ### Signing in / out
 
-    [engine signInWithEmail:@"some email" password:@"some password" callback^(NSError * error){
-        if (error){
-            // Handle it.
-        }
-        else
-        {
-            // You're signed in.
-        }
-    }];
+	[engine signInWithEmail:@"some email" password:@"some password" callback^(NSError * error){
+		if (error){
+			// Handle it.
+		}
+		else
+		{
+	    	// You're signed in.
+		}
+	}];
     
 It's also a good idea to set the signOutBlock, which will be called if either the user instigates a sign out (through -signOut) or if the engine detects a session timeout. The block has a BOOL argument which will help you determine the reason:
 
-    [engine setSignOutBlock:^(BOOL userInstigated){
-        if (!userInstigated) // Session timeout
-    ];
+	[engine setSignOutBlock:^(BOOL userInstigated){
+		if (!userInstigated) // Session timeout
+	}];
     
 I set this when I create the engine instance, but it can be set whenever.
 
 Calling a user instigated sign out is super easy:
 
-    [engine signOut];
+	[engine signOut];
     
 This'll take care of cancelling any running connections, removing cookie information and, if the signOutBlock is set, call the block with the userInstigated argument set to YES.
 
@@ -57,17 +57,59 @@ Now you can start interacting with various elements of Xbox LIVE. The first thin
 
 Simple stuff:
 
-    [engine getFriendsWithCallback:^(NSError * error, NSArray * friends, NSInteger onlineCount){
-        if (!error){
-            // 'friends' contains TIXboxLiveFriend objects
-        }
-    }];
+	[engine getFriendsWithCallback:^(NSError * error, NSArray * friends, NSInteger onlineCount){
+		if (!error){
+			// 'friends' contains TIXboxLiveFriend objects
+		}
+	}];
     
 There are similar methods for games, achievements and messages.
 
+### User info
+
+You can access the engine's TIXboxLiveUser through the 'user' property. The user represents the profile of the account you signed in with. You can see from the header it gives you access to the players real name, location, motto, bio, etc.
+
+It also a method for changing this information:
+
+	[user changeGamerProfileName:@"Name" motto:@"Motto" location:@"Location" bio:@"Bio" callback:^(NSError * error){
+		if (error) // Handle it
+	}];
+    
+### Additional Friend and Message info
+
+The TIXboxLiveFriend and TIXboxLiveMessage classes both have methods for downloading additional information on the object. In the messages case, this additional information is the actual message body, and if there's an image attachment, you can get that as well.
+
+	[message getMessageWithBodyCallback:^(NSString * body){ 
+		// Display the message 
+	} imageCallback:^(UIImage * image){ 
+		// Display the image
+	}];
+
+In the friend case, there is a method for downloading profile information (real name, motto, location, bio, etc).
+
+	[friend getGamerInfoWithCallback:^(NSError *error, NSString *name, NSString *motto, NSString *location, NSString *bio, NSString *gamerscore, NSString *info){
+		// Display the information.
+	}];
+
+### Tiles
+
+Friends, Games and Achievements all have tiles associated with them, and the URLs for these tiles can be found as tileURL properties on the classes. The TIXboxLiveEngineImageCache is the primary method for downloading the tiles, though you can use your own classes if that's easier.
+
+The following code is taken from the FriendsCell.m used in Friendz on iOS:
+
+    BOOL local = [[TIXboxLiveEngineImageCache sharedCache] getImageForURL:friend.tileURL completion:^(UIImage *image, NSURL * URL){
+		if ([URL isEqual:friend.tileURL]){
+			[self setGamertile:[image roundCornerImageWithCornerRadius:5]];
+			[self setNeedsDisplay];
+		}
+	}];
+	if (!local) [self setGamertile:[[UIImage imageNamed:@"avatar-tile"] roundCornerImageWithCornerRadius:5]];
+	
+The return value of -getImageForURL:completion: indicates if the image is on disk, or needs to be downloaded. I use this in Friendz to decide if a placeholder is needed whilst the download completes.
+
 ## ARC?
 
-Over my dead body
+Over my dead body.
 
 ##License
 

@@ -196,7 +196,7 @@
 	return (connection != nil);
 }
 
-- (void)downloadMessageWithBodyCallback:(TIXboxLiveMessageBodyBlock)bodyCallback imageCallback:(TIXboxLiveMessageImageBlock)imageCallback {
+- (void)getMessageWithBodyCallback:(TIXboxLiveMessageBodyBlock)bodyCallback imageCallback:(TIXboxLiveMessageImageBlock)imageCallback {
 	
 	NSURL * URL = [[NSURL alloc] initWithString:@"https://live.xbox.com/en-GB/Messages/Message"];
 	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:URL];

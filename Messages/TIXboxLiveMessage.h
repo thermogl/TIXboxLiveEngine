@@ -64,6 +64,6 @@ typedef void (^TIXboxLiveMessageImageBlock)(NSImage * image);
 - (BOOL)deleteMessage;
 - (BOOL)handleFriendRequest:(BOOL)shouldAccept;
 
-- (void)downloadMessageWithBodyCallback:(TIXboxLiveMessageBodyBlock)bodyCallback imageCallback:(TIXboxLiveMessageImageBlock)imageCallback;
+- (void)getMessageWithBodyCallback:(TIXboxLiveMessageBodyBlock)bodyCallback imageCallback:(TIXboxLiveMessageImageBlock)imageCallback;
 
 @end
