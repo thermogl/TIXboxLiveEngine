@@ -17,7 +17,7 @@ Also, if you're going to be using the TIXboxLiveEngineImageCache, you'll need to
     
 ### Engine setup
 
-The TIXboxLiveEngine class is your entry to the wonderful world of Xbox LIVE. It handles all primary connections (getting friends, games, achievements and messages).
+**The TIXboxLiveEngine class is your entry to the wonderful world of Xbox LIVE. It handles all primary connections (getting friends, games, achievements and messages).**
 
 Creating an instance is as you'd expect:
 
@@ -26,6 +26,8 @@ Creating an instance is as you'd expect:
 You can create as many engines as you need (effectively, one engine represents one account).
     
 ### Signing in / out
+
+**Straight forward, just provide an email and password. The engine will encode them correctly.**
 
 	[engine signInWithEmail:@"some email" password:@"some password" callback^(NSError * error){
 		if (error){
@@ -37,7 +39,7 @@ You can create as many engines as you need (effectively, one engine represents o
 		}
 	}];
     
-It's also a good idea to set the signOutBlock, which will be called if either the user instigates a sign out (through -signOut) or if the engine detects a session timeout. The block has a BOOL argument which will help you determine the reason:
+**It's also a good idea to set the signOutBlock**. This will be called if either the user instigates a sign out (through -signOut) or if the engine detects a session timeout. The block has a BOOL argument which will help you determine the reason:
 
 	[engine setSignOutBlock:^(BOOL userInstigated){
 		if (!userInstigated) // Session timeout
@@ -45,7 +47,7 @@ It's also a good idea to set the signOutBlock, which will be called if either th
     
 I set this when I create the engine instance, but it can be set whenever.
 
-Calling a user instigated sign out is super easy:
+**Calling a user instigated sign out is super easy:**
 
 	[engine signOut];
     
@@ -63,11 +65,11 @@ Simple stuff:
 		}
 	}];
     
-There are similar methods for games, achievements and messages.
+**There are similar methods for games, achievements and messages.**
 
 ### User info
 
-You can access the engine's TIXboxLiveUser through the 'user' property. The user represents the profile of the account you signed in with. You can see from the header it gives you access to the players real name, location, motto, bio, etc.
+You can access the engine's TIXboxLiveUser through the 'user' property. **The user represents the profile of the account you signed in with**. You can see from the header it gives you access to the players real name, location, motto, bio, etc.
 
 It also a method for changing this information:
 
@@ -77,7 +79,7 @@ It also a method for changing this information:
     
 ### Additional Friend and Message info
 
-The TIXboxLiveFriend and TIXboxLiveMessage classes both have methods for downloading additional information on the object. In the messages case, this additional information is the actual message body, and if there's an image attachment, you can get that as well.
+The TIXboxLiveFriend and TIXboxLiveMessage classes both have methods for downloading additional information for the object. In the messages case, this additional information is the actual message body, and if there's an image attachment, you can get that as well.
 
 	[message getMessageWithBodyCallback:^(NSString * body){ 
 		// Display the message 
@@ -107,9 +109,11 @@ The following code is taken from the FriendsCell.m used in Friendz on iOS:
 	
 The return value of -getImageForURL:completion: indicates if the image is on disk, or needs to be downloaded. I use this in Friendz to decide if a placeholder is needed whilst the download completes.
 
+**TIXboxLiveEngineImageCache will take care of cropping game box art to square images.**
+
 ### Cross Platform Compatibility
 
-The TIXboxLiveEngine is built to run on both Mac and iOS. Anywhere you see UIImage in the above code samples, NSImage can be used in it's place on Mac.
+**The TIXboxLiveEngine is built to run on both Mac and iOS. Anywhere you see UIImage in the above code samples, NSImage can be used in it's place on Mac.**
 
 ## ARC?
 
