@@ -77,20 +77,34 @@ It also a method for changing this information:
 		if (error) // Handle it
 	}];
     
-### Additional Friend and Message info
+### Friends
 
-The TIXboxLiveFriend and TIXboxLiveMessage classes both have methods for downloading additional information for the object. In the messages case, this additional information is the actual message body, and if there's an image attachment, you can get that as well.
+There is a method for downloading profile information (real name, motto, location, bio, etc) in the TIXboxLiveFriend class.
+
+	[friend getGamerInfoWithCallback:^(NSError *error, NSString *name, NSString *motto, NSString *location, NSString *bio, NSString *gamerscore, NSString *info){
+		// Display the information.
+	}];
+	
+You can send friend requests from the engine with:
+
+	[engine sendFriendRequestToGamer:@"Some Gamertag" callback:^(NSError *error, NSString *gamertag) {
+		if (error) // Handle error
+	}];
+	
+### Messages
+
+To get the actual message body, and if there's an image attachment, you call a method in the TIXboxLiveMessage class.
 
 	[message getMessageWithBodyCallback:^(NSString * body){ 
 		// Display the message 
 	} imageCallback:^(UIImage * image){ 
-		// Display the image
+		// Display the image				
 	}];
+	
+Sending messages, like friend requests, is done on the TIXboxLiveEngine.
 
-In the friend case, there is a method for downloading profile information (real name, motto, location, bio, etc).
-
-	[friend getGamerInfoWithCallback:^(NSError *error, NSString *name, NSString *motto, NSString *location, NSString *bio, NSString *gamerscore, NSString *info){
-		// Display the information.
+	[engine sendMessage:@"Some message" recipients:[@"Gamertag", @"Gamertag 2"] callback:^(NSError * error, NSArray * recipients){
+		if (error) // Handle error
 	}];
 
 ### Tiles
