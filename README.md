@@ -4,8 +4,6 @@
 
 ## Usage
 
-The TIXboxLiveEngine class is your entry to the wonderful world of Xbox LIVE. It handles all primary connections (getting friends, games, achievements and messages).
-
 ### First things first
 
 Before you start trying to sign in, you need to tell the TIXboxLiveEngineCookieStorage where you want to save the cookie information (the official API is awful, so we scrape the site).
@@ -18,6 +16,8 @@ Also, if you're going to be using the TIXboxLiveEngineImageCache, you'll need to
 	[[TIXboxLiveEngineImageCache sharedCache] setCacheRootDirectory:cacheDirectory];
     
 ### Engine setup
+
+The TIXboxLiveEngine class is your entry to the wonderful world of Xbox LIVE. It handles all primary connections (getting friends, games, achievements and messages).
 
 Creating an instance is as you'd expect:
 
