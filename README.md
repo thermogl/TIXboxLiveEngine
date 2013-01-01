@@ -125,7 +125,7 @@ The return value of -getImageForURL:completion: indicates if the image is on dis
 
 **TIXboxLiveEngineImageCache will take care of cropping game box art to square images.**
 
-### Cross Platform Compatibility
+### Cross platform compatibility
 
 **The TIXboxLiveEngine is built to run on both Mac and iOS. Anywhere you see UIImage in the above code samples, NSImage can be used in its place on Mac.**
 
