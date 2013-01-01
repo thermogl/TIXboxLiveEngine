@@ -46,8 +46,8 @@
 		NSArray * rawMessages = [messageData safeObjectForKey:@"Messages"];
 		[rawMessages enumerateObjectsUsingBlock:^(NSDictionary * rawMessage, NSUInteger idx, BOOL *stop){
 			
-			TIXboxLiveMessageReadStatus status = [[rawMessage safeObjectForKey:@"HasBeenRead"] boolValue] ? 
-			TIXboxLiveMessageReadStatusRead : TIXboxLiveMessageReadStatusUnread;
+			TIXboxLiveMessageReadStatus status = ([[rawMessage safeObjectForKey:@"HasBeenRead"] boolValue] ?
+												  TIXboxLiveMessageReadStatusRead : TIXboxLiveMessageReadStatusUnread);
 			
 			TIXboxLiveMessageAttachmentType type = TIXboxLiveMessageAttachmentTypeNone;
 			if ([[rawMessage safeObjectForKey:@"HasImage"] boolValue]) type = TIXboxLiveMessageAttachmentTypeImage;
