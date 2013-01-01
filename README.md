@@ -129,6 +129,10 @@ The return value of -getImageForURL:completion: indicates if the image is on dis
 
 **The TIXboxLiveEngine is built to run on both Mac and iOS. Anywhere you see UIImage in the above code samples, NSImage can be used in its place on Mac.**
 
+### Stuff I've missed
+
+The engine does more than is mentioned here, but should be pretty self explanatory if you look at the header files. **Any questions can be directed to me on Twitter ([@thermogl](http://twitter.com/thermogl)).**
+
 ## ARC?
 
 Over my dead body.
