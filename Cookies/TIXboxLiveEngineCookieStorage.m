@@ -82,8 +82,8 @@
 			BOOL hasExpired = ([cookie.expiresDate timeIntervalSinceNow] < 0);
 			if (!hasExpired){
 				
-				BOOL matchesHost = ([cookie.domain isEqualToString:URL.host]);
-				if (!matchesHost) matchesHost = ([cookie.domain hasPrefix:@"."] && [[@"." stringByAppendingString:URL.host] hasSuffix:cookie.domain]);
+				BOOL matchesHost = ([cookie.domain isEqualToString:URL.host] ||
+									([cookie.domain hasPrefix:@"."] && [[@"." stringByAppendingString:URL.host] hasSuffix:cookie.domain]));
 				
 				BOOL matchesPath = ([URL.path hasPrefix:cookie.path]);
 				if (matchesHost && matchesPath) block(cookie);
