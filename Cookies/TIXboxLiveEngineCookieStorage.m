@@ -74,10 +74,9 @@
 	if (URL.host && cookieHash && block){
 		
 		NSMutableArray * allCookies = [[NSMutableArray alloc] initWithContentsOfFile:[self filePathForHash:cookieHash]];
-		NSMutableArray * expiredCookies = [[NSMutableArray alloc] init];
+		__block BOOL removedExpiredCookie = NO;
 		
-		[allCookies enumerateObjectsUsingBlock:^(NSDictionary * cookieProperties, NSUInteger idx, BOOL *stop){
-			
+		[allCookies enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSDictionary * cookieProperties, NSUInteger idx, BOOL *stop){
 			NSHTTPCookie * cookie = [[NSHTTPCookie alloc] initWithProperties:cookieProperties];
 			
 			BOOL hasExpired = ([cookie.expiresDate timeIntervalSinceNow] < 0);
@@ -87,23 +86,18 @@
 				if (!matchesHost) matchesHost = ([cookie.domain hasPrefix:@"."] && [[@"." stringByAppendingString:URL.host] hasSuffix:cookie.domain]);
 				
 				BOOL matchesPath = ([URL.path hasPrefix:cookie.path]);
-				
 				if (matchesHost && matchesPath) block(cookie);
 			}
 			else
 			{
-				[expiredCookies addObject:cookieProperties];
+				[allCookies removeObject:cookieProperties];
+				removedExpiredCookie = YES;
 			}
 			
 			[cookie release];
 		}];
 		
-		if (expiredCookies.count){
-			[allCookies removeObjectsInArray:expiredCookies];
-			[allCookies writeToFile:[self filePathForHash:cookieHash] atomically:YES];
-		}
-		
-		[expiredCookies release];
+		if (removedExpiredCookie) [allCookies writeToFile:[self filePathForHash:cookieHash] atomically:YES];
 		[allCookies release];
 	}
 }

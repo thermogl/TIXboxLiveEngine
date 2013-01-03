@@ -22,9 +22,11 @@ typedef void (^TIXboxLiveEngineImageCacheCompletionBlock)(NSImage * image, NSURL
 	BOOL emptyingDiskCache;
 	
 	NSString * cacheRootDirectory;
+	BOOL cropsGameBoxArt;
 }
 
 @property (nonatomic, copy) NSString * cacheRootDirectory;
+@property (nonatomic, assign) BOOL cropsGameBoxArt;
 
 + (TIXboxLiveEngineImageCache *)sharedCache;
 

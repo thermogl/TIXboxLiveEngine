@@ -25,6 +25,7 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 
 @implementation TIXboxLiveEngineImageCache
 @synthesize cacheRootDirectory;
+@synthesize cropsGameBoxArt;
 
 #pragma mark - Instance Methods
 - (id)init {
@@ -35,6 +36,7 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 		processingQueue = dispatch_queue_create("com.TIXboxLiveEngineImageCache.ProcessingQueue", NULL);
 		ioQueue = dispatch_queue_create("com.TIXboxLiveEngineImageCache.IOQueue", NULL);
 		emptyingDiskCache = NO;
+		cropsGameBoxArt = YES;
 #if TARGET_OS_IPHONE
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(emptyMemoryCache) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
 #endif
@@ -199,7 +201,7 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 	if (tileImage){
 		
 		CGFloat scale = tileImage.size.width / tileImage.size.height;
-		if (scale < 0.74 && scale > 0.7){
+		if (cropsGameBoxArt && scale < 0.74 && scale > 0.7){
 			
 			dispatch_async(processingQueue, ^{
 				CGFloat xValue = tileImage.size.height / 8;
