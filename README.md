@@ -103,7 +103,7 @@ To get the actual message body, and if there's an image attachment, you call a m
 	
 Sending messages, like friend requests, is done on the TIXboxLiveEngine.
 
-	[engine sendMessage:@"Some message" recipients:[@"Gamertag", @"Gamertag 2"] callback:^(NSError * error, NSArray * recipients){
+	[engine sendMessage:@"Some message" recipients:@[@"Gamertag", @"Gamertag 2"] callback:^(NSError * error, NSArray * recipients){
 		if (error) // Handle error
 	}];
 
