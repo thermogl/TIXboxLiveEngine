@@ -24,19 +24,7 @@ typedef enum {
 typedef void (^TIXboxLiveFriendGamerInfoBlock)(NSError * error, NSString * name, NSString * motto, 
 											   NSString * location, NSString * bio, NSString * gamerscore, NSString * info);
 
-@interface TIXboxLiveFriend : TIXboxLiveEngineCookieBase <NSCoding, NSCopying> {
-
-	NSString * gamertag;
-	NSString * info;
-	TIXboxLiveFriendStatus status;
-	NSURL * tileURL;
-	NSURL * avatarURL;
-	TIXboxLiveFriendRequestType friendRequestType;
-	BOOL isOnFriendsList;
-	
-	NSMutableDictionary * returnDataDict;
-}
-
+@interface TIXboxLiveFriend : TIXboxLiveEngineCookieBase <NSCoding, NSCopying>
 @property (nonatomic, copy) NSString * gamertag;
 @property (nonatomic, copy) NSString * info;
 @property (nonatomic, assign) TIXboxLiveFriendStatus status;

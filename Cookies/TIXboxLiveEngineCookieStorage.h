@@ -7,10 +7,7 @@
 //
 
 typedef void (^TIXboxLiveEngineCookieBlock)(NSHTTPCookie * cookie);
-@interface TIXboxLiveEngineCookieStorage : NSObject {
-	NSString * cookieRootDirectory;
-}
-
+@interface TIXboxLiveEngineCookieStorage : NSObject
 @property (nonatomic, copy) NSString * cookieRootDirectory;
 
 + (TIXboxLiveEngineCookieStorage *)sharedCookieStorage;

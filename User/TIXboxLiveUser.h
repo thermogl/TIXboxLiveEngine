@@ -14,25 +14,7 @@ extern NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationN
 typedef void (^TIXboxLiveUserProfileBlock)(NSError * error);
 
 @class TIXboxLiveFriend;
-@interface TIXboxLiveUser : TIXboxLiveEngineCookieBase <NSCoding> {
-	
-	NSString * gamertag;
-	NSString * gamerscore;
-	
-	NSString * realName;
-	NSString * motto;
-	NSString * location;
-	NSString * bio;
-	
-	NSString * oldName;
-	NSString * oldMotto;
-	NSString * oldLocation;
-	NSString * oldBio;
-	
-	NSURL * tileURL;
-	NSMutableDictionary * returnDataDict;
-}
-
+@interface TIXboxLiveUser : TIXboxLiveEngineCookieBase <NSCoding>
 @property (nonatomic, copy) NSString * gamertag;
 @property (nonatomic, copy) NSString * gamerscore;
 @property (nonatomic, copy) NSString * realName;

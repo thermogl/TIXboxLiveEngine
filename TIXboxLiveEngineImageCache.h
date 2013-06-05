@@ -12,19 +12,7 @@ typedef void (^TIXboxLiveEngineImageCacheCompletionBlock)(UIImage * image, NSURL
 typedef void (^TIXboxLiveEngineImageCacheCompletionBlock)(NSImage * image, NSURL * URL);
 #endif
 
-@interface TIXboxLiveEngineImageCache : NSObject {
-	
-	NSMutableDictionary	* returnDataDict;
-	NSMutableDictionary * memoryCache;
-	
-	dispatch_queue_t processingQueue;
-	dispatch_queue_t ioQueue;
-	BOOL emptyingDiskCache;
-	
-	NSString * cacheRootDirectory;
-	BOOL cropsGameBoxArt;
-}
-
+@interface TIXboxLiveEngineImageCache : NSObject
 @property (nonatomic, copy) NSString * cacheRootDirectory;
 @property (nonatomic, assign) BOOL cropsGameBoxArt;
 

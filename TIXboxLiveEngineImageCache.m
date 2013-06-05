@@ -23,20 +23,27 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 - (void)writeImageData:(NSData *)imageData image:(id)image toPathWithKey:(NSString *)key completion:(dispatch_block_t)completion;
 @end
 
-@implementation TIXboxLiveEngineImageCache
-@synthesize cacheRootDirectory;
-@synthesize cropsGameBoxArt;
+@implementation TIXboxLiveEngineImageCache {
+	NSMutableDictionary	* _returnDataDict;
+	NSMutableDictionary * _memoryCache;
+	
+	dispatch_queue_t _processingQueue;
+	dispatch_queue_t _ioQueue;
+	BOOL _emptyingDiskCache;
+}
+@synthesize cacheRootDirectory = _cacheRootDirectory;
+@synthesize cropsGameBoxArt = _cropsGameBoxArt;
 
 #pragma mark - Instance Methods
 - (id)init {
 	
 	if ((self = [super init])){
-		memoryCache	= [[NSMutableDictionary alloc] init];
-		returnDataDict = [[NSMutableDictionary alloc] init];
-		processingQueue = dispatch_queue_create("com.TIXboxLiveEngineImageCache.ProcessingQueue", NULL);
-		ioQueue = dispatch_queue_create("com.TIXboxLiveEngineImageCache.IOQueue", NULL);
-		emptyingDiskCache = NO;
-		cropsGameBoxArt = YES;
+		_memoryCache	= [[NSMutableDictionary alloc] init];
+		_returnDataDict = [[NSMutableDictionary alloc] init];
+		_processingQueue = dispatch_queue_create("com.TIXboxLiveEngineImageCache.ProcessingQueue", NULL);
+		_ioQueue = dispatch_queue_create("com.TIXboxLiveEngineImageCache.IOQueue", NULL);
+		_emptyingDiskCache = NO;
+		_cropsGameBoxArt = YES;
 #if TARGET_OS_IPHONE
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(emptyMemoryCache) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
 #endif
@@ -50,13 +57,13 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 	id image = nil;
 	BOOL needsDownload = YES;
 	
-	if (URL && !emptyingDiskCache){
+	if (URL && !_emptyingDiskCache){
 		
 		needsDownload = NO;
 		NSString * cacheKey = [self cacheKeyForURL:URL];
 		NSString * filePath = [self filePathForKey:cacheKey];
 		
-		if (!(image = [memoryCache objectForKey:cacheKey])){
+		if (!(image = [_memoryCache objectForKey:cacheKey])){
 			needsDownload = YES;
 			
 			NSDictionary * attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:NULL];
@@ -84,17 +91,17 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 	
 	if (URL){
 		NSString * cacheKey = [self cacheKeyForURL:URL];
-		[memoryCache removeObjectForKey:cacheKey];
+		[_memoryCache removeObjectForKey:cacheKey];
 		[[NSFileManager defaultManager] removeItemAtPath:[self filePathForKey:cacheKey] error:NULL];
 	}
 }
 
 - (void)emptyDiskCache {
 	
-	if (!emptyingDiskCache){
-		dispatch_async(ioQueue, ^{
+	if (!_emptyingDiskCache){
+		dispatch_async(_ioQueue, ^{
 			
-			emptyingDiskCache = YES;
+			_emptyingDiskCache = YES;
 			
 			NSString * directoryPath = [[self filePathForKey:@""] stringByDeletingLastPathComponent];
 			NSFileManager * fileManager = [[NSFileManager alloc] init];
@@ -105,7 +112,7 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 				if ([file contains:@".xboximage"]) [[NSFileManager defaultManager] removeItemAtPath:[directoryPath stringByAppendingFormat:@"/%@", file] error:NULL];
 			}
 			
-			emptyingDiskCache = NO;
+			_emptyingDiskCache = NO;
 			[fileManager release];
 		});
 		
@@ -114,7 +121,7 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 }
 
 - (void)emptyMemoryCache {
-	[memoryCache removeAllObjects];
+	[_memoryCache removeAllObjects];
 }
 
 #pragma mark - Private Helpers
@@ -128,19 +135,19 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 }
 
 - (NSString *)filePathForKey:(NSString *)key {
-	return [cacheRootDirectory stringByAppendingFormat:@"%@.xboximage", key];
+	return [_cacheRootDirectory stringByAppendingFormat:@"%@.xboximage", key];
 }
 
 - (void)storeImageInMemoryCache:(id)image key:(NSString *)key {
 	
-	if (memoryCache.allKeys.count >= kTIXboxLiveEngineMaxImageCount) [memoryCache removeObjectForKey:[memoryCache.allKeys lastObject]];
-	if (image && key) [memoryCache setObject:image forKey:key];
+	if (_memoryCache.allKeys.count >= kTIXboxLiveEngineMaxImageCount) [_memoryCache removeObjectForKey:[_memoryCache.allKeys lastObject]];
+	if (image && key) [_memoryCache setObject:image forKey:key];
 }
 
 - (void)writeImageData:(NSData *)imageData image:(id)image toPathWithKey:(NSString *)key completion:(dispatch_block_t)completion {
 	[self storeImageInMemoryCache:image key:key];
 	
-	dispatch_async(ioQueue, ^{
+	dispatch_async(_ioQueue, ^{
 		[imageData writeToFile:[self filePathForKey:key] atomically:YES];
 		if (completion) dispatch_async(dispatch_get_main_queue(), ^{completion();});
 	});
@@ -162,7 +169,7 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 	
 	if (connection){
 		NSMutableData * data = [[NSMutableData alloc] init];
-		[returnDataDict setObject:data forKey:[NSValue valueWithPointer:connection]];
+		[_returnDataDict setObject:data forKey:[NSValue valueWithPointer:connection]];
 		[data release];
 	}
 	
@@ -172,15 +179,15 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 
 #pragma mark - NSURLConnection Delegate
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-	[returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
+	[_returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-	[(NSMutableData *)[returnDataDict objectForKey:[NSValue valueWithPointer:connection]] appendData:data];
+	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithPointer:connection]] appendData:data];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
-	[(NSMutableData *)[returnDataDict objectForKey:[NSValue valueWithPointer:connection]] setLength:0];
+	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithPointer:connection]] setLength:0];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
@@ -188,7 +195,7 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 	TIXboxLiveEngineConnection * imageConnection = (TIXboxLiveEngineConnection *)connection;
 	TIXboxLiveEngineImageCacheCompletionBlock completionBlock = (TIXboxLiveEngineImageCacheCompletionBlock)imageConnection.callback;
 	
-	NSData * returnData = [returnDataDict objectForKey:[NSValue valueWithPointer:connection]];
+	NSData * returnData = [_returnDataDict objectForKey:[NSValue valueWithPointer:connection]];
 	NSString * cacheKey = [imageConnection.userInfo objectForKey:kTIXboxLiveEngineConnectionCacheKeyKey];
 	NSURL * URL = [imageConnection.userInfo objectForKey:kTIXboxLiveEngineConnectionURLKey];
 	
@@ -201,9 +208,9 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 	if (tileImage){
 		
 		CGFloat scale = tileImage.size.width / tileImage.size.height;
-		if (cropsGameBoxArt && scale < 0.74 && scale > 0.7){
+		if (_cropsGameBoxArt && scale < 0.74 && scale > 0.7){
 			
-			dispatch_async(processingQueue, ^{
+			dispatch_async(_processingQueue, ^{
 				CGFloat xValue = tileImage.size.height / 8;
 #if TARGET_OS_IPHONE
 				UIImage * croppedImage = [tileImage imageCroppedToRect:(CGRect){{0, xValue}, {tileImage.size.width, tileImage.size.width}}];
@@ -226,16 +233,16 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 	}
 	
 	[tileImage release];
-	[returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
+	[_returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
 }
 
 #pragma mark - Memory Management
 - (void)dealloc {
-	[returnDataDict release];
-	[memoryCache release];
-	dispatch_release(processingQueue);
-	dispatch_release(ioQueue);
-	[cacheRootDirectory release];
+	[_returnDataDict release];
+	[_memoryCache release];
+	dispatch_release(_processingQueue);
+	dispatch_release(_ioQueue);
+	[_cacheRootDirectory release];
 	[super dealloc];
 }
 

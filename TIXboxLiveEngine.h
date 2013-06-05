@@ -36,32 +36,7 @@ typedef void (^TIXboxLiveEngineSignOutBlock)(BOOL userInstigated);
 typedef void (^TIXboxLiveEngineLogBlock)(TIXboxLiveEngineConnection * connection, NSString * response);
 
 @class TIXboxLiveGame;
-@interface TIXboxLiveEngine : NSObject {
-	
-	TIXboxLiveUser * user;
-	
-	NSMutableDictionary * returnDataDict;
-	NSMutableArray * connectionQueue;
-	NSMutableArray * parsers;
-	
-	BOOL signedIn;
-	BOOL signingIn;
-	BOOL loadingFriends;
-	BOOL loadingGames;
-	BOOL loadingMessages;
-	BOOL loadingRecentPlayers;
-	
-	NSString * email;
-	NSString * password;
-	NSString * cookieHash;
-	
-	NSString * verificationToken;
-	NSInteger verificationTokenAttemptCount;
-	
-	TIXboxLiveEngineSignOutBlock signOutBlock;
-	TIXboxLiveEngineLogBlock logBlock;
-}
-
+@interface TIXboxLiveEngine : NSObject
 @property (nonatomic, retain) TIXboxLiveUser * user;
 @property (nonatomic, readonly) BOOL signedIn;
 @property (nonatomic, readonly) BOOL signingIn;

@@ -14,25 +14,25 @@
 @end
 
 @implementation TIXboxLiveGame
-@synthesize title;
-@synthesize titleID;
-@synthesize unlockedScore;
-@synthesize totalScore;
-@synthesize unlockedAchievements;
-@synthesize totalAchievements;
-@synthesize lastPlayedDate;
-@synthesize tileURL;
-@synthesize gamertagComparedWith;
-@synthesize relativeDateStamp;
+@synthesize title = _title;
+@synthesize titleID = _titleID;
+@synthesize unlockedScore = _unlockedScore;
+@synthesize totalScore = _totalScore;
+@synthesize unlockedAchievements = _unlockedAchievements;
+@synthesize totalAchievements = _totalAchievements;
+@synthesize lastPlayedDate = _lastPlayedDate;
+@synthesize tileURL = _tileURL;
+@synthesize gamertagComparedWith = _gamertagComparedWith;
+@synthesize relativeDateStamp = _relativeDateStamp;
 
 - (id)initWithTitle:(NSString *)aTitle titleID:(NSString *)anID lastPlayedDate:(NSDate *)aDate tileURL:(NSURL *)aURL {
 	
 	if ((self = [super init])){
 		
-		title = [aTitle copy];
-		titleID = [anID copy];
-		lastPlayedDate = [aDate copy];
-		tileURL = [aURL copy];
+		_title = [aTitle copy];
+		_titleID = [anID copy];
+		_lastPlayedDate = [aDate copy];
+		_tileURL = [aURL copy];
 	}
 	
 	return self;
@@ -42,14 +42,14 @@
 	
 	if ((self = [self init])){
 		
-		title = [[aDecoder decodeObjectForKey:@"Title"] copy];
-		titleID = [[aDecoder decodeObjectForKey:@"TitleID"] copy];
-		unlockedScore = [[aDecoder decodeObjectForKey:@"UnlockedScore"] integerValue];
-		totalScore = [[aDecoder decodeObjectForKey:@"TotalScore"] integerValue];
-		unlockedAchievements = [[aDecoder decodeObjectForKey:@"UnlockedAchievements"] integerValue];
-		totalAchievements = [[aDecoder decodeObjectForKey:@"TotalAchievements"] integerValue];
-		lastPlayedDate = [[aDecoder decodeObjectForKey:@"LastPlayedDate"] copy];
-		tileURL = [[aDecoder decodeObjectForKey:@"TileURL"] copy];
+		_title = [[aDecoder decodeObjectForKey:@"Title"] copy];
+		_titleID = [[aDecoder decodeObjectForKey:@"TitleID"] copy];
+		_unlockedScore = [[aDecoder decodeObjectForKey:@"UnlockedScore"] integerValue];
+		_totalScore = [[aDecoder decodeObjectForKey:@"TotalScore"] integerValue];
+		_unlockedAchievements = [[aDecoder decodeObjectForKey:@"UnlockedAchievements"] integerValue];
+		_totalAchievements = [[aDecoder decodeObjectForKey:@"TotalAchievements"] integerValue];
+		_lastPlayedDate = [[aDecoder decodeObjectForKey:@"LastPlayedDate"] copy];
+		_tileURL = [[aDecoder decodeObjectForKey:@"TileURL"] copy];
 	}
 	
 	return self;
@@ -57,22 +57,22 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
 	
-	[aCoder encodeObject:title forKey:@"Title"];
-	[aCoder encodeObject:titleID forKey:@"TitleID"];
-	[aCoder encodeObject:[NSNumber numberWithInteger:unlockedScore] forKey:@"UnlockedScore"];
-	[aCoder encodeObject:[NSNumber numberWithInteger:totalScore] forKey:@"TotalScore"];
-	[aCoder encodeObject:[NSNumber numberWithInteger:unlockedAchievements] forKey:@"UnlockedAchievements"];
-	[aCoder encodeObject:[NSNumber numberWithInteger:totalAchievements] forKey:@"TotalAchievements"];
-	[aCoder encodeObject:lastPlayedDate forKey:@"LastPlayedDate"];
-	[aCoder encodeObject:tileURL forKey:@"TileURL"];
+	[aCoder encodeObject:_title forKey:@"Title"];
+	[aCoder encodeObject:_titleID forKey:@"TitleID"];
+	[aCoder encodeObject:[NSNumber numberWithInteger:_unlockedScore] forKey:@"UnlockedScore"];
+	[aCoder encodeObject:[NSNumber numberWithInteger:_totalScore] forKey:@"TotalScore"];
+	[aCoder encodeObject:[NSNumber numberWithInteger:_unlockedAchievements] forKey:@"UnlockedAchievements"];
+	[aCoder encodeObject:[NSNumber numberWithInteger:_totalAchievements] forKey:@"TotalAchievements"];
+	[aCoder encodeObject:_lastPlayedDate forKey:@"LastPlayedDate"];
+	[aCoder encodeObject:_tileURL forKey:@"TileURL"];
 }
 
 - (NSString *)relativeDateStamp {
 	
-	if (!relativeDateStamp) 
-		relativeDateStamp = [[lastPlayedDate relativeDateString] copy];
+	if (!_relativeDateStamp) 
+		_relativeDateStamp = [[_lastPlayedDate relativeDateString] copy];
 	
-	return relativeDateStamp;
+	return _relativeDateStamp;
 }
 
 - (BOOL)isEqual:(id)object {
@@ -81,24 +81,24 @@
 }
 
 - (BOOL)isEqualToGame:(TIXboxLiveGame *)game {
-	return (self == game || [titleID isEqualToString:game.titleID]);
+	return (self == game || [_titleID isEqualToString:game.titleID]);
 }
 
 - (NSComparisonResult)compare:(TIXboxLiveGame *)aGame {
-	return [title caseInsensitiveCompare:aGame.title];
+	return [_title caseInsensitiveCompare:aGame.title];
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat:@"<TIXboxLiveGame %p; title = \"%@\"; titleID = \"%@\">", self, title, titleID];
+	return [NSString stringWithFormat:@"<TIXboxLiveGame %p; title = \"%@\"; titleID = \"%@\">", self, _title, _titleID];
 }
 
 - (void)dealloc {
-	[title release];
-	[titleID release];
-	[lastPlayedDate release];
-	[gamertagComparedWith release];
-	[relativeDateStamp release];
-	[tileURL release];
+	[_title release];
+	[_titleID release];
+	[_lastPlayedDate release];
+	[_gamertagComparedWith release];
+	[_relativeDateStamp release];
+	[_tileURL release];
 	[super dealloc];
 }
 

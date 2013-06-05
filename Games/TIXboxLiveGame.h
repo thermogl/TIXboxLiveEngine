@@ -6,20 +6,7 @@
 //  Copyright 2010 Tom Irving. All rights reserved.
 //
 
-@interface TIXboxLiveGame : NSObject <NSCoding> {
-
-	NSString * title;
-	NSString * titleID;
-	NSInteger unlockedScore;
-	NSInteger totalScore;
-	NSInteger unlockedAchievements;
-	NSInteger totalAchievements;
-	NSDate * lastPlayedDate;
-	NSURL * tileURL;
-	NSString * gamertagComparedWith;
-	NSString * relativeDateStamp;
-}
-
+@interface TIXboxLiveGame : NSObject <NSCoding>
 @property (nonatomic, copy) NSString * title;
 @property (nonatomic, copy) NSString * titleID;
 @property (nonatomic, assign) NSInteger unlockedScore;

@@ -14,7 +14,7 @@
 @end
 
 @implementation TIXboxLiveEngineCookieStorage
-@synthesize cookieRootDirectory;
+@synthesize cookieRootDirectory = _cookieRootDirectory;
 
 - (void)addCookiesFromResponse:(NSURLResponse *)response hash:(NSString *)cookieHash {
 	
@@ -103,11 +103,11 @@
 }
 
 - (NSString *)filePathForHash:(NSString *)hash {
-	return [cookieRootDirectory stringByAppendingFormat:@"%@.cookies", hash];
+	return [_cookieRootDirectory stringByAppendingFormat:@"%@.cookies", hash];
 }
 
 - (void)dealloc {
-	[cookieRootDirectory release];
+	[_cookieRootDirectory release];
 	[super dealloc];
 }
 

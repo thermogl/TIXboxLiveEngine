@@ -20,20 +20,22 @@
 - (void)notifyDelegateOfGamerInfo:(NSDictionary *)gamerInfo forConnection:(TIXboxLiveEngineConnection *)connection;
 @end
 
-@implementation TIXboxLiveFriend
-@synthesize gamertag;
-@synthesize info;
-@synthesize status;
-@synthesize avatarURL;
-@synthesize isOnFriendsList;
-@synthesize friendRequestType;
-@synthesize tileURL;
+@implementation TIXboxLiveFriend {	
+	NSMutableDictionary * _returnDataDict;
+}
+@synthesize gamertag = _gamertag;
+@synthesize info = _info;
+@synthesize status = _status;
+@synthesize avatarURL = _avatarURL;
+@synthesize isOnFriendsList = _isOnFriendsList;
+@synthesize friendRequestType = _friendRequestType;
+@synthesize tileURL = _tileURL;
 
 #pragma mark - Init / Copy Methods
 - (id)init {
 	
 	if ((self = [super init])){
-		returnDataDict = [[NSMutableDictionary alloc] init];
+		_returnDataDict = [[NSMutableDictionary alloc] init];
 	}
 	
 	return self;
@@ -43,13 +45,13 @@
 	
 	if ((self = [self init])){
 		
-		gamertag = [aGamertag copy];
-		info = [someInfo copy];
-		status = someStatus;
-		tileURL = [aURL copy];
-		avatarURL = [[NSURL alloc] initWithString:[NSString stringWithFormat:@"http://avatar.xboxlive.com/avatar/%@/avatar-body.png", gamertag.encodedURLString]];
-		isOnFriendsList = YES;
-		friendRequestType = TIXboxLiveFriendRequestTypeNone;
+		_gamertag = [aGamertag copy];
+		_info = [someInfo copy];
+		_status = someStatus;
+		_tileURL = [aURL copy];
+		_avatarURL = [[NSURL alloc] initWithString:[NSString stringWithFormat:@"http://avatar.xboxlive.com/avatar/%@/avatar-body.png", _gamertag.encodedURLString]];
+		_isOnFriendsList = YES;
+		_friendRequestType = TIXboxLiveFriendRequestTypeNone;
 	}
 	
 	return self;
@@ -59,50 +61,50 @@
 	
 	if ((self = [self init])){
 		
-		gamertag = [[aDecoder decodeObjectForKey:@"Gamertag"] copy];
-		info = @"Waiting for refresh";
-		status = TIXboxLiveFriendStatusUnknown;
-		avatarURL = [[aDecoder decodeObjectForKey:@"AvatarURL"] copy];
-		isOnFriendsList = [aDecoder decodeBoolForKey:@"IsOnFriendsList"];
-		friendRequestType = TIXboxLiveFriendRequestTypeNone;
-		tileURL = [[aDecoder decodeObjectForKey:@"TileURL"] copy];
+		_gamertag = [[aDecoder decodeObjectForKey:@"Gamertag"] copy];
+		_info = @"Waiting for refresh";
+		_status = TIXboxLiveFriendStatusUnknown;
+		_avatarURL = [[aDecoder decodeObjectForKey:@"AvatarURL"] copy];
+		_isOnFriendsList = [aDecoder decodeBoolForKey:@"IsOnFriendsList"];
+		_friendRequestType = TIXboxLiveFriendRequestTypeNone;
+		_tileURL = [[aDecoder decodeObjectForKey:@"TileURL"] copy];
 	}
 	
 	return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-	[aCoder encodeObject:gamertag forKey:@"Gamertag"];
-	[aCoder encodeBool:isOnFriendsList forKey:@"IsOnFriendsList"];
-	[aCoder encodeObject:tileURL forKey:@"TileURL"];
-	[aCoder encodeObject:avatarURL forKey:@"AvatarURL"];
+	[aCoder encodeObject:_gamertag forKey:@"Gamertag"];
+	[aCoder encodeBool:_isOnFriendsList forKey:@"IsOnFriendsList"];
+	[aCoder encodeObject:_tileURL forKey:@"TileURL"];
+	[aCoder encodeObject:_avatarURL forKey:@"AvatarURL"];
 }
 
 - (id)copyWithZone:(NSZone *)zone {
 	
 	TIXboxLiveFriend * friend = [[[self class] allocWithZone:zone] init];
-	[friend setGamertag:gamertag];
-	[friend setInfo:info];
-	[friend setStatus:status];
-	[friend setAvatarURL:avatarURL];
-	[friend setIsOnFriendsList:isOnFriendsList];
-	[friend setTileURL:tileURL];
+	[friend setGamertag:_gamertag];
+	[friend setInfo:_info];
+	[friend setStatus:_status];
+	[friend setAvatarURL:_avatarURL];
+	[friend setIsOnFriendsList:_isOnFriendsList];
+	[friend setTileURL:_tileURL];
 	
 	return friend;
 }
 
 - (NSComparisonResult)compare:(TIXboxLiveFriend *)aFriend {
 	
-	if (status == aFriend.status){
+	if (_status == aFriend.status){
 		return [self statusInsensitiveCompare:aFriend];
 	}
-	else if (status == TIXboxLiveFriendStatusRequest){
+	else if (_status == TIXboxLiveFriendStatusRequest){
 		return NSOrderedAscending;
 	}
-	else if (status == TIXboxLiveFriendStatusOffline){
+	else if (_status == TIXboxLiveFriendStatusOffline){
 		return NSOrderedDescending;
 	}
-	else if (status == TIXboxLiveFriendStatusOnline){
+	else if (_status == TIXboxLiveFriendStatusOnline){
 		if (aFriend.status == TIXboxLiveFriendStatusRequest) return NSOrderedDescending;
 		if (aFriend.status == TIXboxLiveFriendStatusOffline) return NSOrderedAscending;
 	}
@@ -111,7 +113,7 @@
 }
 
 - (NSComparisonResult)statusInsensitiveCompare:(TIXboxLiveFriend *)aFriend {
-	return [gamertag caseInsensitiveCompare:aFriend.gamertag];
+	return [_gamertag caseInsensitiveCompare:aFriend.gamertag];
 }
 
 + (TIXboxLiveFriend *)friendWithGamertag:(NSString *)aGamertag {
@@ -131,7 +133,7 @@
 	
 	if (connection){
 		NSMutableData * data = [[NSMutableData alloc] init];
-		[returnDataDict setObject:data forKey:[NSValue valueWithPointer:connection]];
+		[_returnDataDict setObject:data forKey:[NSValue valueWithPointer:connection]];
 		[data release];
 	}
 	
@@ -148,7 +150,7 @@
 	[request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
 	[request setDefaultsForHash:self.cookieHash];
 	
-	TIURLRequestParameter * tagParameter = [[TIURLRequestParameter alloc] initWithName:@"gamerTag" value:gamertag];
+	TIURLRequestParameter * tagParameter = [[TIURLRequestParameter alloc] initWithName:@"gamerTag" value:_gamertag];
 	TIURLRequestParameter * verificationParameter = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:self.verificationToken];
 	
 	NSArray * params = [[NSArray alloc] initWithObjects:tagParameter, verificationParameter, nil];
@@ -169,7 +171,7 @@
 
 - (void)getGamerInfoWithCallback:(TIXboxLiveFriendGamerInfoBlock)callback {
 	
-	NSString * gamerAddress = [@"https://live.xbox.com/en-GB/MyXbox/Profile?gamertag=" stringByAppendingString:gamertag.encodedURLParameterString];
+	NSString * gamerAddress = [@"https://live.xbox.com/en-GB/MyXbox/Profile?gamertag=" stringByAppendingString:_gamertag.encodedURLParameterString];
 	
 	NSURL * URL = [[NSURL alloc] initWithString:gamerAddress];
 	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:URL];
@@ -188,21 +190,21 @@
 		if (infoBlock) infoBlock(error, nil, nil, nil, nil, nil, nil);
 	}
 	
-	[returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
+	[_returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-	[(NSMutableData *)[returnDataDict objectForKey:[NSValue valueWithPointer:connection]] appendData:data];
+	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithPointer:connection]] appendData:data];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
-	[(NSMutableData *)[returnDataDict objectForKey:[NSValue valueWithPointer:connection]] setLength:0];
+	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithPointer:connection]] setLength:0];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	
 	TIXboxLiveEngineConnection * xboxConnection = (TIXboxLiveEngineConnection *)connection;
-	NSData * returnData = [returnDataDict objectForKey:[NSValue valueWithPointer:connection]];
+	NSData * returnData = [_returnDataDict objectForKey:[NSValue valueWithPointer:connection]];
 	
 	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetFriendGamerInfo){
 		NSString * response = [[NSString alloc] initWithData:returnData encoding:NSUTF8StringEncoding];
@@ -210,7 +212,7 @@
 		[response release];
 	}
 	
-	[returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
+	[_returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
 }
 
 #pragma mark - Helpers
@@ -229,7 +231,7 @@
 	NSString * gamerscore = [gamerPage stringBetween:@"<div class=\"gamerscore\">" and:@"</div>"];
 	NSString * newInfo = [[gamerPage stringBetween:@"<div class=\"presence\">" and:@"</div>"] stringByCorrectingDateRelativeToLocale];
 	
-	if (!tileURL) tileURL = [[NSURL alloc] initWithString:[gamerPage stringBetween:@"<img class=\"gamerpic\" src=\"" and:@"\""]];
+	if (!_tileURL) _tileURL = [[NSURL alloc] initWithString:[gamerPage stringBetween:@"<img class=\"gamerpic\" src=\"" and:@"\""]];
 	
 	TIXboxLiveFriendGamerInfoBlock infoBlock = connection.callback;
 	if (infoBlock) dispatch_async_main_queue(^{infoBlock(nil, realName, motto, location, bio, gamerscore, newInfo);});
@@ -241,16 +243,16 @@
 #pragma mark - Gamer Methods
 - (NSString *)statusDescription {
 	
-	if (status == TIXboxLiveFriendStatusOnline) return @"Online";
-	else if (status == TIXboxLiveFriendStatusOffline) return @"Offline";
-	else if (status == TIXboxLiveFriendStatusRequest) return @"Pending";
+	if (_status == TIXboxLiveFriendStatusOnline) return @"Online";
+	else if (_status == TIXboxLiveFriendStatusOffline) return @"Offline";
+	else if (_status == TIXboxLiveFriendStatusRequest) return @"Pending";
 	else return @"Unknown";
 }
 
 - (BOOL)isEqual:(id)object {
 	
 	if ([object isKindOfClass:[TIXboxLiveMessage class]]){
-		return [gamertag.lowercaseString isEqualToString:((TIXboxLiveMessage *)object).sender.lowercaseString];
+		return [_gamertag.lowercaseString isEqualToString:((TIXboxLiveMessage *)object).sender.lowercaseString];
 	}
 	
 	if ([object isKindOfClass:[TIXboxLiveFriend class]]) return [self isEqualToFriend:object];
@@ -264,17 +266,17 @@
 }
 
 - (BOOL)hasGamertag:(NSString *)aGamertag {
-	return [gamertag.lowercaseString isEqualToString:aGamertag.lowercaseString];
+	return [_gamertag.lowercaseString isEqualToString:aGamertag.lowercaseString];
 }
 
 - (BOOL)removeFriend {
 	
 	NSString * removeAddress = @"https://live.xbox.com/en-GB/Friends/Remove";
 	
-	if (friendRequestType == TIXboxLiveFriendRequestTypeOutgoing)
+	if (_friendRequestType == TIXboxLiveFriendRequestTypeOutgoing)
 		removeAddress = @"https://live.xbox.com/en-GB/Friends/Cancel";
 	
-	if (friendRequestType == TIXboxLiveFriendRequestTypeIncoming)
+	if (_friendRequestType == TIXboxLiveFriendRequestTypeIncoming)
 		removeAddress = @"https://live.xbox.com/en-GB/Friends/Decline";
 	
 	return ([self postConnectionWithAddress:removeAddress] != nil);
@@ -291,13 +293,13 @@
 - (NSString *)game {
 	
 	NSString * game = @"";
-	if (status == TIXboxLiveFriendStatusOnline){
+	if (_status == TIXboxLiveFriendStatusOnline){
 		
-		game = [info stringBetween:@"playing " and:@" -"];
+		game = [_info stringBetween:@"playing " and:@" -"];
 		if (!game.isNotEmpty){
 			
-			NSRange gameRange = [info rangeOfString:@"playing "];
-			game = [[info substringFromIndex:(gameRange.location + gameRange.length)] stringByReplacingWeirdEncoding];
+			NSRange gameRange = [_info rangeOfString:@"playing "];
+			game = [[_info substringFromIndex:(gameRange.location + gameRange.length)] stringByReplacingWeirdEncoding];
 		}
 	}
 	
@@ -308,7 +310,7 @@
 	
 	if (oldFriend && ![self.game isEqualToString:@""]){
 		return (![self.game isEqualToString:oldFriend.game] && 
-				oldFriend.status == TIXboxLiveFriendStatusOnline && status == TIXboxLiveFriendStatusOnline);
+				oldFriend.status == TIXboxLiveFriendStatusOnline && _status == TIXboxLiveFriendStatusOnline);
 	}
 	
 	return NO;
@@ -318,8 +320,8 @@
 - (NSDictionary *)dictRepresentation {
 	
 	NSMutableDictionary * dict = [[NSMutableDictionary alloc] init];
-	[dict safelySetObject:gamertag forKey:@"Gamertag"];
-	[dict safelySetObject:info forKey:@"Info"];
+	[dict safelySetObject:_gamertag forKey:@"Gamertag"];
+	[dict safelySetObject:_info forKey:@"Info"];
 	
 	return [dict autorelease];
 }
@@ -329,11 +331,11 @@
 }
 
 - (void)dealloc {
-	[gamertag release];
-	[info release];
-	[avatarURL release];
-	[returnDataDict release];
-	[tileURL release];
+	[_gamertag release];
+	[_info release];
+	[_avatarURL release];
+	[_returnDataDict release];
+	[_tileURL release];
 	[super dealloc];
 }
 

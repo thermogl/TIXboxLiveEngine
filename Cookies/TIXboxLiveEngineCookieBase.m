@@ -9,12 +9,12 @@
 #import "TIXboxLiveEngineCookieBase.h"
 
 @implementation TIXboxLiveEngineCookieBase
-@synthesize cookieHash;
-@synthesize verificationToken;
+@synthesize cookieHash = _cookieHash;
+@synthesize verificationToken = _verificationToken;
 
 - (void)dealloc {
-	[cookieHash release];
-	[verificationToken release];
+	[_cookieHash release];
+	[_verificationToken release];
 	[super dealloc];
 }
 

@@ -6,12 +6,7 @@
 //  Copyright 2010 Tom Irving. All rights reserved.
 //
 
-@interface TIURLRequestParameter : NSObject {
-	
-    NSString * name;
-    NSString * value;
-}
-
+@interface TIURLRequestParameter : NSObject
 @property (nonatomic, copy) NSString * name;
 @property (nonatomic, copy) NSString * value;
 @property (nonatomic, readonly) NSString * safeURLRepresentation;

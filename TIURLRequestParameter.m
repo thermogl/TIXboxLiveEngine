@@ -10,30 +10,30 @@
 #import "TIXboxLiveEngineAdditions.h"
 
 @implementation TIURLRequestParameter
-@synthesize name;
-@synthesize value;
+@synthesize name = _name;
+@synthesize value = _value;
 
 - (id)initWithName:(NSString *)aName value:(NSString *)aValue {
 	
 	if ((self = [super init])){
-		name = [aName copy];
-		value = [aValue copy];
+		_name = [aName copy];
+		_value = [aValue copy];
 	}
 	
     return self;
 }
 
 - (NSString *)safeURLRepresentation {
-    return [NSString stringWithFormat:@"%@=%@", name.encodedURLParameterString, value.encodedURLParameterString];
+    return [NSString stringWithFormat:@"%@=%@", _name.encodedURLParameterString, _value.encodedURLParameterString];
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat:@"<URLRequestParameter %p; name = \"%@\"; value = \"%@\">", self, name, value];
+	return [NSString stringWithFormat:@"<URLRequestParameter %p; name = \"%@\"; value = \"%@\">", self, _name, _value];
 }
 
 - (void)dealloc {
-	[name release];
-	[value release];
+	[_name release];
+	[_value release];
 	[super dealloc];
 }
 

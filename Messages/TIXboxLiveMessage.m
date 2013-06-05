@@ -16,21 +16,23 @@
 - (void)addParametersToRequest:(NSMutableURLRequest *)request;
 @end
 
-@implementation TIXboxLiveMessage
-@synthesize messageID;
-@synthesize sender;
-@synthesize summary;
-@synthesize date;
-@synthesize readStatus;
-@synthesize body;
-@synthesize attachmentType;
-@synthesize relativeDateStamp;
-@synthesize fullDateStamp;
+@implementation TIXboxLiveMessage {
+	NSMutableDictionary * _returnDataDict;
+}
+@synthesize messageID = _messageID;
+@synthesize sender = _sender;
+@synthesize summary = _summary;
+@synthesize date = _date;
+@synthesize readStatus = _readStatus;
+@synthesize body = _body;
+@synthesize attachmentType = _attachmentType;
+@synthesize relativeDateStamp = _relativeDateStamp;
+@synthesize fullDateStamp = _fullDateStamp;
 
 - (id)init {
 	
 	if ((self = [super init])){
-		returnDataDict = [[NSMutableDictionary alloc] init];
+		_returnDataDict = [[NSMutableDictionary alloc] init];
 	}
 	
 	return self;
@@ -41,12 +43,12 @@
 	
 	if ((self = [self init])){
 		
-		messageID = [anID copy];
-		sender = [aSender copy];
-		summary = [aSummary copy];
-		date = [aDate copy];
-		readStatus = aStatus;
-		attachmentType = type;
+		_messageID = [anID copy];
+		_sender = [aSender copy];
+		_summary = [aSummary copy];
+		_date = [aDate copy];
+		_readStatus = aStatus;
+		_attachmentType = type;
 	}
 	
 	return self;
@@ -56,42 +58,42 @@
 	
 	if ((self = [self init])){
 		
-		messageID = [[aDecoder decodeObjectForKey:@"MessageID"] copy];
-		sender = [[aDecoder decodeObjectForKey:@"Sender"] copy];
-		summary = [[aDecoder decodeObjectForKey:@"Summary"] copy];
-		date = [[aDecoder decodeObjectForKey:@"Date"] copy];
-		readStatus = [aDecoder decodeIntegerForKey:@"ReadStatus"];
-		body = [[aDecoder decodeObjectForKey:@"Body"] copy];
-		attachmentType = [aDecoder decodeIntegerForKey:@"AttachmentType"];
+		_messageID = [[aDecoder decodeObjectForKey:@"MessageID"] copy];
+		_sender = [[aDecoder decodeObjectForKey:@"Sender"] copy];
+		_summary = [[aDecoder decodeObjectForKey:@"Summary"] copy];
+		_date = [[aDecoder decodeObjectForKey:@"Date"] copy];
+		_readStatus = [aDecoder decodeIntegerForKey:@"ReadStatus"];
+		_body = [[aDecoder decodeObjectForKey:@"Body"] copy];
+		_attachmentType = [aDecoder decodeIntegerForKey:@"AttachmentType"];
 	}
 	
 	return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-	[aCoder encodeObject:messageID forKey:@"MessageID"];
-	[aCoder encodeObject:sender forKey:@"Sender"];
-	[aCoder encodeObject:summary forKey:@"Summary"];
-	[aCoder encodeObject:date forKey:@"Date"];
-	[aCoder encodeInteger:readStatus forKey:@"ReadStatus"];
-	[aCoder encodeObject:body forKey:@"Body"];
-	[aCoder encodeInteger:attachmentType forKey:@"AttachmentType"];
+	[aCoder encodeObject:_messageID forKey:@"MessageID"];
+	[aCoder encodeObject:_sender forKey:@"Sender"];
+	[aCoder encodeObject:_summary forKey:@"Summary"];
+	[aCoder encodeObject:_date forKey:@"Date"];
+	[aCoder encodeInteger:_readStatus forKey:@"ReadStatus"];
+	[aCoder encodeObject:_body forKey:@"Body"];
+	[aCoder encodeInteger:_attachmentType forKey:@"AttachmentType"];
 }
 
 - (NSString *)relativeDateStamp {
 	
-	if (!relativeDateStamp)
-		relativeDateStamp = [date.relativeDateString retain];
+	if (!_relativeDateStamp)
+		_relativeDateStamp = [_date.relativeDateString retain];
 	
-	return relativeDateStamp;
+	return _relativeDateStamp;
 }
 
 - (NSString *)fullDateStamp {
 	
-	if (!fullDateStamp)
-		fullDateStamp = [date.fullDateString retain];
+	if (!_fullDateStamp)
+		_fullDateStamp = [_date.fullDateString retain];
 	
-	return fullDateStamp;
+	return _fullDateStamp;
 }
 
 - (BOOL)isEqual:(id)object {
@@ -107,11 +109,11 @@
 }
 
 - (BOOL)hasMessageID:(NSString *)anID {
-	return [messageID isEqualToString:anID];
+	return [_messageID isEqualToString:anID];
 }
 
 - (BOOL)isFriendRequest {
-	return ([summary.lowercaseString contains:@"wants to be your friend"]);
+	return ([_summary.lowercaseString contains:@"wants to be your friend"]);
 }
 
 - (TIXboxLiveEngineConnection *)connectionWithRequest:(NSMutableURLRequest *)request type:(TIXboxLiveEngineConnectionType)type {
@@ -123,7 +125,7 @@
 	
 	if (connection){
 		NSMutableData * data = [[NSMutableData alloc] init];
-		[returnDataDict setObject:data forKey:[NSValue valueWithPointer:connection]];
+		[_returnDataDict setObject:data forKey:[NSValue valueWithPointer:connection]];
 		[data release];
 	}
 	
@@ -135,7 +137,7 @@
 	
 	NSMutableArray * parameters = [[NSMutableArray alloc] init];
 	
-	TIURLRequestParameter * parameter = [[TIURLRequestParameter alloc] initWithName:@"msgID" value:messageID];
+	TIURLRequestParameter * parameter = [[TIURLRequestParameter alloc] initWithName:@"msgID" value:_messageID];
 	[parameters addObject:parameter];
 	[parameter release];
 	
@@ -179,7 +181,7 @@
 	[request setDefaultsForHash:self.cookieHash];
 	
 	TIURLRequestParameter * verificationParameter = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:self.verificationToken];
-	TIURLRequestParameter * gamertagParameter = [[TIURLRequestParameter alloc] initWithName:@"gamerTag" value:sender];
+	TIURLRequestParameter * gamertagParameter = [[TIURLRequestParameter alloc] initWithName:@"gamerTag" value:_sender];
 	
 	NSArray * parameters = [[NSArray alloc] initWithObjects:verificationParameter, gamertagParameter, nil];
 	[request setParameters:parameters];
@@ -208,9 +210,9 @@
 	[[self connectionWithRequest:request type:TIXboxLiveEngineConnectionTypeGetMessageBody] setCallback:bodyCallback];
 	[request release];
 	
-	if (attachmentType == TIXboxLiveMessageAttachmentTypeImage){
+	if (_attachmentType == TIXboxLiveMessageAttachmentTypeImage){
 		
-		NSURL * imageURL = [[NSURL alloc] initWithString:[@"https://live.xbox.com/en-GB/Messages/Image?msgId=" stringByAppendingString:messageID]];
+		NSURL * imageURL = [[NSURL alloc] initWithString:[@"https://live.xbox.com/en-GB/Messages/Image?msgId=" stringByAppendingString:_messageID]];
 		NSMutableURLRequest * imageRequest = [[NSMutableURLRequest alloc] initWithURL:imageURL];
 		[imageURL release];
 		
@@ -227,24 +229,24 @@
 		[self setBody:error.localizedDescription];
 		
 		TIXboxLiveMessageBodyBlock bodyBlock = xboxConnection.callback;
-		if (bodyBlock) bodyBlock(body);
+		if (bodyBlock) bodyBlock(_body);
 	}
 	
-	[returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
+	[_returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-	[(NSMutableData *)[returnDataDict objectForKey:[NSValue valueWithPointer:connection]] appendData:data];
+	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithPointer:connection]] appendData:data];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
-	[(NSMutableData *)[returnDataDict objectForKey:[NSValue valueWithPointer:connection]] setLength:0];
+	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithPointer:connection]] setLength:0];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	
 	TIXboxLiveEngineConnection * xboxConnection = (TIXboxLiveEngineConnection *)connection;
-	NSData * returnData = [returnDataDict objectForKey:[NSValue valueWithPointer:connection]];
+	NSData * returnData = [_returnDataDict objectForKey:[NSValue valueWithPointer:connection]];
 	
 	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetMessageBody){
 		
@@ -254,7 +256,7 @@
 		
 		NSString * tempBody = [contentDict safeObjectForKey:@"Text"];
 		
-		if (!tempBody.isNotEmpty && TIXboxLiveMessageAttachmentIsVoice(attachmentType))
+		if (!tempBody.isNotEmpty && TIXboxLiveMessageAttachmentIsVoice(_attachmentType))
 			tempBody = @"Voice attachments can only be viewed on your console.";
 		
 		if (!tempBody) tempBody = @"An error occured when downloading the message";
@@ -263,7 +265,7 @@
 		[self setReadStatus:TIXboxLiveMessageReadStatusRead];
 		
 		TIXboxLiveMessageBodyBlock bodyBlock = xboxConnection.callback;
-		if (bodyBlock) bodyBlock(body);
+		if (bodyBlock) bodyBlock(_body);
 	}
 	
 	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetMessageImage){
@@ -278,26 +280,26 @@
 		[image autorelease];
 	}
 	
-	[returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
+	[_returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
 }
 
 - (NSComparisonResult)compare:(TIXboxLiveMessage *)message {
-	return [sender caseInsensitiveCompare:message.sender];
+	return [_sender caseInsensitiveCompare:message.sender];
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat:@"<TIXboxLiveMessage %p; sender = \"%@\"; summary = \"%@\">", self, sender, summary];
+	return [NSString stringWithFormat:@"<TIXboxLiveMessage %p; sender = \"%@\"; summary = \"%@\">", self, _sender, _summary];
 }
 
 - (void)dealloc {
-	[messageID release];
-	[sender release];
-	[summary release];
-	[date release];
-	[body release];
-	[returnDataDict release];
-	[relativeDateStamp release];
-	[fullDateStamp release];
+	[_messageID release];
+	[_sender release];
+	[_summary release];
+	[_date release];
+	[_body release];
+	[_returnDataDict release];
+	[_relativeDateStamp release];
+	[_fullDateStamp release];
 	[super dealloc];
 }
 

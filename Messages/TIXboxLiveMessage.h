@@ -29,22 +29,7 @@ typedef void (^TIXboxLiveMessageImageBlock)(UIImage * image);
 typedef void (^TIXboxLiveMessageImageBlock)(NSImage * image);
 #endif
 
-@interface TIXboxLiveMessage : TIXboxLiveEngineCookieBase <NSCoding> {
-
-	NSString * messageID;
-	NSString * sender;
-	NSString * summary;
-	NSDate * date;
-	TIXboxLiveMessageReadStatus readStatus;
-	TIXboxLiveMessageAttachmentType attachmentType;
-	NSString * body;
-	
-	NSString * relativeDateStamp;
-	NSString * fullDateStamp;
-	
-	NSMutableDictionary * returnDataDict;
-}
-
+@interface TIXboxLiveMessage : TIXboxLiveEngineCookieBase <NSCoding>
 @property (nonatomic, copy) NSString * messageID;
 @property (nonatomic, copy) NSString * sender;
 @property (nonatomic, copy) NSString * summary;

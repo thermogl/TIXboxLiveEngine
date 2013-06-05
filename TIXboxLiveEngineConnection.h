@@ -53,14 +53,7 @@ typedef void (^TIXboxLiveEngineMessagesBlock)(NSError * error, NSArray * message
 typedef void (^TIXboxLiveEngineFriendRequestBlock)(NSError * error, NSString * gamertag);
 typedef void (^TIXboxLiveEngineMessageSentBlock)(NSError * error, NSArray * recipients);
 
-@interface TIXboxLiveEngineConnection : NSURLConnection {
-	
-	TIXboxLiveEngineConnectionType type;
-	id callback;
-	NSDictionary * userInfo;
-	NSNumber * backgroundTaskIdentifier;
-}
-
+@interface TIXboxLiveEngineConnection : NSURLConnection
 @property (nonatomic, assign) TIXboxLiveEngineConnectionType type;
 @property (nonatomic, copy) id callback;
 @property (nonatomic, retain) NSDictionary * userInfo;

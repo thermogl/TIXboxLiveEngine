@@ -25,24 +25,32 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 - (void)clearOldValues;
 @end
 
-@implementation TIXboxLiveUser
-@synthesize gamertag;
-@synthesize gamerscore;
-@synthesize realName;
-@synthesize motto;
-@synthesize location;
-@synthesize bio;
-@synthesize tileURL;
+@implementation TIXboxLiveUser {
+	
+	NSString * _oldName;
+	NSString * _oldMotto;
+	NSString * _oldLocation;
+	NSString * _oldBio;
+	
+	NSMutableDictionary * _returnDataDict;
+}
+@synthesize gamertag = _gamertag;
+@synthesize gamerscore = _gamerscore;
+@synthesize realName = _realName;
+@synthesize motto = _motto;
+@synthesize location = _location;
+@synthesize bio = _bio;
+@synthesize tileURL = _tileURL;
 
 - (id)init {
 	
 	if ((self = [super init])){
 		
-		oldName = nil;
-		oldMotto = nil;
-		oldLocation = nil;
-		oldBio = nil;
-		returnDataDict = [[NSMutableDictionary alloc] init];
+		_oldName = nil;
+		_oldMotto = nil;
+		_oldLocation = nil;
+		_oldBio = nil;
+		_returnDataDict = [[NSMutableDictionary alloc] init];
 	}
 	
 	return self;
@@ -51,9 +59,9 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 - (id)initWithGamertag:(NSString *)aTag gamerscore:(NSString *)aScore tileURL:(NSURL *)aURL {
 	
 	if ((self = [self init])){
-		gamertag = [aTag copy];
-		gamerscore = [aScore copy];
-		tileURL = [aURL retain];
+		_gamertag = [aTag copy];
+		_gamerscore = [aScore copy];
+		_tileURL = [aURL retain];
 	}
 	
 	return self;
@@ -63,26 +71,26 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 	
 	if ((self = [self init])){
 		
-		gamertag = [[aDecoder decodeObjectForKey:@"Gamertag"] copy];
-		gamerscore = [[aDecoder decodeObjectForKey:@"Gamerscore"] copy];
-		realName = [[aDecoder decodeObjectForKey:@"RealName"] copy];
-		motto = [[aDecoder decodeObjectForKey:@"Motto"] copy];
-		location = [[aDecoder decodeObjectForKey:@"Location"] copy];
-		bio = [[aDecoder decodeObjectForKey:@"Bio"] copy];
-		tileURL = [[aDecoder decodeObjectForKey:@"TileURL"] copy];
+		_gamertag = [[aDecoder decodeObjectForKey:@"Gamertag"] copy];
+		_gamerscore = [[aDecoder decodeObjectForKey:@"Gamerscore"] copy];
+		_realName = [[aDecoder decodeObjectForKey:@"RealName"] copy];
+		_motto = [[aDecoder decodeObjectForKey:@"Motto"] copy];
+		_location = [[aDecoder decodeObjectForKey:@"Location"] copy];
+		_bio = [[aDecoder decodeObjectForKey:@"Bio"] copy];
+		_tileURL = [[aDecoder decodeObjectForKey:@"TileURL"] copy];
 	}
 	
 	return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-	[aCoder encodeObject:gamertag forKey:@"Gamertag"];
-	[aCoder encodeObject:gamerscore forKey:@"Gamerscore"];
-	[aCoder encodeObject:realName forKey:@"RealName"];
-	[aCoder encodeObject:motto forKey:@"Motto"];
-	[aCoder encodeObject:location forKey:@"Location"];
-	[aCoder encodeObject:bio forKey:@"Bio"];
-	[aCoder encodeObject:tileURL forKey:@"TileURL"];
+	[aCoder encodeObject:_gamertag forKey:@"Gamertag"];
+	[aCoder encodeObject:_gamerscore forKey:@"Gamerscore"];
+	[aCoder encodeObject:_realName forKey:@"RealName"];
+	[aCoder encodeObject:_motto forKey:@"Motto"];
+	[aCoder encodeObject:_location forKey:@"Location"];
+	[aCoder encodeObject:_bio forKey:@"Bio"];
+	[aCoder encodeObject:_tileURL forKey:@"TileURL"];
 }
 
 - (TIXboxLiveEngineConnection *)connectionWithRequest:(NSMutableURLRequest *)request type:(TIXboxLiveEngineConnectionType)type {
@@ -94,7 +102,7 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 	
 	if (connection){
 		NSMutableData * data = [[NSMutableData alloc] init];
-		[returnDataDict setObject:data forKey:[NSValue valueWithPointer:connection]];
+		[_returnDataDict setObject:data forKey:[NSValue valueWithPointer:connection]];
 		[data release];
 	}
 	
@@ -152,29 +160,29 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 		[self doCallbackForProfileReceived:xboxConnection];
 	}
 	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeChangeGamerProfile){
-		[self setRealName:oldName];
-		[self setMotto:oldMotto];
-		[self setLocation:oldLocation];
-		[self setBio:oldBio];
+		[self setRealName:_oldName];
+		[self setMotto:_oldMotto];
+		[self setLocation:_oldLocation];
+		[self setBio:_oldBio];
 		[self clearOldValues];
 		[self doCallbackForProfileChangeSuccessfully:NO connection:xboxConnection];
 	}
 	
-	[returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
+	[_returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-	[(NSMutableData *)[returnDataDict objectForKey:[NSValue valueWithPointer:connection]] appendData:data];
+	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithPointer:connection]] appendData:data];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
-	[(NSMutableData *)[returnDataDict objectForKey:[NSValue valueWithPointer:connection]] setLength:0];
+	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithPointer:connection]] setLength:0];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	
 	TIXboxLiveEngineConnection * xboxConnection = (TIXboxLiveEngineConnection *)connection;
-	NSMutableData * returnData = [returnDataDict objectForKey:[NSValue valueWithPointer:connection]];
+	NSMutableData * returnData = [_returnDataDict objectForKey:[NSValue valueWithPointer:connection]];
 	
 	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetGamerProfile){
 		
@@ -201,10 +209,10 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 		
 		BOOL successful = [response contains:@"s Profile - Xbox.com"];
 		if (!successful){
-			[self setRealName:oldName];
-			[self setMotto:oldMotto];
-			[self setLocation:oldLocation];
-			[self setBio:oldBio];
+			[self setRealName:_oldName];
+			[self setMotto:_oldMotto];
+			[self setLocation:_oldLocation];
+			[self setBio:_oldBio];
 		}
 		
 		[self clearOldValues];
@@ -213,7 +221,7 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 		[response release];
 	}
 	
-	[returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
+	[_returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
 }
 
 - (void)doCallbackForProfileReceived:(TIXboxLiveEngineConnection *)connection {
@@ -235,38 +243,38 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 
 - (void)setOldValues {
 	
-	[oldName release];
-	oldName = [realName copy];
+	[_oldName release];
+	_oldName = [_realName copy];
 	
-	[oldMotto release];
-	oldMotto = [motto copy];
+	[_oldMotto release];
+	_oldMotto = [_motto copy];
 	
-	[oldLocation release];
-	oldLocation = [location copy];
+	[_oldLocation release];
+	_oldLocation = [_location copy];
 	
-	[oldBio release];
-	oldBio = [bio copy];
+	[_oldBio release];
+	_oldBio = [_bio copy];
 }
 
 - (void)clearOldValues {
 	
-	[oldName release];
-	oldName = nil;
+	[_oldName release];
+	_oldName = nil;
 		
-	[oldMotto release];
-	oldMotto = nil;
+	[_oldMotto release];
+	_oldMotto = nil;
 		
-	[oldLocation release];
-	oldLocation = nil;
+	[_oldLocation release];
+	_oldLocation = nil;
 		
-	[oldBio release];
-	oldBio = nil;
+	[_oldBio release];
+	_oldBio = nil;
 }
 
 - (BOOL)isEqual:(id)object {
 	
 	if ([object isKindOfClass:[TIXboxLiveMessage class]]){
-		return [gamertag.lowercaseString isEqualToString:((TIXboxLiveMessage *)object).sender.lowercaseString];
+		return [_gamertag.lowercaseString isEqualToString:((TIXboxLiveMessage *)object).sender.lowercaseString];
 	}
 	
 	if ([object isKindOfClass:[TIXboxLiveUser class]]) return [self isEqualToUser:object];
@@ -276,23 +284,23 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 }
 
 - (BOOL)isEqualToUser:(TIXboxLiveUser *)user {
-	return (self == user || [gamertag.lowercaseString isEqualToString:user.gamertag.lowercaseString]);
+	return (self == user || [_gamertag.lowercaseString isEqualToString:user.gamertag.lowercaseString]);
 }
 
 - (BOOL)isEqualToFriend:(TIXboxLiveFriend *)friend {
-	return [friend hasGamertag:gamertag];
+	return [friend hasGamertag:_gamertag];
 }
 
 - (void)dealloc {
 	[self clearOldValues];
-	[gamertag release];
-	[gamerscore release];
-	[realName release];
-	[motto release];
-	[location release];
-	[bio release];
-	[tileURL release];
-	[returnDataDict release];
+	[_gamertag release];
+	[_gamerscore release];
+	[_realName release];
+	[_motto release];
+	[_location release];
+	[_bio release];
+	[_tileURL release];
+	[_returnDataDict release];
 	[super dealloc];
 }
 

@@ -13,17 +13,7 @@ typedef enum {
 	TIXboxLiveAchievementUnlockedStatusNeither = 3,
 } TIXboxLiveAchievementUnlockedStatus;
 
-@interface TIXboxLiveAchievement : NSObject <NSCoding> {
-
-	NSString * title;
-	NSString * info;
-	NSInteger score;
-	TIXboxLiveAchievementUnlockedStatus unlockedStatus;
-	NSURL * tileURL;
-	
-	NSMutableDictionary * returnDataDict;
-}
-
+@interface TIXboxLiveAchievement : NSObject <NSCoding>
 @property (nonatomic, copy) NSString * title;
 @property (nonatomic, copy) NSString * info;
 @property (nonatomic, assign) NSInteger score;

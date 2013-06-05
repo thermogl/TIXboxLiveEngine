@@ -9,17 +9,19 @@
 #import "TIXboxLiveAchievement.h"
 #import "TIXboxLiveEngineAdditions.h"
 
-@implementation TIXboxLiveAchievement
-@synthesize title;
-@synthesize info;
-@synthesize score;
-@synthesize unlockedStatus;
-@synthesize tileURL;
+@implementation TIXboxLiveAchievement {	
+	NSMutableDictionary * _returnDataDict;
+}
+@synthesize title = _title;
+@synthesize info = _info;
+@synthesize score = _score;
+@synthesize unlockedStatus = _unlockedStatus;
+@synthesize tileURL = _tileURL;
 
 - (id)init {
 	
 	if ((self = [super init])){
-		returnDataDict = [[NSMutableDictionary alloc] init];
+		_returnDataDict = [[NSMutableDictionary alloc] init];
 	}
 	
 	return self;
@@ -30,11 +32,11 @@
 	
 	if ((self = [self init])){
 		
-		title = [aTitle copy];
-		info = [someInfo copy];
-		score = someScore;
-		unlockedStatus = aStatus;
-		tileURL = [aURL copy];
+		_title = [aTitle copy];
+		_info = [someInfo copy];
+		_score = someScore;
+		_unlockedStatus = aStatus;
+		_tileURL = [aURL copy];
 	}
 	
 	return self;
@@ -44,30 +46,30 @@
 	
 	if ((self = [self init])){
 		
-		title = [[aDecoder decodeObjectForKey:@"Title"] copy];
-		info = [[aDecoder decodeObjectForKey:@"Info"] copy];
-		score = [aDecoder decodeIntegerForKey:@"Score"];
-		unlockedStatus = [aDecoder decodeIntegerForKey:@"UnlockedStatus"];
-		tileURL = [[aDecoder decodeObjectForKey:@"TileURL"] copy];
+		_title = [[aDecoder decodeObjectForKey:@"Title"] copy];
+		_info = [[aDecoder decodeObjectForKey:@"Info"] copy];
+		_score = [aDecoder decodeIntegerForKey:@"Score"];
+		_unlockedStatus = [aDecoder decodeIntegerForKey:@"UnlockedStatus"];
+		_tileURL = [[aDecoder decodeObjectForKey:@"TileURL"] copy];
 	}
 	
 	return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-	[aCoder encodeObject:title forKey:@"Title"];
-	[aCoder encodeObject:info forKey:@"Info"];
-	[aCoder encodeInteger:score forKey:@"Score"];
-	[aCoder encodeInteger:unlockedStatus forKey:@"UnlockedStatus"];
-	[aCoder encodeObject:tileURL forKey:@"TileURL"];
+	[aCoder encodeObject:_title forKey:@"Title"];
+	[aCoder encodeObject:_info forKey:@"Info"];
+	[aCoder encodeInteger:_score forKey:@"Score"];
+	[aCoder encodeInteger:_unlockedStatus forKey:@"UnlockedStatus"];
+	[aCoder encodeObject:_tileURL forKey:@"TileURL"];
 }
 
 - (NSString *)unlockedDescription {
 	
-	if (unlockedStatus == TIXboxLiveAchievementUnlockedStatusMe) return @"Only you have unlocked this.";
-	else if (unlockedStatus == TIXboxLiveAchievementUnlockedStatusThem) return @"You have not unlocked this.";
-	else if (unlockedStatus == TIXboxLiveAchievementUnlockedStatusBoth) return @"You have both unlocked this.";
-	else if (unlockedStatus == TIXboxLiveAchievementUnlockedStatusNeither) return @"Neither of you have unlocked this.";
+	if (_unlockedStatus == TIXboxLiveAchievementUnlockedStatusMe) return @"Only you have unlocked this.";
+	else if (_unlockedStatus == TIXboxLiveAchievementUnlockedStatusThem) return @"You have not unlocked this.";
+	else if (_unlockedStatus == TIXboxLiveAchievementUnlockedStatusBoth) return @"You have both unlocked this.";
+	else if (_unlockedStatus == TIXboxLiveAchievementUnlockedStatusNeither) return @"Neither of you have unlocked this.";
 	return @"";
 }
 
@@ -76,22 +78,22 @@
 }
 
 - (BOOL)isEqualToAchievement:(TIXboxLiveAchievement *)achievement {
-	return (self == achievement || [achievement.tileURL isEqual:tileURL]);
+	return (self == achievement || [achievement.tileURL isEqual:_tileURL]);
 }
 
 - (NSComparisonResult)compare:(TIXboxLiveAchievement *)achievement {
-	return [title caseInsensitiveCompare:achievement.title];
+	return [_title caseInsensitiveCompare:achievement.title];
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat:@"<TIXboxLiveAchievement %p; title = \"%@\">", self, title];
+	return [NSString stringWithFormat:@"<TIXboxLiveAchievement %p; title = \"%@\">", self, _title];
 }
 
 - (void)dealloc {
-	[title release];
-	[returnDataDict release];
-	[info release];
-	[tileURL release];
+	[_title release];
+	[_returnDataDict release];
+	[_info release];
+	[_tileURL release];
 	[super dealloc];
 }
 
