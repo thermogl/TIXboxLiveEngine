@@ -8,7 +8,7 @@
 
 #import "TIXboxLiveEngineCookieBase.h"
 
-typedef void (^TIXboxLiveFriendsParserFriendsBlock)(NSArray * friends, NSInteger onlineCount);
+typedef void (^TIXboxLiveFriendsParserFriendsBlock)(NSArray * onlineFriends, NSArray * offlineFriends, NSArray * friendRequests);
 typedef void (^TIXboxLiveFriendsParserRecentPlayersBlock)(NSArray * players);
 typedef void (^TIXboxLiveFriendsParserFriendsOfFriendsBlock)(NSArray * friends);
 

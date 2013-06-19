@@ -662,11 +662,11 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 			TIXboxLiveFriendsParser * friendsParser = [[TIXboxLiveFriendsParser alloc] init];
 			[friendsParser setVerificationToken:_verificationToken];
 			[friendsParser setCookieHash:_cookieHash];
-			[friendsParser parseFriendsPage:response callback:^(NSArray * friends, NSInteger onlineCount) {
+			[friendsParser parseFriendsPage:response callback:^(NSArray *onlineFriends, NSArray *offlineFriends, NSArray * friendRequests) {
 				[weakSelf removeParserFromParsers:friendsParser];
 				
 				TIXboxLiveEngineFriendsBlock friendsBlock = xboxConnection.callback;
-				if (friendsBlock) friendsBlock(nil, friends, onlineCount);
+				if (friendsBlock) friendsBlock(nil, onlineFriends, offlineFriends, friendRequests);
 			}];
 			[self addParserToParsers:friendsParser];
 			[friendsParser release];
@@ -1016,7 +1016,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		}
 		else if (TIXboxLiveEngineConnectionTypeIsFriends(connection.type)){
 			TIXboxLiveEngineFriendsBlock block = connection.callback;
-			block(error, nil, 0);
+			block(error, nil, nil, nil);
 		}
 		else if (TIXboxLiveEngineConnectionTypeIsGames(connection.type) || connection.type == TIXboxLiveEngineConnectionTypeGetGameComparisons){
 			TIXboxLiveEngineGamesBlock block = connection.callback;

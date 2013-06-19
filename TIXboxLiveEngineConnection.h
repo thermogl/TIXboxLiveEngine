@@ -44,7 +44,7 @@ typedef enum {
 } TIXboxLiveEngineConnectionType;
 
 typedef void (^TIXboxLiveEngineConnectionBlock)(NSError * error);
-typedef void (^TIXboxLiveEngineFriendsBlock)(NSError * error, NSArray * friends, NSInteger onlineCount);
+typedef void (^TIXboxLiveEngineFriendsBlock)(NSError * error, NSArray * onlineFriends, NSArray * offlineFriends, NSArray * friendRequests);
 typedef void (^TIXboxLiveEngineGamesBlock)(NSError * error, NSString * gamertag, NSArray * games);
 typedef void (^TIXboxLiveEngineAchievementsBlock)(NSError * error, TIXboxLiveGame * game, NSArray * achievements);
 typedef void (^TIXboxLiveEngineRecentPlayersBlock)(NSError * error, NSArray * players);

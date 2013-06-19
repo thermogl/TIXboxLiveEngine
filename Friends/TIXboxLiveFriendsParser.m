@@ -37,7 +37,9 @@
 	dispatch_async_serial("com.TIXboxLiveEngine.FriendsParseQueue", ^{
 		
 		__block NSInteger onlineCount = 0;
-		NSMutableArray * friends = [[NSMutableArray alloc] init];
+		NSMutableArray * onlineFriends = [[NSMutableArray alloc] init];
+		NSMutableArray * offlineFriends = [[NSMutableArray alloc] init];
+		NSMutableArray * friendRequests = [[NSMutableArray alloc] init];
 		
 		NSDateFormatter * inputFormatter = [[NSDateFormatter alloc] init];
 		[inputFormatter setDateFormat:@"dd/MM/yyyy"];
@@ -65,7 +67,7 @@
 			[friend setFriendRequestType:TIXboxLiveFriendRequestTypeNone];
 			[friend setVerificationToken:self.verificationToken];
 			[friend setCookieHash:self.cookieHash];
-			[friends addObject:friend];
+			[(isOnline ? onlineFriends : offlineFriends) addObject:friend];
 			[friend release];
 		}];
 		
@@ -82,7 +84,7 @@
 			[friend setFriendRequestType:TIXboxLiveFriendRequestTypeOutgoing];
 			[friend setVerificationToken:self.verificationToken];
 			[friend setCookieHash:self.cookieHash];
-			[friends addObject:friend];
+			[friendRequests addObject:friend];
 			[friend release];
 		}];
 		
@@ -99,16 +101,22 @@
 			[friend setFriendRequestType:TIXboxLiveFriendRequestTypeIncoming];
 			[friend setVerificationToken:self.verificationToken];
 			[friend setCookieHash:self.cookieHash];
-			[friends addObject:friend];
+			[friendRequests addObject:friend];
 			[friend release];
 		}];
 		
 		[inputFormatter release];
 		[outputFormatter release];
 		
-		[friends sortUsingSelector:@selector(compare:)];
-		dispatch_async_main_queue(^{callback(friends, onlineCount);});
-		[friends release];
+		[onlineFriends sortUsingSelector:@selector(compare:)];
+		[offlineFriends sortUsingSelector:@selector(compare:)];
+		[friendRequests sortUsingSelector:@selector(compare:)];
+		
+		dispatch_async_main_queue(^{callback(onlineFriends, offlineFriends, friendRequests);});
+		
+		[onlineFriends release];
+		[offlineFriends release];
+		[friendRequests release];
 	});
 }
 
