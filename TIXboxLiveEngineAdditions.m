@@ -466,11 +466,8 @@ NSData * NSImageDataRepresentation(NSImage * image, NSBitmapImageFileType type, 
 	
 	NSDictionary * properties = (type == NSPNGFileType ? nil : [NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:compression] 
 																						   forKey:NSImageCompressionFactor]);
-	NSBitmapImageRep * bitmapRep = [[NSBitmapImageRep alloc] initWithData:[image TIFFRepresentation]];
-	NSData * data = [bitmapRep representationUsingType:type properties:properties];
-	[bitmapRep release];
-	
-	return data;
+	NSBitmapImageRep * bitmapRep = [NSBitmapImageRep imageRepWithData:image.TIFFRepresentation];
+	return [bitmapRep representationUsingType:type properties:properties];
 }
 
 NSData * NSImagePNGRepresentation(NSImage * image) {
@@ -494,7 +491,7 @@ NSData * NSImageJPEGRepresentation(NSImage * image, CGFloat compression) {
 	[self drawAtPoint:NSZeroPoint fromRect:(NSRect){NSZeroPoint, self.size} operation:NSCompositeCopy fraction:1.0];
     [croppedImage unlockFocus];
 	
-    return [croppedImage autorelease];
+    return croppedImage;
 }
 
 @end

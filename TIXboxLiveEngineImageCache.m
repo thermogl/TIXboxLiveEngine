@@ -73,7 +73,7 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 #if TARGET_OS_IPHONE
 				image = [UIImage imageWithContentsOfFile:filePath];
 #else
-				image = [[[NSImage alloc] initWithContentsOfFile:filePath] autorelease];
+				image = [[NSImage alloc] initWithContentsOfFile:filePath];
 #endif
 				[self storeImageInMemoryCache:image key:cacheKey];
 			}
