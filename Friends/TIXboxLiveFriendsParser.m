@@ -37,9 +37,9 @@
 	dispatch_async_serial("com.TIXboxLiveEngine.FriendsParseQueue", ^{
 		
 		__block NSInteger onlineCount = 0;
-		NSMutableArray * onlineFriends = [[NSMutableArray alloc] init];
-		NSMutableArray * offlineFriends = [[NSMutableArray alloc] init];
-		NSMutableArray * friendRequests = [[NSMutableArray alloc] init];
+		NSMutableArray * onlineFriends = [NSMutableArray array];
+		NSMutableArray * offlineFriends = [NSMutableArray array];
+		NSMutableArray * friendRequests = [NSMutableArray array];
 		
 		NSDateFormatter * inputFormatter = [[NSDateFormatter alloc] init];
 		[inputFormatter setDateFormat:@"dd/MM/yyyy"];
@@ -57,66 +57,50 @@
 			NSString * gamertag = [friendDict safeObjectForKey:@"GamerTag"];
 			NSString * info = [[friendDict safeObjectForKey:@"Presence"] stringByCorrectingDateRelativeToLocaleWithInputFormatter:inputFormatter 
 																												  outputFormatter:outputFormatter];
-			NSURL * tileURL = [[NSURL alloc] initWithString:[friendDict safeObjectForKey:@"LargeGamerTileUrl"]];
+			NSURL * tileURL = [NSURL URLWithString:[friendDict safeObjectForKey:@"LargeGamerTileUrl"]];
 			
 			TIXboxLiveFriendStatus status = isOnline ? TIXboxLiveFriendStatusOnline : TIXboxLiveFriendStatusOffline;
 			
 			TIXboxLiveFriend * friend = [[TIXboxLiveFriend alloc] initWithGamertag:gamertag info:info status:status tileURL:tileURL];
-			[tileURL release];
-			
 			[friend setFriendRequestType:TIXboxLiveFriendRequestTypeNone];
 			[friend setVerificationToken:self.verificationToken];
 			[friend setCookieHash:self.cookieHash];
 			[(isOnline ? onlineFriends : offlineFriends) addObject:friend];
-			[friend release];
 		}];
 		
 		rawFriends = [friendsData safeObjectForKey:@"Outgoing"];
 		[rawFriends enumerateObjectsUsingBlock:^(NSDictionary * friendDict, NSUInteger idx, BOOL *stop){
 			
 			NSString * gamertag = [friendDict safeObjectForKey:@"GamerTag"];
-			NSURL * tileURL = [[NSURL alloc] initWithString:[friendDict safeObjectForKey:@"LargeGamerTileUrl"]];
+			NSURL * tileURL = [NSURL URLWithString:[friendDict safeObjectForKey:@"LargeGamerTileUrl"]];
 			
 			TIXboxLiveFriend * friend = [[TIXboxLiveFriend alloc] initWithGamertag:gamertag info:@"Friend request sent" 
 																			status:TIXboxLiveFriendStatusRequest tileURL:tileURL];
-			[tileURL release];
-			
 			[friend setFriendRequestType:TIXboxLiveFriendRequestTypeOutgoing];
 			[friend setVerificationToken:self.verificationToken];
 			[friend setCookieHash:self.cookieHash];
 			[friendRequests addObject:friend];
-			[friend release];
 		}];
 		
 		rawFriends = [friendsData safeObjectForKey:@"Incoming"];
 		[rawFriends enumerateObjectsUsingBlock:^(NSDictionary * friendDict, NSUInteger idx, BOOL *stop){
 			
 			NSString * gamertag = [friendDict safeObjectForKey:@"GamerTag"];
-			NSURL * tileURL = [[NSURL alloc] initWithString:[friendDict safeObjectForKey:@"LargeGamerTileUrl"]];
+			NSURL * tileURL = [NSURL URLWithString:[friendDict safeObjectForKey:@"LargeGamerTileUrl"]];
 			
 			TIXboxLiveFriend * friend = [[TIXboxLiveFriend alloc] initWithGamertag:gamertag info:@"Wants to be your friend" 
 																			status:TIXboxLiveFriendStatusRequest tileURL:tileURL];
-			[tileURL release];
-			
 			[friend setFriendRequestType:TIXboxLiveFriendRequestTypeIncoming];
 			[friend setVerificationToken:self.verificationToken];
 			[friend setCookieHash:self.cookieHash];
 			[friendRequests addObject:friend];
-			[friend release];
 		}];
-		
-		[inputFormatter release];
-		[outputFormatter release];
 		
 		[onlineFriends sortUsingSelector:@selector(compare:)];
 		[offlineFriends sortUsingSelector:@selector(compare:)];
 		[friendRequests sortUsingSelector:@selector(compare:)];
 		
 		dispatch_async_main_queue(^{callback(onlineFriends, offlineFriends, friendRequests);});
-		
-		[onlineFriends release];
-		[offlineFriends release];
-		[friendRequests release];
 	});
 }
 
@@ -129,34 +113,26 @@
 		NSDateFormatter * outputFormatter = [[NSDateFormatter alloc] init];
 		[outputFormatter setDateStyle:NSDateFormatterShortStyle];
 		
-		NSMutableArray * players = [[NSMutableArray alloc] init];
-		NSArray * rawPlayers = [(NSDictionary *)[aPage objectFromJSONString] safeObjectForKey:@"Data"];
+		NSMutableArray * players = [NSMutableArray array];
 		
+		NSArray * rawPlayers = [(NSDictionary *)[aPage objectFromJSONString] safeObjectForKey:@"Data"];
 		[rawPlayers enumerateObjectsUsingBlock:^(NSDictionary * playerDict, NSUInteger idx, BOOL *stop){
 			
 			NSString * gamertag = [playerDict safeObjectForKey:@"GamerTag"];
 			NSString * info = [[playerDict safeObjectForKey:@"Presence"] stringByCorrectingDateRelativeToLocaleWithInputFormatter:inputFormatter 
 																												  outputFormatter:outputFormatter];
-			NSURL * tileURL = [[NSURL alloc] initWithString:[playerDict safeObjectForKey:@"LargeGamerTileUrl"]];
+			NSURL * tileURL = [NSURL URLWithString:[playerDict safeObjectForKey:@"LargeGamerTileUrl"]];
 			
 			TIXboxLiveFriend * friend = [[TIXboxLiveFriend alloc] initWithGamertag:gamertag info:info status:TIXboxLiveFriendStatusUnknown tileURL:tileURL];
-			[tileURL release];
-			
 			[friend setFriendRequestType:TIXboxLiveFriendRequestTypeNone];
 			[friend setIsOnFriendsList:NO];
 			[friend setVerificationToken:self.verificationToken];
 			[friend setCookieHash:self.cookieHash];
 			[players addObject:friend];
-			[friend release];
 		}];
 		
-		[inputFormatter release];
-		[outputFormatter release];
-		
 		[players sortUsingSelector:@selector(compare:)];
-		
 		dispatch_async_main_queue(^{callback(players);});
-		[players release];
 	});
 }
 
@@ -164,7 +140,7 @@
 	
 	dispatch_async_serial("com.TIXboxLiveEngine.FriendsOfFriendParseQueue", ^{
 		
-		NSMutableArray * friends = [[NSMutableArray alloc] init];
+		NSMutableArray * friends = [NSMutableArray array];
 		
 		NSDictionary * friendsData = [(NSDictionary *)[aPage objectFromJSONString] safeObjectForKey:@"Data"];
 		NSArray * rawFriends = [friendsData	safeObjectForKey:@"Friends"];
@@ -172,23 +148,18 @@
 		[rawFriends enumerateObjectsUsingBlock:^(NSDictionary * friendDict, NSUInteger idx, BOOL *stop){
 			
 			NSString * gamertag = [friendDict safeObjectForKey:@"GamerTag"];
-			NSURL * tileURL = [[NSURL alloc] initWithString:[friendDict safeObjectForKey:@"LargeGamerTileUrl"]];
+			NSURL * tileURL = [NSURL URLWithString:[friendDict safeObjectForKey:@"LargeGamerTileUrl"]];
 			
 			TIXboxLiveFriend * friend = [[TIXboxLiveFriend alloc] initWithGamertag:gamertag info:@"Unknown" status:TIXboxLiveFriendStatusUnknown tileURL:tileURL];
-			[tileURL release];
-			
 			[friend setFriendRequestType:TIXboxLiveFriendRequestTypeNone];
 			[friend setIsOnFriendsList:NO];
 			[friend setVerificationToken:self.verificationToken];
 			[friend setCookieHash:self.cookieHash];
 			[friends addObject:friend];
-			[friend release];
 		}];
 		
 		[friends sortUsingSelector:@selector(compare:)];
-		
 		dispatch_async_main_queue(^{callback(friends);});
-		[friends release];
 	});
 }
 

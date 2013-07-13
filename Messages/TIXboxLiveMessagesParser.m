@@ -19,7 +19,7 @@
 		NSDateFormatter * relativeFormatter = [[NSDateFormatter alloc] init];
 		NSDateFormatter * fullFormatter = [[NSDateFormatter alloc] init];
 		
-		NSMutableArray * messages = [[NSMutableArray alloc] init];
+		NSMutableArray * messages = [NSMutableArray array];
 		
 		NSString * messagesJSON = [[aPage stringBetween:@"var mc = " and:@";"] stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
 		NSDictionary * messageData = [(NSDictionary *)[messagesJSON objectFromJSONString] safeObjectForKey:@"Data"];
@@ -40,7 +40,6 @@
 			[message setRelativeDateStamp:[date relativeDateStringWithDateFormatter:relativeFormatter]];
 			[message setFullDateStamp:[date fullDateStringWithDateFormatter:fullFormatter]];
 			[messages addObject:message];
-			[message release];
 		}];
 		
 		NSArray * rawMessages = [messageData safeObjectForKey:@"Messages"];
@@ -75,14 +74,9 @@
 			[message setRelativeDateStamp:[date relativeDateStringWithDateFormatter:relativeFormatter]];
 			[message setFullDateStamp:[date fullDateStringWithDateFormatter:fullFormatter]];
 			[messages addObject:message];
-			[message release];
 		}];
 		
-		[fullFormatter release];
-		[relativeFormatter release];
-		
 		dispatch_async_main_queue(^{callback(messages);});
-		[messages release];
 	});
 }
 

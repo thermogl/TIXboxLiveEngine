@@ -16,7 +16,7 @@ void dispatch_async_main_queue(dispatch_block_t block);
 @end
 
 @interface NSMutableURLRequest (TIXboxLiveEngineAdditions)
-@property (nonatomic, retain) NSArray * parameters;
+@property (nonatomic, strong) NSArray * parameters;
 - (void)setDefaultsForHash:(NSString *)cookieHash;
 @end
 

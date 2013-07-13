@@ -17,7 +17,6 @@
 void dispatch_async_serial(const char * label, dispatch_block_t block) {
 	dispatch_queue_t queue = dispatch_queue_create(label, NULL);
 	dispatch_async(queue, block);
-	dispatch_release(queue);
 }
 
 void dispatch_async_main_queue(dispatch_block_t block) {
@@ -44,13 +43,13 @@ void dispatch_async_main_queue(dispatch_block_t block) {
 	
     NSString * encodedParams = self.URL.query;
 	if (!self.isMultipart && !self.isMethodGetOrDelete){
-		encodedParams = [[[NSString alloc] initWithData:self.HTTPBody encoding:NSASCIIStringEncoding] autorelease];
+		encodedParams = [[NSString alloc] initWithData:self.HTTPBody encoding:NSASCIIStringEncoding];
 	}
 	
 	if (encodedParams && ![encodedParams isEqualToString:@""]){
 		
 		NSArray * encodedParameterPairs = [encodedParams componentsSeparatedByString:@"&"];
-		NSMutableArray * requestParameters = [[NSMutableArray alloc] init];
+		NSMutableArray * requestParameters = [NSMutableArray array];
 		
 		[encodedParameterPairs enumerateObjectsUsingBlock:^(NSString * encodedPair, NSUInteger idx, BOOL *stop){
 			NSArray * encodedPairElements = [encodedPair componentsSeparatedByString:@"="];
@@ -61,11 +60,10 @@ void dispatch_async_main_queue(dispatch_block_t block) {
 				
 				TIURLRequestParameter * parameter = [[TIURLRequestParameter alloc] initWithName:name value:value];
 				[requestParameters addObject:parameter];
-				[parameter release];
 			}
 		}];
 		
-		return [requestParameters autorelease];
+		return requestParameters;
     }
     
     return nil;
@@ -73,21 +71,17 @@ void dispatch_async_main_queue(dispatch_block_t block) {
 
 - (void)setParameters:(NSArray *)parameters {
 	
-	NSMutableArray * pairs = [[NSMutableArray alloc] init];
+	NSMutableArray * pairs = [NSMutableArray array];
 	
 	[parameters enumerateObjectsUsingBlock:^(TIURLRequestParameter * requestParameter, NSUInteger idx, BOOL *stop){
 		[pairs addObject:requestParameter.safeURLRepresentation];
 	}];
 	
 	NSString * encodedParameterPairs = [pairs componentsJoinedByString:@"&"];
-	[pairs release];
 	
 	NSData * bodyData = [encodedParameterPairs dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
 	
-	NSString * length = [[NSString alloc] initWithFormat:@"%d", (int)bodyData.length];
-	[self setValue:length forHTTPHeaderField:@"Content-Length"];
-	[length release];
-	
+	[self setValue:[NSString stringWithFormat:@"%d", (int)bodyData.length] forHTTPHeaderField:@"Content-Length"];
 	[self setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
 	[self setHTTPBody:bodyData];
 	[self setHTTPMethod:@"POST"];
@@ -100,14 +94,13 @@ void dispatch_async_main_queue(dispatch_block_t block) {
 	[self setTimeoutInterval:45];
 	[self setValue:@"en-gb" forHTTPHeaderField:@"Accept-Language"];
 	
-	NSMutableString * cookieString = [[NSMutableString alloc] init];
+	NSMutableString * cookieString = [NSMutableString string];
 	 
 	[[TIXboxLiveEngineCookieStorage sharedCookieStorage] enumerateCookiesForURL:self.URL hash:cookieHash block:^(NSHTTPCookie * cookie){
 		[cookieString appendFormat:@"%@=%@; ", cookie.name, cookie.value];
 	 }];
 	
 	if (cookieString.isNotEmpty) [self setValue:cookieString forHTTPHeaderField:@"Cookie"];
-	[cookieString release];
 }
 
 @end
@@ -152,23 +145,23 @@ void dispatch_async_main_queue(dispatch_block_t block) {
 }
 
 - (NSString *)encodedURLString {
-	return [(NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)self, NULL, (CFStringRef)@"?=&+", 
-																kCFStringEncodingUTF8) autorelease];
+	return (__bridge_transfer NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)self, NULL, (CFStringRef)@"?=&+",
+																				 kCFStringEncodingUTF8);
 }
 
 - (NSString *)encodedURLParameterString {
-    return [(NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)self, NULL, (CFStringRef)@":/=,!$&'()*+;[]@#?", 
-																kCFStringEncodingUTF8) autorelease];
+	return (__bridge_transfer NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)self, NULL, (CFStringRef)@":/=,!$&'()*+;[]@#?",
+																				 kCFStringEncodingUTF8);
 }
 
 - (NSString *)decodedURLString {
-	return [(NSString *)CFURLCreateStringByReplacingPercentEscapesUsingEncoding(NULL, (CFStringRef)self, CFSTR(""), 
-																				kCFStringEncodingUTF8) autorelease];
+	return (__bridge_transfer NSString *)CFURLCreateStringByReplacingPercentEscapesUsingEncoding(NULL, (CFStringRef)self, CFSTR(""),
+																								 kCFStringEncodingUTF8);
 }
 
 - (NSString *)stringByReplacingWeirdEncoding {
 	
-	NSScanner * scanner = [[NSScanner alloc] initWithString:self];
+	NSScanner * scanner = [NSScanner scannerWithString:self];
 	[scanner setCharactersToBeSkipped:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]];
 	
 	NSMutableString * replacedString = [[NSMutableString alloc] initWithString:self];
@@ -177,20 +170,16 @@ void dispatch_async_main_queue(dispatch_block_t block) {
 	while (!scanner.isAtEnd){
 		if ([scanner scanInt:&anInt]){
 			
-			NSString * formatString = [[NSString alloc] initWithFormat:@"&#%d;", anInt];
+			NSString * formatString = [NSString stringWithFormat:@"&#%d;", anInt];
 			
 			if ([replacedString contains:formatString]){
-				NSString * replacementString = [[NSString alloc] initWithFormat:@"%C", (unsigned short)anInt];
+				NSString * replacementString = [NSString stringWithFormat:@"%C", (unsigned short)anInt];
 				[replacedString replaceOccurrencesOfString:formatString withString:replacementString options:0 range:NSMakeRange(0, replacedString.length)];
-				[replacementString release];
 			}
-			
-			[formatString release];
 		}
 	}
 	
-	[scanner release];
-	return [replacedString autorelease];
+	return replacedString;
 }
 
 - (NSString *)stringByEscapingXML {
@@ -224,12 +213,12 @@ void dispatch_async_main_queue(dispatch_block_t block) {
 	[NSDateFormatter setDefaultFormatterBehavior:NSDateFormatterBehavior10_4];
 	
 	if (!inputFormatter){
-		inputFormatter = [[[NSDateFormatter alloc] init] autorelease];
+		inputFormatter = [[NSDateFormatter alloc] init];
 		[inputFormatter setDateFormat:@"dd/MM/yyyy"];
 	}
 	
 	if (!outputFormatter){
-		outputFormatter = [[[NSDateFormatter alloc] init] autorelease];
+		outputFormatter = [[NSDateFormatter alloc] init];
 		[outputFormatter setDateStyle:NSDateFormatterShortStyle];
 	}
 	
@@ -273,7 +262,7 @@ static char EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvw
         output[index + 3] = (i + 2) < length ? EncodingTable[(value >> 0) & 0x3F] : '=';
     }
 	
-    return [[[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding] autorelease];
+    return [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
 }
 
 - (id)objectFromJSONString {
@@ -385,7 +374,7 @@ static char EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvw
 
 - (NSString *)relativeDateStringWithDateFormatter:(NSDateFormatter *)dateFormatter {
 	
-	if (!dateFormatter) dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+	if (!dateFormatter) dateFormatter = [[NSDateFormatter alloc] init];
 	
 	NSDate * now = [NSDate date];
 	
@@ -418,7 +407,6 @@ static char EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvw
 		[componentsToSubtract setDay:-7];
 		
 		NSDate * lastweek = [calendar dateByAddingComponents:componentsToSubtract toDate:now options:0];
-		[componentsToSubtract release];
 		
 		if ([self compare:lastweek] == NSOrderedDescending){
 			[dateFormatter setDateFormat:@"EEEE"];
@@ -440,7 +428,7 @@ static char EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvw
 
 - (NSString *)fullDateStringWithDateFormatter:(NSDateFormatter *)dateFormatter {
 	
-	if (!dateFormatter) dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+	if (!dateFormatter) dateFormatter = [[NSDateFormatter alloc] init];
 	[dateFormatter setDateStyle:NSDateFormatterLongStyle];
 	[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	return [[dateFormatter stringFromDate:self] stringByReplacingOccurrencesOfString:@"," withString:@""];

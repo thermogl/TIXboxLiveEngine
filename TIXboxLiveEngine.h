@@ -37,7 +37,7 @@ typedef void (^TIXboxLiveEngineLogBlock)(TIXboxLiveEngineConnection * connection
 
 @class TIXboxLiveGame;
 @interface TIXboxLiveEngine : NSObject
-@property (nonatomic, retain) TIXboxLiveUser * user;
+@property (nonatomic, strong) TIXboxLiveUser * user;
 @property (nonatomic, readonly) BOOL signedIn;
 @property (nonatomic, readonly) BOOL signingIn;
 @property (nonatomic, readonly) BOOL loadingFriends;

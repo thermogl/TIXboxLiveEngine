@@ -11,11 +11,4 @@
 @implementation TIXboxLiveEngineCookieBase
 @synthesize cookieHash = _cookieHash;
 @synthesize verificationToken = _verificationToken;
-
-- (void)dealloc {
-	[_cookieHash release];
-	[_verificationToken release];
-	[super dealloc];
-}
-
 @end

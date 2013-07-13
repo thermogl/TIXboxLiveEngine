@@ -43,6 +43,8 @@ typedef enum {
 	TIXboxLiveEngineConnectionTypeGetTileImage,
 } TIXboxLiveEngineConnectionType;
 
+@class TIXboxLiveGame;
+
 typedef void (^TIXboxLiveEngineConnectionBlock)(NSError * error);
 typedef void (^TIXboxLiveEngineFriendsBlock)(NSError * error, NSArray * onlineFriends, NSArray * offlineFriends, NSArray * friendRequests);
 typedef void (^TIXboxLiveEngineGamesBlock)(NSError * error, NSString * gamertag, NSArray * games);
@@ -56,8 +58,8 @@ typedef void (^TIXboxLiveEngineMessageSentBlock)(NSError * error, NSArray * reci
 @interface TIXboxLiveEngineConnection : NSURLConnection
 @property (nonatomic, assign) TIXboxLiveEngineConnectionType type;
 @property (nonatomic, copy) id callback;
-@property (nonatomic, retain) NSDictionary * userInfo;
-@property (nonatomic, retain) NSNumber * backgroundTaskIdentifier;
+@property (nonatomic, strong) NSDictionary * userInfo;
+@property (nonatomic, strong) NSNumber * backgroundTaskIdentifier;
 @property (nonatomic, readonly) NSString * typeDescription;
 
 @end

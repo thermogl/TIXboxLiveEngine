@@ -92,14 +92,4 @@
 	return [NSString stringWithFormat:@"<TIXboxLiveGame %p; title = \"%@\"; titleID = \"%@\">", self, _title, _titleID];
 }
 
-- (void)dealloc {
-	[_title release];
-	[_titleID release];
-	[_lastPlayedDate release];
-	[_gamertagComparedWith release];
-	[_relativeDateStamp release];
-	[_tileURL release];
-	[super dealloc];
-}
-
 @end

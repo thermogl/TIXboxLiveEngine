@@ -89,12 +89,4 @@
 	return [NSString stringWithFormat:@"<TIXboxLiveAchievement %p; title = \"%@\">", self, _title];
 }
 
-- (void)dealloc {
-	[_title release];
-	[_returnDataDict release];
-	[_info release];
-	[_tileURL release];
-	[super dealloc];
-}
-
 @end

@@ -121,8 +121,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 
 #pragma mark - Property Overrides
 - (void)setVerificationTokenFromResponse:(NSString *)response {
-	[_verificationToken release];
-	_verificationToken = [[response stringBetween:@"<input name=\"__RequestVerificationToken\" type=\"hidden\" value=\"" and:@"\""] retain];
+	_verificationToken = [response stringBetween:@"<input name=\"__RequestVerificationToken\" type=\"hidden\" value=\"" and:@"\""];
 }
 
 #pragma mark - Connection / Queue stuff Methods
@@ -170,12 +169,9 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		"wreply=https:%2F%2Flive.xbox.com:443%2Fxweb%2Flive%2Fpassport%2FsetCookies.ashx%3Frru%3D"
 		"http%253a%252f%252flive.xbox.com%252fen-GB%252fProfile&lc=2057&id=66262&cbcxt=0";
 		
-		NSURL * loginURL = [[NSURL alloc] initWithString:loginAddress];
-		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:loginURL];
-		[loginURL release];
-		
+		NSURL * loginURL = [NSURL URLWithString:loginAddress];
+		NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:loginURL];
 		[[self connectionWithRequest:request type:TIXboxLiveEngineConnectionTypeGetLogin] setCallback:callback];
-		[request release];
 		
 		_signingIn = YES;
 	}
@@ -203,9 +199,8 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	NSString * friendsAddress = @"https://live.xbox.com/en-GB/Friends/List";
 	if (!withToken) friendsAddress = @"https://live.xbox.com/en-GB/Friends";
 	
-	NSURL * friendsURL = [[NSURL alloc] initWithString:friendsAddress];
-	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:friendsURL];
-	[friendsURL release];
+	NSURL * friendsURL = [NSURL URLWithString:friendsAddress];
+	NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:friendsURL];
 	
 	if (withToken){
 		
@@ -213,20 +208,13 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		[request setValue:@"https://live.xbox.com/en-GB/Friends" forHTTPHeaderField:@"Referer"];
 		
 		TIURLRequestParameter * requestParam = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:_verificationToken];
-		NSArray * params = [[NSArray alloc] initWithObjects:requestParam, nil];
-		[requestParam release];
-		
-		[request setParameters:params];
-		[params release];
+		[request setParameters:[NSArray arrayWithObject:requestParam]];
 	}
 	
 	TIXboxLiveEngineConnectionType type = TIXboxLiveEngineConnectionTypeGetFriends;
 	if (!withToken) type = TIXboxLiveEngineConnectionTypeGetFriendsVerification;
 	
-	TIXboxLiveEngineConnection * connection = [self connectionWithRequest:request type:type];
-	[request release];
-	
-	return connection;
+	return [self connectionWithRequest:request type:type];
 }
 
 - (void)getRecentPlayersWithCallback:(TIXboxLiveEngineRecentPlayersBlock)callback {
@@ -242,9 +230,8 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	NSString * playersAddress = @"https://live.xbox.com/en-GB/Friends/Recent";
 	if (!withToken) playersAddress = @"https://live.xbox.com/en-GB/Friends";
 	
-	NSURL * playersURL = [[NSURL alloc] initWithString:playersAddress];
-	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:playersURL];
-	[playersURL release];
+	NSURL * playersURL = [NSURL URLWithString:playersAddress];
+	NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:playersURL];
 	
 	if (withToken){
 		
@@ -252,29 +239,21 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		[request setValue:@"https://live.xbox.com/en-GB/Friends" forHTTPHeaderField:@"Referer"];
 		
 		TIURLRequestParameter * requestParam = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:_verificationToken];
-		NSArray * params = [[NSArray alloc] initWithObjects:requestParam, nil];
-		[requestParam release];
-		
-		[request setParameters:params];
-		[params release];
+		[request setParameters:[NSArray arrayWithObject:requestParam]];
 	}
 	
 	TIXboxLiveEngineConnectionType type = TIXboxLiveEngineConnectionTypeGetRecentPlayers;
 	if (!withToken) type = TIXboxLiveEngineConnectionTypeGetRecentPlayersVerification;
 	
-	TIXboxLiveEngineConnection * connection = [self connectionWithRequest:request type:type];
-	[request release];
-	
-	return connection;
+	return [self connectionWithRequest:request type:type];
 }
 
 - (void)getFriendsOfFriend:(NSString *)gamertag callback:(TIXboxLiveEngineFriendsOfFriendBlock)callback {
 	
 	if (gamertag.isNotEmpty){
 		
-		NSURL * friendsURL = [[NSURL alloc] initWithString:@"https://live.xbox.com/en-GB/Friends/List"];
-		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:friendsURL];
-		[friendsURL release];
+		NSURL * friendsURL = [NSURL URLWithString:@"https://live.xbox.com/en-GB/Friends/List"];
+		NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:friendsURL];
 		
 		[request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
 		[request setValue:[@"https://live.xbox.com/en-GB/Friends?gamertag="
@@ -283,20 +262,10 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		
 		TIURLRequestParameter * gamertagParam = [[TIURLRequestParameter alloc] initWithName:@"gamertag" value:gamertag];
 		TIURLRequestParameter * verificationParam = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:_verificationToken];
-		NSArray * params = [[NSArray alloc] initWithObjects:verificationParam, gamertagParam, nil];
-		[gamertagParam release];
-		[verificationParam release];
-		
-		[request setParameters:params];
-		[params release];
+		[request setParameters:[NSArray arrayWithObjects:gamertagParam, verificationParam, nil]];
 		
 		TIXboxLiveEngineConnection * connection = [self connectionWithRequest:request type:TIXboxLiveEngineConnectionTypeGetFriendsOfFriend];
-		[request release];
-		
-		NSDictionary * userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:gamertag, TIXboxLiveEngineConnectionGamertagKey, nil];
-		[connection setUserInfo:userInfo];
-		[userInfo release];
-		
+		[connection setUserInfo:[NSDictionary dictionaryWithObject:gamertag forKey:TIXboxLiveEngineConnectionGamertagKey]];
 		[connection setCallback:callback];
 	}
 }
@@ -305,29 +274,17 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	
 	if (gamertag.isNotEmpty){
 		
-		NSURL * friendRequestURL = [[NSURL alloc] initWithString:@"https://live.xbox.com/en-GB/Friends/Add"];
-		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:friendRequestURL];
-		[friendRequestURL release];
+		NSURL * friendRequestURL = [NSURL URLWithString:@"https://live.xbox.com/en-GB/Friends/Add"];
+		NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:friendRequestURL];
 		
 		[request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
 		
 		TIURLRequestParameter * parameter = [[TIURLRequestParameter alloc] initWithName:@"gamertag" value:gamertag.stringByTrimmingWhitespaceAndNewLines];
 		TIURLRequestParameter * parameter2 = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:_verificationToken];
-		
-		NSArray * parameters = [[NSArray alloc] initWithObjects:parameter, parameter2, nil];
-		[parameter release];
-		[parameter2 release];
-		
-		[request setParameters:parameters];
-		[parameters release];
+		[request setParameters:[NSArray arrayWithObjects:parameter, parameter2, nil]];
 		
 		TIXboxLiveEngineConnection * connection = [self connectionWithRequest:request type:TIXboxLiveEngineConnectionTypeSendFriendRequest];
-		[request release];
-		
-		NSDictionary * userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:gamertag, TIXboxLiveEngineConnectionGamertagKey, nil];
-		[connection setUserInfo:userInfo];
-		[userInfo release];
-		
+		[connection setUserInfo:[NSDictionary dictionaryWithObject:gamertag forKey:TIXboxLiveEngineConnectionGamertagKey]];
 		[connection setCallback:callback];
 	}
 }
@@ -346,9 +303,8 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	NSString * gamesAddress = @"https://live.xbox.com/en-GB/Activity/Summary";
 	if (!withToken) gamesAddress = @"https://live.xbox.com/en-GB/Activity";
 	
-	NSURL * gamesURL = [[NSURL alloc] initWithString:gamesAddress];
-	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:gamesURL];
-	[gamesURL release];
+	NSURL * gamesURL = [NSURL URLWithString:gamesAddress];
+	NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:gamesURL];
 	
 	if (withToken){
 		
@@ -356,40 +312,25 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		[request setValue:@"https://live.xbox.com/en-GB/Activity" forHTTPHeaderField:@"Referer"];
 		
 		TIURLRequestParameter * requestParam = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:_verificationToken];
-		NSArray * params = [[NSArray alloc] initWithObjects:requestParam, nil];
-		[requestParam release];
-		
-		[request setParameters:params];
-		[params release];
+		[request setParameters:[NSArray arrayWithObject:requestParam]];
 	}
 	
 	TIXboxLiveEngineConnectionType type = TIXboxLiveEngineConnectionTypeGetGames;
 	if (!withToken) type = TIXboxLiveEngineConnectionTypeGetGamesVerification;
 	
-	TIXboxLiveEngineConnection * connection = [self connectionWithRequest:request type:type];
-	[request release];
-	
-	return connection;
+	return [self connectionWithRequest:request type:type];
 }
 
 - (void)getAchievementsForGame:(TIXboxLiveGame *)game callback:(TIXboxLiveEngineAchievementsBlock)callback {
 	
 	if (game){
 		
-		NSString * achievementsAddress = [[NSString alloc] initWithFormat:@"https://live.xbox.com/en-GB/Activity/Details?titleId=%@", game.titleID];
-		NSURL * achievementsURL = [[NSURL alloc] initWithString:achievementsAddress];
-		[achievementsAddress release];
-		
-		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:achievementsURL];
-		[achievementsURL release];
+		NSString * achievementsAddress = [NSString stringWithFormat:@"https://live.xbox.com/en-GB/Activity/Details?titleId=%@", game.titleID];
+		NSURL * achievementsURL = [NSURL URLWithString:achievementsAddress];
+		NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:achievementsURL];
 		
 		TIXboxLiveEngineConnection * connection = [self connectionWithRequest:request type:TIXboxLiveEngineConnectionTypeGetAchievements];
-		[request release];
-		
-		NSDictionary * userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:game, TIXboxLiveEngineConnectionGameKey, nil];
-		[connection setUserInfo:userInfo];
-		[userInfo release];
-		
+		[connection setUserInfo:[NSDictionary dictionaryWithObject:game forKey:TIXboxLiveEngineConnectionGameKey]];
 		[connection setCallback:callback];
 	}
 }
@@ -398,32 +339,19 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	
 	if (gamertag.isNotEmpty){
 		
-		NSString * gamesAddress = [[NSString alloc] initWithFormat:@"https://live.xbox.com/en-GB/Activity/Summary?CompareTo=%@",
-								   [[gamertag stringByTrimmingWhitespaceAndNewLines]			 stringByReplacingOccurrencesOfString:@" " withString:@"+"]];
-		
-		NSURL * gamesURL = [[NSURL alloc] initWithString:gamesAddress];
-		[gamesAddress release];
-		
-		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:gamesURL];
-		[gamesURL release];
+		NSString * gamesAddress = [NSString stringWithFormat:@"https://live.xbox.com/en-GB/Activity/Summary?CompareTo=%@",
+								   [[gamertag stringByTrimmingWhitespaceAndNewLines] stringByReplacingOccurrencesOfString:@" " withString:@"+"]];
+		NSURL * gamesURL = [NSURL URLWithString:gamesAddress];
+		NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:gamesURL];
 		
 		[request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
 		[request setValue:@"https://live.xbox.com/en-GB/Activity" forHTTPHeaderField:@"Referer"];
 		
 		TIURLRequestParameter * requestParam = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:_verificationToken];
-		NSArray * params = [[NSArray alloc] initWithObjects:requestParam, nil];
-		[requestParam release];
-		
-		[request setParameters:params];
-		[params release];
+		[request setParameters:[NSArray arrayWithObject:requestParam]];
 		
 		TIXboxLiveEngineConnection * connection = [self connectionWithRequest:request type:TIXboxLiveEngineConnectionTypeGetGameComparisons];
-		[request release];
-		
-		NSDictionary * userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:gamertag, TIXboxLiveEngineConnectionGamertagKey, nil];
-		[connection setUserInfo:userInfo];
-		[userInfo release];
-		
+		[connection setUserInfo:[NSDictionary dictionaryWithObject:gamertag forKey:TIXboxLiveEngineConnectionGamertagKey]];
 		[connection setCallback:callback];
 	}
 }
@@ -431,22 +359,13 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 - (void)getAchievementsComparisonsForGame:(TIXboxLiveGame *)game callback:(TIXboxLiveEngineAchievementsBlock)callback {
 	
 	if (game){
-		NSString * achievementsAddress = [[NSString alloc] initWithFormat:@"https://live.xbox.com/en-GB/Activity/Details?titleId=%@&compareTo=%@",
+		NSString * achievementsAddress = [NSString stringWithFormat:@"https://live.xbox.com/en-GB/Activity/Details?titleId=%@&compareTo=%@",
 										  game.titleID, game.gamertagComparedWith.encodedURLString];
-		
-		NSURL * achievementsURL = [[NSURL alloc] initWithString:achievementsAddress];
-		[achievementsAddress release];
-		
-		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:achievementsURL];
-		[achievementsURL release];
+		NSURL * achievementsURL = [NSURL URLWithString:achievementsAddress];
+		NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:achievementsURL];
 		
 		TIXboxLiveEngineConnection * connection = [self connectionWithRequest:request type:TIXboxLiveEngineConnectionTypeGetAchievementComparisons];
-		[request release];
-		
-		NSDictionary * userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:game, TIXboxLiveEngineConnectionGameKey, nil];
-		[connection setUserInfo:userInfo];
-		[userInfo release];
-		
+		[connection setUserInfo:[NSDictionary dictionaryWithObject:game forKey:TIXboxLiveEngineConnectionGameKey]];
 		[connection setCallback:callback];
 	}
 }
@@ -457,12 +376,9 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	if (!_loadingMessages){
 		_loadingMessages = _signedIn ? YES : NO;
 		
-		NSURL * messagesURL = [[NSURL alloc] initWithString:@"https://live.xbox.com/en-GB/Messages"];
-		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:messagesURL];
-		[messagesURL release];
-		
+		NSURL * messagesURL = [NSURL URLWithString:@"https://live.xbox.com/en-GB/Messages"];
+		NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:messagesURL];
 		[[self connectionWithRequest:request type:TIXboxLiveEngineConnectionTypeGetMessages] setCallback:callback];
-		[request release];
 	}
 }
 
@@ -470,38 +386,28 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	
 	if (message.isNotEmpty && recipients){
 		
-		NSURL * messageURL = [[NSURL alloc] initWithString:@"https://live.xbox.com/en-GB/Messages/SendMessage"];
-		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:messageURL];
-		[messageURL release];
+		NSURL * messageURL = [NSURL URLWithString:@"https://live.xbox.com/en-GB/Messages/SendMessage"];
+		NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:messageURL];
 		
 		[request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
 		
-		NSMutableArray * parameters = [[NSMutableArray alloc] init];
+		NSMutableArray * parameters = [NSMutableArray array];
 		[recipients enumerateObjectsUsingBlock:^(NSString * recipient, NSUInteger idx, BOOL *stop){
 			TIURLRequestParameter * recipientParameter = [[TIURLRequestParameter alloc] initWithName:@"Recipients" value:recipient];
 			[parameters addObject:recipientParameter];
-			[recipientParameter release];
 		}];
 		
 		TIURLRequestParameter * messageParameter = [[TIURLRequestParameter alloc] initWithName:@"Message" value:message];
 		[parameters addObject:messageParameter];
-		[messageParameter release];
 		
 		TIURLRequestParameter * verificationParameter = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:_verificationToken];
 		[parameters addObject:verificationParameter];
-		[verificationParameter release];
 		
 		[request setParameters:parameters];
-		[parameters release];
 		
 		TIXboxLiveEngineConnection * connection = [self connectionWithRequest:request type:TIXboxLiveEngineConnectionTypeSendMessage];
-		[request release];
-		
-		NSDictionary * userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:message, TIXboxLiveEngineConnectionMessageKey,
-								   recipients, TIXboxLiveEngineConnectionRecipientsKey, nil];
-		[connection setUserInfo:userInfo];
-		[userInfo release];
-		
+		[connection setUserInfo:[NSDictionary dictionaryWithObjectsAndKeys:message, TIXboxLiveEngineConnectionMessageKey,
+								 recipients, TIXboxLiveEngineConnectionRecipientsKey, nil]];
 		[connection setCallback:callback];
 	}
 }
@@ -517,14 +423,10 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	if (TIXboxLiveEngineConnectionTypeIsRecentPlayers(xboxConnection.type)) _loadingRecentPlayers = NO;
 	if (TIXboxLiveEngineConnectionTypeIsLogin(xboxConnection.type)) _signingIn = NO;
 	
-	if (_logBlock){
-		NSString * response = [[NSString alloc] initWithFormat:@"Error (%d) - %@", (int)error.code, error.localizedDescription];
-		_logBlock(xboxConnection, response);
-		[response release];
-	}
+	if (_logBlock) _logBlock(xboxConnection, [NSString stringWithFormat:@"Error (%d) - %@", (int)error.code, error.localizedDescription]);
 	
 	[self doCallbackForError:error connection:xboxConnection];
-	[_returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
+	[_returnDataDict removeObjectForKey:[NSValue valueWithNonretainedObject:connection]];
 	
 	[self setNetworkSpinnerVisible:NO];
 	[self endMultitaskingForConnection:xboxConnection];
@@ -536,23 +438,22 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 	
 	NSMutableURLRequest * newRequest = [request mutableCopy];
 	[newRequest setDefaultsForHash:_cookieHash];
-	
-	return [newRequest autorelease];
+	return newRequest;
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithPointer:connection]] appendData:data];
+	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithNonretainedObject:connection]] appendData:data];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
 	
 	[[TIXboxLiveEngineCookieStorage sharedCookieStorage] addCookiesFromResponse:response hash:_cookieHash];
-	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithPointer:connection]] setLength:0];
+	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithNonretainedObject:connection]] setLength:0];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	
-	id connectionKey = [NSValue valueWithPointer:connection];
+	id connectionKey = [NSValue valueWithNonretainedObject:connection];
 	NSString * response = [[NSString alloc] initWithData:[_returnDataDict objectForKey:connectionKey] encoding:NSUTF8StringEncoding];
 	[_returnDataDict removeObjectForKey:connectionKey];
 	
@@ -567,10 +468,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		TIURLRequestParameter * passwordParam = [[TIURLRequestParameter alloc] initWithName:@"passwd" value:_password];
 		TIURLRequestParameter * optionsParam = [[TIURLRequestParameter alloc] initWithName:@"LoginOptions" value:@"1"];
 		
-		NSMutableArray * parameters = [[NSMutableArray alloc] initWithObjects:emailParam, passwordParam, optionsParam, nil];
-		[emailParam release];
-		[passwordParam release];
-		[optionsParam release];
+		NSMutableArray * parameters = [NSMutableArray arrayWithObjects:emailParam, passwordParam, optionsParam, nil];
 		
 		NSArray * rawParams = [response componentsSeparatedByString:@"<input type=\"hidden\""];
 		for (int i = 1; i < rawParams.count; i++){
@@ -581,18 +479,13 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 			
 			TIURLRequestParameter * parameter = [[TIURLRequestParameter alloc] initWithName:name value:value];
 			[parameters addObject:parameter];
-			[parameter release];
 		}
 		
-		NSURL * postURL = [[NSURL alloc] initWithString:[response stringBetween:@"urlPost:'" and:@"'"]];
-		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:postURL];
-		[postURL release];
-		
+		NSURL * postURL = [NSURL URLWithString:[response stringBetween:@"urlPost:'" and:@"'"]];
+		NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:postURL];
 		[request setParameters:parameters];
-		[parameters release];
 		
 		[[self connectionWithRequest:request type:TIXboxLiveEngineConnectionTypePostLogin] setCallback:xboxConnection.callback];
-		[request release];
 	}
 	
 	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypePostLogin){
@@ -658,7 +551,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		}
 		else if (response.isNotEmpty && ![response contains:kTIXboxLiveEngineJavascriptCheck]){
 			
-			__block TIXboxLiveEngine * weakSelf = self;
+			__weak TIXboxLiveEngine * weakSelf = self;
 			TIXboxLiveFriendsParser * friendsParser = [[TIXboxLiveFriendsParser alloc] init];
 			[friendsParser setVerificationToken:_verificationToken];
 			[friendsParser setCookieHash:_cookieHash];
@@ -669,24 +562,16 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 				if (friendsBlock) friendsBlock(nil, onlineFriends, offlineFriends, friendRequests);
 			}];
 			[self addParserToParsers:friendsParser];
-			[friendsParser release];
 		}
-		else
-		{
-			[self doCallbackForSignOut:NO];
-		}
+		else [self doCallbackForSignOut:NO];
 	}
 	
 	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetRecentPlayersVerification){
 		
-		if ([response contains:kTIXboxLiveEngineJavascriptCheck]){
-			[self doCallbackForSignOut:NO];
-		}
-		else
-		{
+		if (![response contains:kTIXboxLiveEngineJavascriptCheck]){
 			[self setVerificationTokenFromResponse:response];
 			[[self getRecentPlayersWithToken:YES] setCallback:xboxConnection.callback];
-		}
+		} else [self doCallbackForSignOut:NO];
 	}
 	
 	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetRecentPlayers){
@@ -698,7 +583,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		}
 		else
 		{
-			__block TIXboxLiveEngine * weakSelf = self;
+			__weak TIXboxLiveEngine * weakSelf = self;
 			TIXboxLiveFriendsParser * friendsParser = [[TIXboxLiveFriendsParser alloc] init];
 			[friendsParser setVerificationToken:_verificationToken];
 			[friendsParser setCookieHash:_cookieHash];
@@ -709,13 +594,12 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 				if (recentPlayersBlock) recentPlayersBlock(nil, players);
 			}];
 			[self addParserToParsers:friendsParser];
-			[friendsParser release];
 		}
 	}
 	
 	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetFriendsOfFriend){
 		
-		__block TIXboxLiveEngine * weakSelf = self;
+		__weak TIXboxLiveEngine * weakSelf = self;
 		TIXboxLiveFriendsParser * friendsParser = [[TIXboxLiveFriendsParser alloc] init];
 		[friendsParser setVerificationToken:_verificationToken];
 		[friendsParser setCookieHash:_cookieHash];
@@ -726,19 +610,14 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 			if (friendsBlock) friendsBlock(nil, [xboxConnection.userInfo objectForKey:TIXboxLiveEngineConnectionGamertagKey], friends);
 		}];
 		[self addParserToParsers:friendsParser];
-		[friendsParser release];
 	}
 	
 	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetGamesVerification){
 		
-		if ([response contains:kTIXboxLiveEngineJavascriptCheck]){
-			[self doCallbackForSignOut:NO];
-		}
-		else
-		{
+		if (![response contains:kTIXboxLiveEngineJavascriptCheck]){
 			[self setVerificationTokenFromResponse:response];
 			[[self getGamesWithToken:YES] setCallback:xboxConnection.callback];
-		}
+		} else [self doCallbackForSignOut:NO];
 	}
 	
 	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetGames){
@@ -749,7 +628,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		}
 		else
 		{
-			__block TIXboxLiveEngine * weakSelf = self;
+			__weak TIXboxLiveEngine * weakSelf = self;
 			TIXboxLiveGamesParser * gamesParser = [[TIXboxLiveGamesParser alloc] init];
 			[gamesParser parseGamesPage:response callback:^(NSArray * games) {
 				[weakSelf removeParserFromParsers:gamesParser];
@@ -758,13 +637,12 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 				if (gamesBlock) gamesBlock(nil, nil, games);
 			}];
 			[self addParserToParsers:gamesParser];
-			[gamesParser release];
 		}
 	}
 	
 	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetGameComparisons){
 		
-		__block TIXboxLiveEngine * weakSelf = self;
+		__weak TIXboxLiveEngine * weakSelf = self;
 		TIXboxLiveGamesParser * gamesParser = [[TIXboxLiveGamesParser alloc] init];
 		[gamesParser parseGameComparisonsPage:response callback:^(NSArray * games) {
 			[weakSelf removeParserFromParsers:gamesParser];
@@ -773,12 +651,11 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 			if (gamesBlock) gamesBlock(nil, [xboxConnection.userInfo objectForKey:TIXboxLiveEngineConnectionGamertagKey], games);
 		}];
 		[self addParserToParsers:gamesParser];
-		[gamesParser release];
 	}
 	
 	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetAchievements){
 		
-		__block TIXboxLiveEngine * weakSelf = self;
+		__weak TIXboxLiveEngine * weakSelf = self;
 		TIXboxLiveAchievementsParser * achievementsParser = [[TIXboxLiveAchievementsParser alloc] init];
 		[achievementsParser parseAchievementsPage:response callback:^(NSArray * achievements) {
 			[weakSelf removeParserFromParsers:achievementsParser];
@@ -787,12 +664,11 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 			block(nil, [xboxConnection.userInfo objectForKey:TIXboxLiveEngineConnectionGameKey], achievements);
 		}];
 		[self addParserToParsers:achievementsParser];
-		[achievementsParser release];
 	}
 	
 	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetAchievementComparisons){
 		
-		__block TIXboxLiveEngine * weakSelf = self;
+		__weak TIXboxLiveEngine * weakSelf = self;
 		TIXboxLiveAchievementsParser * achievementsParser = [[TIXboxLiveAchievementsParser alloc] init];
 		[achievementsParser parseAchievementComparisonsPage:response callback:^(NSArray *achievements) {
 			[weakSelf removeParserFromParsers:achievementsParser];
@@ -801,14 +677,13 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 			block(nil, [xboxConnection.userInfo objectForKey:TIXboxLiveEngineConnectionGameKey], achievements);
 		}];
 		[self addParserToParsers:achievementsParser];
-		[achievementsParser release];
 	}
 	
 	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetMessages){
 		
 		_loadingMessages = NO;
 		
-		__block TIXboxLiveEngine * weakSelf = self;
+		__weak TIXboxLiveEngine * weakSelf = self;
 		TIXboxLiveMessagesParser * messagesParser = [[TIXboxLiveMessagesParser alloc] init];
 		[messagesParser setCookieHash:_cookieHash];
 		[messagesParser setVerificationToken:_verificationToken];
@@ -819,8 +694,6 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 			if (messagesBlock) messagesBlock(nil, messages);
 		}];
 		[self addParserToParsers:messagesParser];
-		[messagesParser release];
-		
 	}
 	
 	else if (xboxConnection.type == TIXboxLiveEngineConnectionTypeSendFriendRequest){
@@ -829,9 +702,8 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		NSError * error = nil;
 		
 		if (![[responseDict objectForKey:@"Success"] boolValue]){
-			NSDictionary * userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:kTIXboxLiveEngineFriendRequestErrorMessage, NSLocalizedDescriptionKey, nil];
+			NSDictionary * userInfo = [NSDictionary dictionaryWithObjectsAndKeys:kTIXboxLiveEngineFriendRequestErrorMessage, NSLocalizedDescriptionKey, nil];
 			error = [NSError errorWithDomain:kTIXboxLiveEngineErrorDomain code:TIXboxLiveEngineErrorCodeUnknownError userInfo:userInfo];
-			[userInfo release];
 		}
 		
 		TIXboxLiveEngineFriendRequestBlock friendRequestBlock = xboxConnection.callback;
@@ -848,16 +720,14 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 			NSString * status = [responseDict objectForKey:@"Status"];
 			if (!status) status = kTIXboxLiveEngineMessageSendErrorMessage;
 			
-			NSDictionary * userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:status, NSLocalizedDescriptionKey, nil];
+			NSDictionary * userInfo = [NSDictionary dictionaryWithObjectsAndKeys:status, NSLocalizedDescriptionKey, nil];
 			error = [NSError errorWithDomain:kTIXboxLiveEngineErrorDomain code:TIXboxLiveEngineErrorCodeMessageSendingError userInfo:userInfo];
-			[userInfo release];
 		}
 		
 		TIXboxLiveEngineMessageSentBlock messageSentBlock = xboxConnection.callback;
 		if (messageSentBlock) messageSentBlock(error, [xboxConnection.userInfo objectForKey:TIXboxLiveEngineConnectionRecipientsKey]);
 	}
-		
-	[response release];
+	
 	[self endMultitaskingForConnection:xboxConnection];
 }
 
@@ -874,20 +744,12 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		
 		[connection setType:type];
 		
-		NSMutableData * returnData = [[NSMutableData alloc] init];
-		[_returnDataDict setObject:returnData forKey:[NSValue valueWithPointer:connection]];
-		[returnData release];
+		[_returnDataDict setObject:[NSMutableData data] forKey:[NSValue valueWithNonretainedObject:connection]];
 		
 		if (startImmediately){
 			[self beginMultitaskingForConnection:connection];
 			[self setNetworkSpinnerVisible:YES];
-		}
-		else
-		{
-			[self addConnectionToQueue:connection];
-		}
-		
-		[connection release];
+		} else [self addConnectionToQueue:connection];
 	}
 	
 	return connection;
@@ -908,21 +770,15 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 			if (name.isNotEmpty && value.isNotEmpty){
 				TIURLRequestParameter * parameter = [[TIURLRequestParameter alloc] initWithName:name value:value];
 				[parameters addObject:parameter];
-				[parameter release];
 			}
 		}];
 		
 		NSString * postAddress = [response stringBetween:@"action=\"" and:@"\""];		
-		NSURL * postURL = [[NSURL alloc] initWithString:postAddress];
-		
-		NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:postURL];
-		[postURL release];
-		
+		NSURL * postURL = [NSURL URLWithString:postAddress];
+		NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:postURL];
 		[request setParameters:parameters];
-		[parameters release];
 		
 		[[self connectionWithRequest:request type:type] setCallback:callback];
-		[request release];
 	}
 	else
 	{
@@ -967,17 +823,14 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 		_signedIn = YES;
 		[self startQueuedConnections];
 		
-		NSURL * gamerpicURL = [[NSURL alloc] initWithString:[gamerInfo objectForKey:@"gamerpic"]];
-		
+		NSURL * gamerpicURL = [NSURL URLWithString:[gamerInfo objectForKey:@"gamerpic"]];
 		TIXboxLiveUser * newUser = [[TIXboxLiveUser alloc] initWithGamertag:gamertag
 																 gamerscore:[gamerInfo objectForKey:@"gamerscore"] 
 																	tileURL:gamerpicURL];
-		[gamerpicURL release];
 		
 		[newUser setCookieHash:_cookieHash];
 		[newUser getGamerProfileWithCallback:nil];
 		[self setUser:newUser];
-		[newUser release];
 		
 		TIXboxLiveEngineConnectionBlock signInBlock = connection.callback;
 		if (signInBlock) signInBlock(nil);
@@ -1104,9 +957,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 			[self endMultitaskingForConnection:connection];
 		}];
 		
-		NSNumber * taskIdentifier = [[NSNumber alloc] initWithInteger:identifier];
-		[connection setBackgroundTaskIdentifier:taskIdentifier];
-		[taskIdentifier release];
+		[connection setBackgroundTaskIdentifier:[NSNumber numberWithInteger:identifier]];
 	}
 #endif
 }
@@ -1129,16 +980,6 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 - (void)dealloc {
 	[self cancelRunningConnections];
 	[self resetCredentials];
-	[_user release];
-	[_returnDataDict release];
-	[_parsers release];
-	[_email release];
-	[_password release];
-	[_cookieHash release];
-	[_verificationToken release];
-	[_signOutBlock release];
-	[_logBlock release];
-	[super dealloc];
 }
 
 @end

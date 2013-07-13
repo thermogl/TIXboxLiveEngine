@@ -31,10 +31,4 @@
 	return [NSString stringWithFormat:@"<URLRequestParameter %p; name = \"%@\"; value = \"%@\">", self, _name, _value];
 }
 
-- (void)dealloc {
-	[_name release];
-	[_value release];
-	[super dealloc];
-}
-
 @end

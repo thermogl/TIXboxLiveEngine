@@ -49,7 +49,7 @@
 		_info = [someInfo copy];
 		_status = someStatus;
 		_tileURL = [aURL copy];
-		_avatarURL = [[NSURL alloc] initWithString:[NSString stringWithFormat:@"http://avatar.xboxlive.com/avatar/%@/avatar-body.png", _gamertag.encodedURLString]];
+		_avatarURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://avatar.xboxlive.com/avatar/%@/avatar-body.png", _gamertag.encodedURLString]];
 		_isOnFriendsList = YES;
 		_friendRequestType = TIXboxLiveFriendRequestTypeNone;
 	}
@@ -120,7 +120,7 @@
 	
 	TIXboxLiveFriend * friend = [[TIXboxLiveFriend alloc] initWithGamertag:aGamertag info:@"Unknown" status:TIXboxLiveFriendStatusUnknown tileURL:nil];
 	[friend setIsOnFriendsList:NO];
-	return [friend autorelease];
+	return friend;
 }
 
 #pragma mark - Connection Methods
@@ -130,55 +130,33 @@
 	
 	TIXboxLiveEngineConnection * connection = [[TIXboxLiveEngineConnection alloc] initWithRequest:request delegate:self];
 	[connection setType:type];
-	
-	if (connection){
-		NSMutableData * data = [[NSMutableData alloc] init];
-		[_returnDataDict setObject:data forKey:[NSValue valueWithPointer:connection]];
-		[data release];
-	}
-	
-	[connection release];
+	if (connection) [_returnDataDict setObject:[NSMutableData data] forKey:[NSValue valueWithNonretainedObject:connection]];
 	return connection;
 }
 
 - (NSURLConnection *)postConnectionWithAddress:(NSString *)address {
 	
-	NSURL * requestURL = [[NSURL alloc] initWithString:address];
-	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:requestURL];
-	[requestURL release];
+	NSURL * requestURL = [NSURL URLWithString:address];
+	NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:requestURL];
 	
 	[request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
 	[request setDefaultsForHash:self.cookieHash];
 	
 	TIURLRequestParameter * tagParameter = [[TIURLRequestParameter alloc] initWithName:@"gamerTag" value:_gamertag];
 	TIURLRequestParameter * verificationParameter = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:self.verificationToken];
+	[request setParameters:[NSArray arrayWithObjects:tagParameter, verificationParameter, nil]];
 	
-	NSArray * params = [[NSArray alloc] initWithObjects:tagParameter, verificationParameter, nil];
-	
-	[tagParameter release];
-	[verificationParameter release];
-	
-	[request setParameters:params];
-	[params release];
-	
-	NSURLConnection * connection = [[NSURLConnection alloc] initWithRequest:request delegate:nil];
-	
-	[request release];
-	[connection release];
-	
-	return connection;
+	return [NSURLConnection connectionWithRequest:request delegate:nil];
 }
 
 - (void)getGamerInfoWithCallback:(TIXboxLiveFriendGamerInfoBlock)callback {
 	
 	NSString * gamerAddress = [@"https://live.xbox.com/en-GB/MyXbox/Profile?gamertag=" stringByAppendingString:_gamertag.encodedURLParameterString];
 	
-	NSURL * URL = [[NSURL alloc] initWithString:gamerAddress];
-	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:URL];
-	[URL release];
+	NSURL * URL = [NSURL URLWithString:gamerAddress];
+	NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:URL];
 	
 	[[self connectionWithRequest:request type:TIXboxLiveEngineConnectionTypeGetFriendGamerInfo] setCallback:callback];
-	[request release];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
@@ -190,36 +168,32 @@
 		if (infoBlock) infoBlock(error, nil, nil, nil, nil, nil, nil);
 	}
 	
-	[_returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
+	[_returnDataDict removeObjectForKey:[NSValue valueWithNonretainedObject:connection]];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithPointer:connection]] appendData:data];
+	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithNonretainedObject:connection]] appendData:data];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
-	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithPointer:connection]] setLength:0];
+	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithNonretainedObject:connection]] setLength:0];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	
 	TIXboxLiveEngineConnection * xboxConnection = (TIXboxLiveEngineConnection *)connection;
-	NSData * returnData = [_returnDataDict objectForKey:[NSValue valueWithPointer:connection]];
+	NSData * returnData = [_returnDataDict objectForKey:[NSValue valueWithNonretainedObject:connection]];
 	
 	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetFriendGamerInfo){
 		NSString * response = [[NSString alloc] initWithData:returnData encoding:NSUTF8StringEncoding];
 		dispatch_async_serial("com.TIXboxLiveEngine.FriendProfileParseQueue", ^{[self parseGamerInfo:response connection:xboxConnection];});
-		[response release];
 	}
 	
-	[_returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
+	[_returnDataDict removeObjectForKey:[NSValue valueWithNonretainedObject:connection]];
 }
 
 #pragma mark - Helpers
 - (void)parseGamerInfo:(NSString *)gamerPage connection:(TIXboxLiveEngineConnection *)connection {
-	
-	[gamerPage retain];
-	[connection retain];
 	
 	NSString * realName = [gamerPage stringBetween:@"<div class=\"name\" title=\"" and:@"\""];
 	NSString * location = [[[gamerPage stringBetween:@"<label>Location:</label>" and:@"</div>"] stringByTrimmingWhitespaceAndNewLines] 
@@ -231,13 +205,10 @@
 	NSString * gamerscore = [gamerPage stringBetween:@"<div class=\"gamerscore\">" and:@"</div>"];
 	NSString * newInfo = [[gamerPage stringBetween:@"<div class=\"presence\">" and:@"</div>"] stringByCorrectingDateRelativeToLocale];
 	
-	if (!_tileURL) _tileURL = [[NSURL alloc] initWithString:[gamerPage stringBetween:@"<img class=\"gamerpic\" src=\"" and:@"\""]];
+	if (!_tileURL) _tileURL = [NSURL URLWithString:[gamerPage stringBetween:@"<img class=\"gamerpic\" src=\"" and:@"\""]];
 	
 	TIXboxLiveFriendGamerInfoBlock infoBlock = connection.callback;
 	if (infoBlock) dispatch_async_main_queue(^{infoBlock(nil, realName, motto, location, bio, gamerscore, newInfo);});
-	
-	[gamerPage autorelease];
-	[connection autorelease];
 }
 
 #pragma mark - Gamer Methods
@@ -319,24 +290,14 @@
 #pragma mark - Other Stuff
 - (NSDictionary *)dictRepresentation {
 	
-	NSMutableDictionary * dict = [[NSMutableDictionary alloc] init];
+	NSMutableDictionary * dict = [NSMutableDictionary dictionary];
 	[dict safelySetObject:_gamertag forKey:@"Gamertag"];
 	[dict safelySetObject:_info forKey:@"Info"];
-	
-	return [dict autorelease];
+	return dict;
 }
 
 - (NSString *)description {
 	return [NSString stringWithFormat:@"<TIXboxLiveFriend %p; %@>", self, [self dictRepresentation]];
-}
-
-- (void)dealloc {
-	[_gamertag release];
-	[_info release];
-	[_avatarURL release];
-	[_returnDataDict release];
-	[_tileURL release];
-	[super dealloc];
 }
 
 @end

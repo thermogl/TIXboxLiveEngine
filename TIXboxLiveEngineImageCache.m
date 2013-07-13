@@ -38,7 +38,7 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 - (id)init {
 	
 	if ((self = [super init])){
-		_memoryCache	= [[NSMutableDictionary alloc] init];
+		_memoryCache = [[NSMutableDictionary alloc] init];
 		_returnDataDict = [[NSMutableDictionary alloc] init];
 		_processingQueue = dispatch_queue_create("com.TIXboxLiveEngineImageCache.ProcessingQueue", NULL);
 		_ioQueue = dispatch_queue_create("com.TIXboxLiveEngineImageCache.IOQueue", NULL);
@@ -71,7 +71,7 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 				NSDate * modificationDate = [attributes objectForKey:NSFileModificationDate];
 				needsDownload = (modificationDate.timeIntervalSinceNow > kTIXboxLiveEngineImageCacheTime);
 #if TARGET_OS_IPHONE
-				image = [[[UIImage alloc] initWithContentsOfFile:filePath] autorelease];
+				image = [UIImage imageWithContentsOfFile:filePath];
 #else
 				image = [[[NSImage alloc] initWithContentsOfFile:filePath] autorelease];
 #endif
@@ -113,7 +113,6 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 			}
 			
 			_emptyingDiskCache = NO;
-			[fileManager release];
 		});
 		
 		[self emptyMemoryCache];
@@ -155,39 +154,28 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 					 
 - (void)downloadImageAtURL:(NSURL *)URL key:(NSString *)key completionBlock:(TIXboxLiveEngineImageCacheCompletionBlock)block {
 	
-	NSURLRequest * request = [[NSURLRequest alloc] initWithURL:URL];
+	NSURLRequest * request = [NSURLRequest requestWithURL:URL];
 	TIXboxLiveEngineConnection * connection = [[TIXboxLiveEngineConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
-	[request release];
-	
 	[connection setType:TIXboxLiveEngineConnectionTypeGetTileImage];
 	[connection setCallback:block];
+	[connection setUserInfo:[NSDictionary dictionaryWithObjectsAndKeys:key, kTIXboxLiveEngineConnectionCacheKeyKey,
+							 URL, kTIXboxLiveEngineConnectionURLKey, nil]];
 	
-	NSDictionary * userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:key, kTIXboxLiveEngineConnectionCacheKeyKey,
-							   URL, kTIXboxLiveEngineConnectionURLKey, nil];
-	[connection setUserInfo:userInfo];
-	[userInfo release];
-	
-	if (connection){
-		NSMutableData * data = [[NSMutableData alloc] init];
-		[_returnDataDict setObject:data forKey:[NSValue valueWithPointer:connection]];
-		[data release];
-	}
-	
+	if (connection) [_returnDataDict setObject:[NSMutableData data] forKey:[NSValue valueWithNonretainedObject:connection]];
 	[connection start];
-	[connection release];
 }
 
 #pragma mark - NSURLConnection Delegate
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-	[_returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
+	[_returnDataDict removeObjectForKey:[NSValue valueWithNonretainedObject:connection]];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithPointer:connection]] appendData:data];
+	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithNonretainedObject:connection]] appendData:data];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
-	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithPointer:connection]] setLength:0];
+	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithNonretainedObject:connection]] setLength:0];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
@@ -195,12 +183,12 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 	TIXboxLiveEngineConnection * imageConnection = (TIXboxLiveEngineConnection *)connection;
 	TIXboxLiveEngineImageCacheCompletionBlock completionBlock = (TIXboxLiveEngineImageCacheCompletionBlock)imageConnection.callback;
 	
-	NSData * returnData = [_returnDataDict objectForKey:[NSValue valueWithPointer:connection]];
+	NSData * returnData = [_returnDataDict objectForKey:[NSValue valueWithNonretainedObject:connection]];
 	NSString * cacheKey = [imageConnection.userInfo objectForKey:kTIXboxLiveEngineConnectionCacheKeyKey];
 	NSURL * URL = [imageConnection.userInfo objectForKey:kTIXboxLiveEngineConnectionURLKey];
 	
 #if TARGET_OS_IPHONE
-	UIImage * tileImage = [[UIImage alloc] initWithData:returnData];
+	UIImage * tileImage = [UIImage imageWithData:returnData];
 #else
 	NSImage * tileImage = [[NSImage alloc] initWithData:returnData];
 #endif
@@ -232,18 +220,7 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 		}
 	}
 	
-	[tileImage release];
-	[_returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
-}
-
-#pragma mark - Memory Management
-- (void)dealloc {
-	[_returnDataDict release];
-	[_memoryCache release];
-	dispatch_release(_processingQueue);
-	dispatch_release(_ioQueue);
-	[_cacheRootDirectory release];
-	[super dealloc];
+	[_returnDataDict removeObjectForKey:[NSValue valueWithNonretainedObject:connection]];
 }
 
 #pragma mark - Singleton stuff
@@ -257,20 +234,6 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 }
 
 - (id)copyWithZone:(NSZone *)zone {
-	return self;
-}
-
-- (id)retain {
-	return self;
-}
-
-- (NSUInteger)retainCount {
-	return NSUIntegerMax;
-}
-
-- (oneway void)release {}
-
-- (id)autorelease {
 	return self;
 }
 

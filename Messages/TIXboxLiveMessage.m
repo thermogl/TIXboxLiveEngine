@@ -83,16 +83,14 @@
 - (NSString *)relativeDateStamp {
 	
 	if (!_relativeDateStamp)
-		_relativeDateStamp = [_date.relativeDateString retain];
-	
+		_relativeDateStamp = _date.relativeDateString;
 	return _relativeDateStamp;
 }
 
 - (NSString *)fullDateStamp {
 	
 	if (!_fullDateStamp)
-		_fullDateStamp = [_date.fullDateString retain];
-	
+		_fullDateStamp = _date.fullDateString;
 	return _fullDateStamp;
 }
 
@@ -122,49 +120,27 @@
 	
 	TIXboxLiveEngineConnection * connection = [[TIXboxLiveEngineConnection alloc] initWithRequest:request delegate:self];
 	[connection setType:type];
-	
-	if (connection){
-		NSMutableData * data = [[NSMutableData alloc] init];
-		[_returnDataDict setObject:data forKey:[NSValue valueWithPointer:connection]];
-		[data release];
-	}
-	
-	[connection release];
+	if (connection) [_returnDataDict setObject:[NSMutableData data] forKey:[NSValue valueWithNonretainedObject:connection]];
 	return connection;
 }
 
 - (void)addParametersToRequest:(NSMutableURLRequest *)request {
-	
-	NSMutableArray * parameters = [[NSMutableArray alloc] init];
-	
 	TIURLRequestParameter * parameter = [[TIURLRequestParameter alloc] initWithName:@"msgID" value:_messageID];
-	[parameters addObject:parameter];
-	[parameter release];
-	
 	TIURLRequestParameter * parameter2 = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:self.verificationToken];
-	[parameters addObject:parameter2];
-	[parameter2 release];
-	
-	[request setParameters:parameters];
-	[parameters release];
+	[request setParameters:[NSArray arrayWithObjects:parameter, parameter2, nil]];
 }
 
 - (BOOL)deleteMessage {
 	
 	if (self.isFriendRequest) return [self handleFriendRequest:NO];
 	
-	NSURL * deleteURL = [[NSURL alloc] initWithString:@"https://live.xbox.com/en-GB/Messages/Delete"];
-	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:deleteURL];
-	[deleteURL release];
+	NSURL * deleteURL = [NSURL URLWithString:@"https://live.xbox.com/en-GB/Messages/Delete"];
+	NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:deleteURL];
 	
 	[request setDefaultsForHash:self.cookieHash];
 	[self addParametersToRequest:request];
 	
-	NSURLConnection * connection = [[NSURLConnection alloc] initWithRequest:request delegate:nil];
-	
-	[request release];
-	[connection release];
-	
+	NSURLConnection * connection = [NSURLConnection connectionWithRequest:request delegate:nil];
 	return (connection != nil);
 }
 
@@ -173,52 +149,37 @@
 	NSString * requestAddress = @"https://live.xbox.com/en-GB/Friends/Accept";
 	if (!shouldAccept) requestAddress = @"https://live.xbox.com/en-GB/Friends/Decline";
 	
-	NSURL * requestURL = [[NSURL alloc] initWithString:requestAddress];
-	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:requestURL];
-	[requestURL release];
+	NSURL * requestURL = [NSURL URLWithString:requestAddress];
+	NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:requestURL];
 	
 	[request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
 	[request setDefaultsForHash:self.cookieHash];
 	
 	TIURLRequestParameter * verificationParameter = [[TIURLRequestParameter alloc] initWithName:@"__RequestVerificationToken" value:self.verificationToken];
 	TIURLRequestParameter * gamertagParameter = [[TIURLRequestParameter alloc] initWithName:@"gamerTag" value:_sender];
+	[request setParameters:[NSArray arrayWithObjects:verificationParameter, gamertagParameter, nil]];
 	
-	NSArray * parameters = [[NSArray alloc] initWithObjects:verificationParameter, gamertagParameter, nil];
-	[request setParameters:parameters];
-	[parameters release];
-	
-	[verificationParameter release];
-	[gamertagParameter release];
-	
-	NSURLConnection * connection = [[NSURLConnection alloc] initWithRequest:request delegate:nil];
-	
-	[request release];
-	[connection release];
-	
+	NSURLConnection * connection = [NSURLConnection connectionWithRequest:request delegate:nil];
 	return (connection != nil);
 }
 
 - (void)getMessageWithBodyCallback:(TIXboxLiveMessageBodyBlock)bodyCallback imageCallback:(TIXboxLiveMessageImageBlock)imageCallback {
 	
-	NSURL * URL = [[NSURL alloc] initWithString:@"https://live.xbox.com/en-GB/Messages/Message"];
-	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:URL];
-	[URL release];
+	NSURL * URL = [NSURL URLWithString:@"https://live.xbox.com/en-GB/Messages/Message"];
+	NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:URL];
 	
 	[request setDefaultsForHash:self.cookieHash];
 	[self addParametersToRequest:request];
 	
 	[[self connectionWithRequest:request type:TIXboxLiveEngineConnectionTypeGetMessageBody] setCallback:bodyCallback];
-	[request release];
 	
 	if (_attachmentType == TIXboxLiveMessageAttachmentTypeImage){
 		
-		NSURL * imageURL = [[NSURL alloc] initWithString:[@"https://live.xbox.com/en-GB/Messages/Image?msgId=" stringByAppendingString:_messageID]];
-		NSMutableURLRequest * imageRequest = [[NSMutableURLRequest alloc] initWithURL:imageURL];
-		[imageURL release];
+		NSURL * imageURL = [NSURL URLWithString:[@"https://live.xbox.com/en-GB/Messages/Image?msgId=" stringByAppendingString:_messageID]];
+		NSMutableURLRequest * imageRequest = [NSMutableURLRequest requestWithURL:imageURL];
 		
 		[imageRequest setDefaultsForHash:self.cookieHash];
 		[[self connectionWithRequest:imageRequest type:TIXboxLiveEngineConnectionTypeGetMessageImage] setCallback:imageCallback];
-		[imageRequest release];
 	}
 }
 
@@ -232,27 +193,26 @@
 		if (bodyBlock) bodyBlock(_body);
 	}
 	
-	[_returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
+	[_returnDataDict removeObjectForKey:[NSValue valueWithNonretainedObject:connection]];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithPointer:connection]] appendData:data];
+	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithNonretainedObject:connection]] appendData:data];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
-	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithPointer:connection]] setLength:0];
+	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithNonretainedObject:connection]] setLength:0];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	
 	TIXboxLiveEngineConnection * xboxConnection = (TIXboxLiveEngineConnection *)connection;
-	NSData * returnData = [_returnDataDict objectForKey:[NSValue valueWithPointer:connection]];
+	NSData * returnData = [_returnDataDict objectForKey:[NSValue valueWithNonretainedObject:connection]];
 	
 	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetMessageBody){
 		
 		NSString * response = [[NSString alloc] initWithData:returnData encoding:NSUTF8StringEncoding];		
 		NSDictionary * contentDict = [[response objectFromJSONString] objectForKey:@"Data"];
-		[response release];
 		
 		NSString * tempBody = [contentDict safeObjectForKey:@"Text"];
 		
@@ -270,17 +230,15 @@
 	
 	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetMessageImage){
 #if TARGET_OS_IPHONE
-		UIImage * image = [[UIImage alloc] initWithData:returnData];
+		UIImage * image = [UIImage imageWithData:returnData];
 #else
 		NSImage * image = [[NSImage alloc] initWithData:returnData];
 #endif
 		TIXboxLiveMessageImageBlock imageBlock = xboxConnection.callback;
 		if (imageBlock) imageBlock(image);
-		
-		[image autorelease];
 	}
 	
-	[_returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
+	[_returnDataDict removeObjectForKey:[NSValue valueWithNonretainedObject:connection]];
 }
 
 - (NSComparisonResult)compare:(TIXboxLiveMessage *)message {
@@ -289,18 +247,6 @@
 
 - (NSString *)description {
 	return [NSString stringWithFormat:@"<TIXboxLiveMessage %p; sender = \"%@\"; summary = \"%@\">", self, _sender, _summary];
-}
-
-- (void)dealloc {
-	[_messageID release];
-	[_sender release];
-	[_summary release];
-	[_date release];
-	[_body release];
-	[_returnDataDict release];
-	[_relativeDateStamp release];
-	[_fullDateStamp release];
-	[super dealloc];
 }
 
 @end

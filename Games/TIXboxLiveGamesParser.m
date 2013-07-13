@@ -17,7 +17,7 @@
 	dispatch_async_serial("com.TIXboxLiveEngine.GamesParseQueue", ^{
 		
 		NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
-		NSMutableArray * games = [[NSMutableArray alloc] init];
+		NSMutableArray * games = [NSMutableArray array];
 		
 		NSDictionary * gamesData = [(NSDictionary *)[aPage objectFromJSONString] safeObjectForKey:@"Data"];
 		NSArray * rawGames = [gamesData safeObjectForKey:@"Games"];
@@ -29,30 +29,23 @@
 			
 			if (possibleAchievements.intValue > 0){
 				
-				NSURL * tileURL = [[NSURL alloc] initWithString:[rawGame safeObjectForKey:@"BoxArt"]];
+				NSURL * tileURL = [NSURL URLWithString:[rawGame safeObjectForKey:@"BoxArt"]];
 				NSDate * lastPlayedDate = [[playerDict safeObjectForKey:@"LastPlayed"] dateFromJSONDate];
 				
 				TIXboxLiveGame * game = [[TIXboxLiveGame alloc] initWithTitle:[rawGame safeObjectForKey:@"Name"] 
 																	  titleID:[[rawGame safeObjectForKey:@"Id"] stringValue]
 															   lastPlayedDate:lastPlayedDate
 																	  tileURL:tileURL];
-				
-				[tileURL release];
-				
 				[game setUnlockedScore:[[playerDict safeObjectForKey:@"Score"] integerValue]];
 				[game setTotalScore:[[rawGame safeObjectForKey:@"PossibleScore"] integerValue]];
 				[game setUnlockedAchievements:[[playerDict safeObjectForKey:@"Achievements"] integerValue]];
 				[game setTotalAchievements:[possibleAchievements integerValue]];
 				[game setRelativeDateStamp:[lastPlayedDate relativeDateStringWithDateFormatter:dateFormatter]];
 				[games addObject:game];
-				[game release];
 			}
 		}];
 		
-		[dateFormatter release];
-		
 		dispatch_async_main_queue(^{callback(games);});
-		[games release];
 	});
 }
 
@@ -61,7 +54,7 @@
 	dispatch_async_serial("com.TIXboxLiveEngine.GameComparisonParseQueue", ^{
 		
 		NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
-		NSMutableArray * games = [[NSMutableArray alloc] init];
+		NSMutableArray * games = [NSMutableArray array];
 		
 		NSDictionary * gamesData = [(NSDictionary *)[aPage objectFromJSONString] safeObjectForKey:@"Data"];
 		NSArray * rawGames = [gamesData safeObjectForKey:@"Games"];
@@ -84,14 +77,12 @@
 			
 			if (possibleAchievements.intValue > 0 && lastPlayedDate){
 				
-				NSURL * tileURL = [[NSURL alloc] initWithString:[rawGame safeObjectForKey:@"BoxArt"]];
+				NSURL * tileURL = [NSURL URLWithString:[rawGame safeObjectForKey:@"BoxArt"]];
 				
 				TIXboxLiveGame * game = [[TIXboxLiveGame alloc] initWithTitle:[rawGame safeObjectForKey:@"Name"] 
 																	  titleID:[rawGame safeObjectForKey:@"Id"] 
 															   lastPlayedDate:lastPlayedDate
 																	  tileURL:tileURL];
-				[tileURL release];
-				
 				[game setUnlockedScore:[[comparedPlayerDict safeObjectForKey:@"Score"] integerValue]];
 				[game setTotalScore:[[rawGame safeObjectForKey:@"PossibleScore"] integerValue]];
 				[game setUnlockedAchievements:[[comparedPlayerDict safeObjectForKey:@"Achievements"] integerValue]];
@@ -99,14 +90,10 @@
 				[game setGamertagComparedWith:comparedGamertag];
 				[game setRelativeDateStamp:[lastPlayedDate relativeDateStringWithDateFormatter:dateFormatter]];
 				[games addObject:game];
-				[game release];
 			}
 		}];
 		
-		[dateFormatter release];
-		
 		dispatch_async_main_queue(^{callback(games);});
-		[games release];
 	});
 }
 

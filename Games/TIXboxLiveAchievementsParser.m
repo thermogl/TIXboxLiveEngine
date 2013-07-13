@@ -16,7 +16,7 @@
 	
 	dispatch_async_serial("com.TIXboxLiveEngine.AchievementParseQueue", ^{
 		
-		NSMutableArray * achievements = [[NSMutableArray alloc] init];
+		NSMutableArray * achievements = [NSMutableArray array];
 		
 		NSString * achievementsJSON = [aPage stringBetween:@"broker.publish(routes.activity.details.load, " and:@");"];
 		NSArray * rawAchievements = [(NSDictionary *)[achievementsJSON objectFromJSONString] safeObjectForKey:@"Achievements"];
@@ -29,19 +29,16 @@
 			TIXboxLiveAchievementUnlockedStatus status = TIXboxLiveAchievementUnlockedStatusNeither;
 			if ([[(NSDictionary *)[rawAchievement safeObjectForKey:@"EarnDates"] allKeys] count]) status = TIXboxLiveAchievementUnlockedStatusMe;
 			
-			NSURL * tileURL = [[NSURL alloc] initWithString:[rawAchievement safeObjectForKey:@"TileUrl"]];
+			NSURL * tileURL = [NSURL URLWithString:[rawAchievement safeObjectForKey:@"TileUrl"]];
 			TIXboxLiveAchievement * achievement = [[TIXboxLiveAchievement alloc] initWithTitle:name
 																						  info:description 
 																						score:[[rawAchievement safeObjectForKey:@"Score"] integerValue]
 																				unlockedStatus:status 
 																					   tileURL:tileURL];
-			[tileURL release];
 			[achievements addObject:achievement];
-			[achievement release];
 		}];
 		
 		dispatch_async_main_queue(^{callback(achievements);});
-		[achievements release];
 	});
 }
 
@@ -49,7 +46,7 @@
 	
 	dispatch_async_serial("com.TIXboxLiveEngine.AchievementComparisonParseQueue", ^{
 		
-		NSMutableArray * achievements = [[NSMutableArray alloc] init];
+		NSMutableArray * achievements = [NSMutableArray array];
 		
 		NSString * achievementsJSON = [aPage stringBetween:@"broker.publish(routes.activity.details.load, " and:@");"];
 		NSDictionary * achievementsData = (NSDictionary *)[achievementsJSON objectFromJSONString];
@@ -66,23 +63,18 @@
 			if (keys.count == 1){
 				status = [[keys objectAtIndex:0] isEqualToString:[achievementsData safeObjectForKey:@"CurrentGamertag"]] ?
 				TIXboxLiveAchievementUnlockedStatusMe : TIXboxLiveAchievementUnlockedStatusThem;
-			} 
-			else if (keys.count == 2) status = TIXboxLiveAchievementUnlockedStatusBoth;
+			} else if (keys.count == 2) status = TIXboxLiveAchievementUnlockedStatusBoth;
 			
-			NSURL * tileURL = [[NSURL alloc] initWithString:[rawAchievement safeObjectForKey:@"TileUrl"]];
-			
+			NSURL * tileURL = [NSURL URLWithString:[rawAchievement safeObjectForKey:@"TileUrl"]];
 			TIXboxLiveAchievement * achievement = [[TIXboxLiveAchievement alloc] initWithTitle:name
 																						  info:description 
 																						score:[[rawAchievement safeObjectForKey:@"Score"] integerValue]
 																				unlockedStatus:status 
 																					   tileURL:tileURL];
-			[tileURL release];
 			[achievements addObject:achievement];
-			[achievement release];
 		}];
 		
 		dispatch_async_main_queue(^{callback(achievements);});
-		[achievements release];
 	});
 }
 

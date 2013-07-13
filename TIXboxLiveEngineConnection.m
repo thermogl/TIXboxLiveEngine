@@ -52,11 +52,4 @@
 	return [NSString stringWithFormat:@"<TIXboxLiveEngineConnection %p; type: %@>", self, self.typeDescription];
 }
 
-- (void)dealloc {
-	[_callback release];
-	[_userInfo release];
-	[_backgroundTaskIdentifier release];
-	[super dealloc];
-}
-
 @end

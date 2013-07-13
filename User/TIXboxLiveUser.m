@@ -61,7 +61,7 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 	if ((self = [self init])){
 		_gamertag = [aTag copy];
 		_gamerscore = [aScore copy];
-		_tileURL = [aURL retain];
+		_tileURL = aURL;
 	}
 	
 	return self;
@@ -99,32 +99,21 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 	
 	TIXboxLiveEngineConnection * connection = [[TIXboxLiveEngineConnection alloc] initWithRequest:request delegate:self];
 	[connection setType:type];
-	
-	if (connection){
-		NSMutableData * data = [[NSMutableData alloc] init];
-		[_returnDataDict setObject:data forKey:[NSValue valueWithPointer:connection]];
-		[data release];
-	}
-	
-	[connection release];
+	if (connection) [_returnDataDict setObject:[NSMutableData data] forKey:[NSValue valueWithNonretainedObject:connection]];
 	return connection;
 }
 
 - (void)getGamerProfileWithCallback:(TIXboxLiveUserProfileBlock)callback {
 	
-	NSURL * profileURL = [[NSURL alloc] initWithString:@"https://live.xbox.com/en-GB/MyXbox/GamerProfile"];
-	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:profileURL];
-	[profileURL release];
-	
+	NSURL * profileURL = [NSURL URLWithString:@"https://live.xbox.com/en-GB/MyXbox/GamerProfile"];
+	NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:profileURL];
 	[[self connectionWithRequest:request type:TIXboxLiveEngineConnectionTypeGetGamerProfile] setCallback:callback];
-	[request release];
 }
 
 - (void)changeGamerProfileName:(NSString *)name motto:(NSString *)newMotto location:(NSString *)newLocation bio:(NSString *)newBio callback:(TIXboxLiveUserProfileBlock)callback {
 	
-	NSURL * profileURL = [[NSURL alloc] initWithString:@"https://live.xbox.com/en-GB/MyXbox/GamerProfile"];
-	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:profileURL];
-	[profileURL release];
+	NSURL * profileURL = [NSURL URLWithString:@"https://live.xbox.com/en-GB/MyXbox/GamerProfile"];
+	NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:profileURL];
 	
 	[self setOldValues];
 	[self setRealName:name];
@@ -137,20 +126,9 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 	TIURLRequestParameter * mottoParameter = [[TIURLRequestParameter alloc] initWithName:@"Motto" value:newMotto];
 	TIURLRequestParameter * locationParameter = [[TIURLRequestParameter alloc] initWithName:@"Location" value:newLocation];
 	TIURLRequestParameter * bioParameter = [[TIURLRequestParameter alloc] initWithName:@"Bio" value:newBio];
-	
-	NSArray * parameters = [[NSArray alloc] initWithObjects:verificationParameter, nameParameter, mottoParameter, locationParameter, bioParameter, nil];
-	
-	[verificationParameter release];
-	[nameParameter release];
-	[mottoParameter release];
-	[locationParameter release];
-	[bioParameter release];
-	
-	[request setParameters:parameters];
-	[parameters release];
+	[request setParameters:[NSArray arrayWithObjects:verificationParameter, nameParameter, mottoParameter, locationParameter, bioParameter, nil]];
 	
 	[[self connectionWithRequest:request type:TIXboxLiveEngineConnectionTypeChangeGamerProfile] setCallback:callback];
-	[request release];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
@@ -168,21 +146,21 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 		[self doCallbackForProfileChangeSuccessfully:NO connection:xboxConnection];
 	}
 	
-	[_returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
+	[_returnDataDict removeObjectForKey:[NSValue valueWithNonretainedObject:connection]];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithPointer:connection]] appendData:data];
+	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithNonretainedObject:connection]] appendData:data];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
-	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithPointer:connection]] setLength:0];
+	[(NSMutableData *)[_returnDataDict objectForKey:[NSValue valueWithNonretainedObject:connection]] setLength:0];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	
 	TIXboxLiveEngineConnection * xboxConnection = (TIXboxLiveEngineConnection *)connection;
-	NSMutableData * returnData = [_returnDataDict objectForKey:[NSValue valueWithPointer:connection]];
+	NSMutableData * returnData = [_returnDataDict objectForKey:[NSValue valueWithNonretainedObject:connection]];
 	
 	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeGetGamerProfile){
 		
@@ -199,8 +177,6 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 			
 			dispatch_async_main_queue(^{[self doCallbackForProfileReceived:xboxConnection];});
 		});
-		
-		[response release];
 	}
 	
 	if (xboxConnection.type == TIXboxLiveEngineConnectionTypeChangeGamerProfile){
@@ -218,10 +194,9 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 		[self clearOldValues];
 		
 		[self doCallbackForProfileChangeSuccessfully:successful connection:xboxConnection];
-		[response release];
 	}
 	
-	[_returnDataDict removeObjectForKey:[NSValue valueWithPointer:connection]];
+	[_returnDataDict removeObjectForKey:[NSValue valueWithNonretainedObject:connection]];
 }
 
 - (void)doCallbackForProfileReceived:(TIXboxLiveEngineConnection *)connection {
@@ -242,32 +217,16 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 }
 
 - (void)setOldValues {
-	
-	[_oldName release];
 	_oldName = [_realName copy];
-	
-	[_oldMotto release];
 	_oldMotto = [_motto copy];
-	
-	[_oldLocation release];
 	_oldLocation = [_location copy];
-	
-	[_oldBio release];
 	_oldBio = [_bio copy];
 }
 
 - (void)clearOldValues {
-	
-	[_oldName release];
 	_oldName = nil;
-		
-	[_oldMotto release];
 	_oldMotto = nil;
-		
-	[_oldLocation release];
 	_oldLocation = nil;
-		
-	[_oldBio release];
 	_oldBio = nil;
 }
 
@@ -289,19 +248,6 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 
 - (BOOL)isEqualToFriend:(TIXboxLiveFriend *)friend {
 	return [friend hasGamertag:_gamertag];
-}
-
-- (void)dealloc {
-	[self clearOldValues];
-	[_gamertag release];
-	[_gamerscore release];
-	[_realName release];
-	[_motto release];
-	[_location release];
-	[_bio release];
-	[_tileURL release];
-	[_returnDataDict release];
-	[super dealloc];
 }
 
 @end

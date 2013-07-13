@@ -28,20 +28,18 @@
 	
 	if (newCookies && cookieHash){
 		
-		NSMutableArray * allCookies = [[NSMutableArray alloc] initWithContentsOfFile:[self filePathForHash:cookieHash]];
-		if (!allCookies) allCookies = [[NSMutableArray alloc] init];
+		NSMutableArray * allCookies = [NSMutableArray arrayWithContentsOfFile:[self filePathForHash:cookieHash]];
+		if (!allCookies) allCookies = [NSMutableArray array];
 		
 		[newCookies enumerateObjectsUsingBlock:^(NSHTTPCookie * newCookie, NSUInteger idx, BOOL *stop){
 
 			if (![newCookie.name isEqualToString:@"MSPRequ"]){
 				[allCookies enumerateObjectsUsingBlock:^(NSDictionary * existingCookieProperties, NSUInteger idx, BOOL * secondStop){
 				
-					NSHTTPCookie * existingCookie = [[NSHTTPCookie alloc] initWithProperties:existingCookieProperties];
+					NSHTTPCookie * existingCookie = [NSHTTPCookie cookieWithProperties:existingCookieProperties];
 				
 					BOOL cookiesEqual = [existingCookie.name isEqualToString:newCookie.name] &&
 					[existingCookie.domain isEqualToString:newCookie.domain] && [existingCookie.path isEqualToString:newCookie.path];
-				
-					[existingCookie release];
 				
 					if (cookiesEqual){
 						[allCookies removeObject:existingCookieProperties];
@@ -54,7 +52,6 @@
 		}];
 		
 		[allCookies writeToFile:[self filePathForHash:cookieHash] atomically:YES];
-		[allCookies release];
 	}
 }
 
@@ -64,20 +61,20 @@
 
 - (NSArray *)cookiesForURL:(NSURL *)URL hash:(NSString *)cookieHash {
 	
-	NSMutableArray * validCookies = [[NSMutableArray alloc] init];
+	NSMutableArray * validCookies = [NSMutableArray array];
 	[self enumerateCookiesForURL:URL hash:cookieHash block:^(NSHTTPCookie * cookie){[validCookies addObject:cookie];}];
-	return [validCookies autorelease];
+	return validCookies;
 }
 
 - (void)enumerateCookiesForURL:(NSURL *)URL hash:(NSString *)cookieHash block:(TIXboxLiveEngineCookieBlock)block {
 	
 	if (URL.host && cookieHash && block){
 		
-		NSMutableArray * allCookies = [[NSMutableArray alloc] initWithContentsOfFile:[self filePathForHash:cookieHash]];
+		NSMutableArray * allCookies = [NSMutableArray arrayWithContentsOfFile:[self filePathForHash:cookieHash]];
 		__block BOOL removedExpiredCookie = NO;
 		
 		[allCookies enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSDictionary * cookieProperties, NSUInteger idx, BOOL *stop){
-			NSHTTPCookie * cookie = [[NSHTTPCookie alloc] initWithProperties:cookieProperties];
+			NSHTTPCookie * cookie = [NSHTTPCookie cookieWithProperties:cookieProperties];
 			
 			BOOL hasExpired = ([cookie.expiresDate timeIntervalSinceNow] < 0);
 			if (!hasExpired){
@@ -93,22 +90,14 @@
 				[allCookies removeObject:cookieProperties];
 				removedExpiredCookie = YES;
 			}
-			
-			[cookie release];
 		}];
 		
 		if (removedExpiredCookie) [allCookies writeToFile:[self filePathForHash:cookieHash] atomically:YES];
-		[allCookies release];
 	}
 }
 
 - (NSString *)filePathForHash:(NSString *)hash {
 	return [_cookieRootDirectory stringByAppendingFormat:@"%@.cookies", hash];
-}
-
-- (void)dealloc {
-	[_cookieRootDirectory release];
-	[super dealloc];
 }
 
 #pragma mark - Singleton stuff
@@ -123,20 +112,6 @@
 
 - (id)copyWithZone:(NSZone *)zone { 
 	return self; 
-} 
-
-- (id)retain { 
-	return self;
-}
-
-- (NSUInteger)retainCount {
-	return NSUIntegerMax;
-}
-
-- (oneway void)release {}
-
-- (id)autorelease {
-	return self;
 }
 
 @end
