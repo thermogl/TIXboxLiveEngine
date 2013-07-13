@@ -131,9 +131,9 @@ The return value of -getImageForURL:completion: indicates if the image is on dis
 
 ### Min OS requirements
 
-iOS 5.
+iOS 5
 
-OS X 10.7
+OS X 10.8
 
 ### Stuff I've missed
 

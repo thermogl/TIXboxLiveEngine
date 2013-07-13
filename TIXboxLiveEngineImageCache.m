@@ -233,8 +233,4 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 	return shared;
 }
 
-- (id)copyWithZone:(NSZone *)zone {
-	return self;
-}
-
 @end
