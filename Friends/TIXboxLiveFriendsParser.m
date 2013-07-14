@@ -11,12 +11,6 @@
 #import "TIXboxLiveEngineAdditions.h"
 #import "TIXboxLiveEngineConnection.h"
 
-@interface TIXboxLiveFriendsParser (Private)
-- (void)notifyDelegateOfFriends:(NSArray *)friends onlineCount:(NSInteger)onlineCount;
-- (void)notifyDelegateOfRecentPlayers:(NSArray *)players;
-- (void)notifyDelegateOfFriendsOfFriend:(NSArray *)friends;
-@end
-
 @implementation TIXboxLiveFriendsParser
 
 - (void)parseFriendsPage:(NSString *)aPage callback:(TIXboxLiveFriendsParserFriendsBlock)callback {
@@ -36,7 +30,6 @@
 
 	dispatch_async_serial("com.TIXboxLiveEngine.FriendsParseQueue", ^{
 		
-		__block NSInteger onlineCount = 0;
 		NSMutableArray * onlineFriends = [NSMutableArray array];
 		NSMutableArray * offlineFriends = [NSMutableArray array];
 		NSMutableArray * friendRequests = [NSMutableArray array];
@@ -52,7 +45,6 @@
 		[rawFriends enumerateObjectsUsingBlock:^(NSDictionary * friendDict, NSUInteger idx, BOOL *stop){
 			
 			BOOL isOnline = [[friendDict safeObjectForKey:@"IsOnline"] boolValue];
-			if (isOnline) onlineCount ++;
 			
 			NSString * gamertag = [friendDict safeObjectForKey:@"GamerTag"];
 			NSString * info = [[friendDict safeObjectForKey:@"Presence"] stringByCorrectingDateRelativeToLocaleWithInputFormatter:inputFormatter 

@@ -50,7 +50,7 @@ typedef void (^TIXboxLiveEngineLogBlock)(TIXboxLiveEngineConnection * connection
 @property (nonatomic, copy) TIXboxLiveEngineSignOutBlock signOutBlock;
 @property (nonatomic, copy) TIXboxLiveEngineLogBlock logBlock;
 
-- (void)signInWithEmail:(NSString *)anEmail password:(NSString *)aPassword callback:(TIXboxLiveEngineConnectionBlock)block;
+- (void)signInWithEmail:(NSString *)email password:(NSString *)password callback:(TIXboxLiveEngineConnectionBlock)block;
 - (void)signOut;
 
 - (void)getFriendsWithCallback:(TIXboxLiveEngineFriendsBlock)callback;
