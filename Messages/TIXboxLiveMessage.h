@@ -41,7 +41,7 @@ typedef void (^TIXboxLiveMessageImageBlock)(NSImage * image);
 @property (nonatomic, copy) NSString * fullDateStamp;
 @property (nonatomic, readonly) BOOL isFriendRequest;
 
-- (id)initWithMessageID:(NSString *)anID sender:(NSString *)aSender summary:(NSString *)aSummary date:(NSDate *)aDate 
+- (instancetype)initWithMessageID:(NSString *)anID sender:(NSString *)aSender summary:(NSString *)aSummary date:(NSDate *)aDate 
 			 readStatus:(TIXboxLiveMessageReadStatus)aStatus attachmentType:(TIXboxLiveMessageAttachmentType)type;
 
 - (BOOL)isEqualToMessage:(TIXboxLiveMessage *)message;

@@ -18,7 +18,7 @@
 @property (nonatomic, copy) NSString * gamertagComparedWith;
 @property (nonatomic, copy) NSString * relativeDateStamp;
 
-- (id)initWithTitle:(NSString *)aTitle titleID:(NSString *)anID lastPlayedDate:(NSDate *)aDate tileURL:(NSURL *)tileURL;
+- (instancetype)initWithTitle:(NSString *)aTitle titleID:(NSString *)anID lastPlayedDate:(NSDate *)aDate tileURL:(NSURL *)tileURL;
 - (NSString *)relativeDateStamp;
 - (BOOL)isEqualToGame:(TIXboxLiveGame *)game;
 

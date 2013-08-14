@@ -42,7 +42,7 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 @synthesize bio = _bio;
 @synthesize tileURL = _tileURL;
 
-- (id)init {
+- (instancetype)init {
 	
 	if ((self = [super init])){
 		
@@ -56,7 +56,7 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 	return self;
 }
 
-- (id)initWithGamertag:(NSString *)aTag gamerscore:(NSString *)aScore tileURL:(NSURL *)aURL {
+- (instancetype)initWithGamertag:(NSString *)aTag gamerscore:(NSString *)aScore tileURL:(NSURL *)aURL {
 	
 	if ((self = [self init])){
 		_gamertag = [aTag copy];
@@ -67,7 +67,7 @@ NSString * const TIXboxLiveUserDidFinishChangingGamerProfileNotificationName = @
 	return self;
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder {
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
 	
 	if ((self = [self init])){
 		

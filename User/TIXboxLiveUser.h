@@ -23,7 +23,7 @@ typedef void (^TIXboxLiveUserProfileBlock)(NSError * error);
 @property (nonatomic, copy) NSString * bio;
 @property (nonatomic, copy) NSURL * tileURL;
 
-- (id)initWithGamertag:(NSString *)aTag gamerscore:(NSString *)aScore tileURL:(NSURL *)aURL;
+- (instancetype)initWithGamertag:(NSString *)aTag gamerscore:(NSString *)aScore tileURL:(NSURL *)aURL;
 
 - (void)getGamerProfileWithCallback:(TIXboxLiveUserProfileBlock)callback;
 - (void)changeGamerProfileName:(NSString *)name motto:(NSString *)newMotto location:(NSString *)newLocation bio:(NSString *)newBio callback:(TIXboxLiveUserProfileBlock)callback;

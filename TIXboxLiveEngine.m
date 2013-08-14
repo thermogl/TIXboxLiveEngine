@@ -90,7 +90,7 @@ NSString * const kTIXboxLiveEngineMessageSendErrorMessage = @"Your message could
 @synthesize logBlock = _logBlock;
 
 #pragma mark - Init
-- (id)init {
+- (instancetype)init {
 	
 	if ((self = [super init])){
 		

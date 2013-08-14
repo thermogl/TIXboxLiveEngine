@@ -35,7 +35,7 @@ NSString * const kTIXboxLiveEngineConnectionURLKey = @"TIXboxLiveEngineConnectio
 @synthesize cropsGameBoxArt = _cropsGameBoxArt;
 
 #pragma mark - Instance Methods
-- (id)init {
+- (instancetype)init {
 	
 	if ((self = [super init])){
 		_memoryCache = [[NSMutableDictionary alloc] init];

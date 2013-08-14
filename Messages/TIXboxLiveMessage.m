@@ -29,7 +29,7 @@
 @synthesize relativeDateStamp = _relativeDateStamp;
 @synthesize fullDateStamp = _fullDateStamp;
 
-- (id)init {
+- (instancetype)init {
 	
 	if ((self = [super init])){
 		_returnDataDict = [[NSMutableDictionary alloc] init];
@@ -38,7 +38,7 @@
 	return self;
 }
 
-- (id)initWithMessageID:(NSString *)anID sender:(NSString *)aSender summary:(NSString *)aSummary date:(NSDate *)aDate 
+- (instancetype)initWithMessageID:(NSString *)anID sender:(NSString *)aSender summary:(NSString *)aSummary date:(NSDate *)aDate 
 			 readStatus:(TIXboxLiveMessageReadStatus)aStatus attachmentType:(TIXboxLiveMessageAttachmentType)type {
 	
 	if ((self = [self init])){
@@ -54,7 +54,7 @@
 	return self;
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder {
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
 	
 	if ((self = [self init])){
 		

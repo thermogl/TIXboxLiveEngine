@@ -18,7 +18,7 @@
 @synthesize unlockedStatus = _unlockedStatus;
 @synthesize tileURL = _tileURL;
 
-- (id)init {
+- (instancetype)init {
 	
 	if ((self = [super init])){
 		_returnDataDict = [[NSMutableDictionary alloc] init];
@@ -27,7 +27,7 @@
 	return self;
 }
 
-- (id)initWithTitle:(NSString *)aTitle info:(NSString *)someInfo score:(NSInteger)someScore
+- (instancetype)initWithTitle:(NSString *)aTitle info:(NSString *)someInfo score:(NSInteger)someScore
 	 unlockedStatus:(TIXboxLiveAchievementUnlockedStatus)aStatus tileURL:(NSURL *)aURL {
 	
 	if ((self = [self init])){
@@ -42,7 +42,7 @@
 	return self;
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder {
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
 	
 	if ((self = [self init])){
 		

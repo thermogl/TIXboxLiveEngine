@@ -21,7 +21,7 @@ typedef enum {
 @property (nonatomic, copy) NSURL * tileURL;
 @property (nonatomic, readonly) NSString * unlockedDescription;
 
-- (id)initWithTitle:(NSString *)aTitle info:(NSString *)someInfo score:(NSInteger)someScore
+- (instancetype)initWithTitle:(NSString *)aTitle info:(NSString *)someInfo score:(NSInteger)someScore
 	 unlockedStatus:(TIXboxLiveAchievementUnlockedStatus)aStatus tileURL:(NSURL *)tileURL;
 
 - (BOOL)isEqualToAchievement:(TIXboxLiveAchievement *)achievement;

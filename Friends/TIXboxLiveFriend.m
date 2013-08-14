@@ -32,7 +32,7 @@
 @synthesize tileURL = _tileURL;
 
 #pragma mark - Init / Copy Methods
-- (id)init {
+- (instancetype)init {
 	
 	if ((self = [super init])){
 		_returnDataDict = [[NSMutableDictionary alloc] init];
@@ -41,7 +41,7 @@
 	return self;
 }
 
-- (id)initWithGamertag:(NSString *)aGamertag info:(NSString *)someInfo status:(TIXboxLiveFriendStatus)someStatus tileURL:(NSURL *)aURL {
+- (instancetype)initWithGamertag:(NSString *)aGamertag info:(NSString *)someInfo status:(TIXboxLiveFriendStatus)someStatus tileURL:(NSURL *)aURL {
 	
 	if ((self = [self init])){
 		
@@ -57,7 +57,7 @@
 	return self;
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder {
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
 	
 	if ((self = [self init])){
 		

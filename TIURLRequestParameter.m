@@ -13,7 +13,7 @@
 @synthesize name = _name;
 @synthesize value = _value;
 
-- (id)initWithName:(NSString *)aName value:(NSString *)aValue {
+- (instancetype)initWithName:(NSString *)aName value:(NSString *)aValue {
 	
 	if ((self = [super init])){
 		_name = [aName copy];

@@ -34,7 +34,7 @@ typedef void (^TIXboxLiveFriendGamerInfoBlock)(NSError * error, NSString * name,
 @property (nonatomic, assign) BOOL isOnFriendsList;
 @property (nonatomic, readonly) NSString * game;
 
-- (id)initWithGamertag:(NSString *)aGamertag info:(NSString *)someInfo status:(TIXboxLiveFriendStatus)someStatus tileURL:(NSURL *)aURL;
+- (instancetype)initWithGamertag:(NSString *)aGamertag info:(NSString *)someInfo status:(TIXboxLiveFriendStatus)someStatus tileURL:(NSURL *)aURL;
 + (TIXboxLiveFriend *)friendWithGamertag:(NSString *)aGamertag;
 
 - (void)getGamerInfoWithCallback:(TIXboxLiveFriendGamerInfoBlock)callback;

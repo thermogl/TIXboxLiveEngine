@@ -25,7 +25,7 @@
 @synthesize gamertagComparedWith = _gamertagComparedWith;
 @synthesize relativeDateStamp = _relativeDateStamp;
 
-- (id)initWithTitle:(NSString *)aTitle titleID:(NSString *)anID lastPlayedDate:(NSDate *)aDate tileURL:(NSURL *)aURL {
+- (instancetype)initWithTitle:(NSString *)aTitle titleID:(NSString *)anID lastPlayedDate:(NSDate *)aDate tileURL:(NSURL *)aURL {
 	
 	if ((self = [super init])){
 		
@@ -38,7 +38,7 @@
 	return self;
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder {
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
 	
 	if ((self = [self init])){
 		
